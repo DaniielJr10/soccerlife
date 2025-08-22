@@ -8,8 +8,8 @@ class InicioSesionPage extends StatelessWidget { // Crea una clase (plantilla) p
   Widget build(BuildContext context) { // Función que construye y muestra todo lo que ves en pantalla
     return Scaffold( // Estructura básica de una pantalla (como el esqueleto)
       appBar: AppBar( // Barra superior de la pantalla
-        title: const Text('Soccer Life - Login'), // Texto que aparece en la barra superior
-        backgroundColor: Colors.green, // Color verde para la barra superior
+        title: const Text('⚽ Soccer Life - ¡Iniciar Sesión! ⚽'), // Texto que aparece en la barra superior
+        backgroundColor: Colors.blue, // Color azul para la barra superior
       ),
       body: Padding( // Contenido principal de la pantalla con espacios alrededor
         padding: const EdgeInsets.all(20.0), // Espacios de 20 puntos en todos los lados
@@ -53,7 +53,7 @@ class InicioSesionPage extends StatelessWidget { // Crea una clase (plantilla) p
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15), // Espacios internos del botón
               ),
               child: const Text( // Texto que aparece dentro del botón
-                'ENTRAR', // Palabra que se muestra en el botón
+                'INGRESAR', // Palabra que se muestra en el botón
                 style: TextStyle(fontSize: 16, color: Colors.white), // Tamaño y color del texto
               ),
             ),
