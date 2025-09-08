@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+// Pantalla de Login de Soccer Life
+// Este archivo define la UI y la lógica básica de validación/UX del formulario
+// (email, contraseña, mostrar/ocultar, focos y botones de acciones). Todo está
+// distribuido a pantalla completa (encabezado, formulario y acción inferior).
+
 /// Pantalla de inicio de sesión inspirada en el diseño de la imagen adjunta.
 class InicioSesionPage extends StatefulWidget {
   const InicioSesionPage({super.key});
@@ -9,6 +14,7 @@ class InicioSesionPage extends StatefulWidget {
 }
 
 class _InicioSesionPageState extends State<InicioSesionPage> {
+  // Estado y controladores del formulario
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -18,6 +24,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
 
   @override
   void dispose() {
+  // Liberar recursos de controladores y focos cuando la pantalla se destruye
     _emailController.dispose();
     _passwordController.dispose();
     _emailFocus.dispose();
@@ -26,6 +33,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
   }
 
   void _login() {
+  // Acción de login (placeholder). Si la validación pasa, muestra SnackBar.
     if (_formKey.currentState?.validate() ?? false) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Iniciando sesión...')),
@@ -35,12 +43,15 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = Colors.green.shade800;
+  // Tema y color principal reutilizados en varios widgets
+  final theme = Theme.of(context);
+  final primary = Colors.green.shade800;
 
     return Scaffold(
+      // Evitar solapamiento con el teclado en pantallas pequeñas
       resizeToAvoidBottomInset: true,
       body: Container(
+        // Fondo con gradiente suave (verde muy claro a blanco)
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -52,30 +63,36 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
           ),
         ),
         child: SafeArea(
+          // LayoutBuilder para distribuir verticalmente el contenido según alto disponible
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                // Scroll para evitar overflow con teclado
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight - 48),
+                  // Asegurarnos de ocupar toda la altura visible
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
                   child: IntrinsicHeight(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                      // Distribuir: encabezado arriba, formulario al centro, acción abajo
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // ===== Encabezado =====
                         Column(
                           children: [
-                            const SizedBox(height: 8),
+                            // Logo de la app
+                            const SizedBox(height: 4),
                             Align(
                               child: Image.asset(
                                 'images/logo.png',
-                                width: 110,
-                                height: 110,
+                                width: 90,
+                                height: 90,
                                 fit: BoxFit.contain,
                               ),
                             ),
-                            const SizedBox(height: 14),
+                            const SizedBox(height: 8),
+                            // Título y subtítulo
                             Text(
                               'Soccer Life',
                               textAlign: TextAlign.center,
@@ -84,7 +101,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               'Tu evolución futbolística',
                               style: theme.textTheme.bodyMedium?.copyWith(
@@ -97,11 +114,13 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
 
                         // ===== Formulario =====
                         Form(
+                          // Validación en vivo tras interacción
                           key: _formKey,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              // Encabezado del formulario
                               Text(
                                 'Iniciar Sesión',
                                 textAlign: TextAlign.center,
@@ -109,7 +128,8 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 10),
+                              // Campo de email
                               TextFormField(
                                 controller: _emailController,
                                 focusNode: _emailFocus,
@@ -127,6 +147,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                     borderSide: BorderSide.none,
                                   ),
                                 ),
+                                // Reglas básicas de validación de email
                                 validator: (v) {
                                   if (v == null || v.trim().isEmpty) {
                                     return 'Ingresa tu correo';
@@ -137,7 +158,8 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 12),
+                              // Campo de contraseña con botón de mostrar/ocultar
                               TextFormField(
                                 controller: _passwordController,
                                 focusNode: _passwordFocus,
@@ -163,13 +185,15 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                     ),
                                   ),
                                 ),
+                                // Reglas básicas de validación de contraseña
                                 validator: (v) {
                                   if (v == null || v.isEmpty) return 'Ingresa tu contraseña';
                                   if (v.length < 6) return 'Mínimo 6 caracteres';
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 16),
+                              // Botón principal de ingresar
                               SizedBox(
                                 height: 50,
                                 child: FilledButton(
@@ -184,7 +208,8 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   child: const Text('Ingresar'),
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 6),
+                              // Enlace de recuperación de contraseña
                               Center(
                                 child: TextButton(
                                   onPressed: () {
@@ -200,8 +225,9 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                         ),
 
                         // ===== Acción inferior (Crear cuenta) =====
+                        // Se muestra siempre al final para invitar al registro
                         Padding(
-                          padding: const EdgeInsets.only(top: 10),
+                          padding: const EdgeInsets.only(top: 6),
                           child: SizedBox(
                             height: 50,
                             child: OutlinedButton(
