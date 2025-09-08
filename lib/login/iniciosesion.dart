@@ -71,18 +71,17 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: ConstrainedBox(
                   // Asegurarnos de ocupar toda la altura visible
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight > 32 ? constraints.maxHeight - 32 : 0),
                   child: IntrinsicHeight(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      // Distribuir: encabezado arriba, formulario al centro, acción abajo
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // Cambiar la distribución para más control manual
                       children: [
                         // ===== Encabezado =====
                         Column(
                           children: [
                             // Logo de la app
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 50),
                             Align(
                               child: Image.asset(
                                 'images/logo.png',
@@ -91,7 +90,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                 fit: BoxFit.contain,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 12),
                             // Título y subtítulo
                             Text(
                               'Soccer Life',
@@ -101,7 +100,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 6),
                             Text(
                               'Tu evolución futbolística',
                               style: theme.textTheme.bodyMedium?.copyWith(
@@ -111,6 +110,9 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                             ),
                           ],
                         ),
+
+                        // Espacio entre encabezado y formulario
+                        const SizedBox(height: 28),
 
                         // ===== Formulario =====
                         Form(
@@ -128,7 +130,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 27),
                               // Campo de email
                               TextFormField(
                                 controller: _emailController,
@@ -158,7 +160,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 30),
                               // Campo de contraseña con botón de mostrar/ocultar
                               TextFormField(
                                 controller: _passwordController,
@@ -192,7 +194,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 23),
                               // Botón principal de ingresar
                               SizedBox(
                                 height: 50,
@@ -208,7 +210,7 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                                   child: const Text('Ingresar'),
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 20),
                               // Enlace de recuperación de contraseña
                               Center(
                                 child: TextButton(
@@ -224,10 +226,13 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                           ),
                         ),
 
+                        // Espacio flexible reducido
+                        const SizedBox(height: 50),
+
                         // ===== Acción inferior (Crear cuenta) =====
                         // Se muestra siempre al final para invitar al registro
                         Padding(
-                          padding: const EdgeInsets.only(top: 6),
+                          padding: const EdgeInsets.only(top: 0),
                           child: SizedBox(
                             height: 50,
                             child: OutlinedButton(
