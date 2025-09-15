@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'recuperar.dart'; // Importar la pantalla de recuperación de contraseña
 
 // Pantalla de Login de Soccer Life
 // Este archivo define la UI y la lógica básica de validación/UX del formulario
@@ -215,8 +216,12 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                               Center(
                                 child: TextButton(
                                   onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Recuperar contraseña')),
+                                    // Navegar a la pantalla de recuperación de contraseña
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const RecuperarPasswordPage(),
+                                      ),
                                     );
                                   },
                                   child: const Text('¿Olvidaste tu contraseña?'),
