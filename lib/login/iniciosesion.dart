@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'recuperar.dart'; // Importar la pantalla de recuperación de contraseña
+import 'registrarse.dart';
+import 'recuperar.dart';
 
 // Pantalla de Login de Soccer Life
 // Este archivo define la UI y la lógica básica de validación/UX del formulario
@@ -216,7 +217,6 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                               Center(
                                 child: TextButton(
                                   onPressed: () {
-                                    // Navegar a la pantalla de recuperación de contraseña
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -242,8 +242,11 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
                             height: 50,
                             child: OutlinedButton(
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Ir a crear cuenta')),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const RegistrarsePage(),
+                                  ),
                                 );
                               },
                               style: OutlinedButton.styleFrom(
