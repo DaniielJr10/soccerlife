@@ -48,17 +48,12 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
   
   // Lista de posiciones de fútbol
   final List<String> _posiciones = [
-    'Portero',
+    'Arquero',
     'Defensa Central',
-    'Lateral Derecho',
-    'Lateral Izquierdo',
-    'Mediocampista Defensivo',
-    'Mediocampista Central',
-    'Mediocampista Ofensivo',
-    'Extremo Derecho',
-    'Extremo Izquierdo',
-    'Delantero Centro',
-    'Segundo Delantero',
+    'Lateral',
+    'Volante',
+    'Extremo',
+    'Delantero',
   ];
 
   @override
@@ -193,18 +188,18 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
 
   // Validar paso 1 (Información Personal)
   bool _validateStep1() {
-    return _validateEmail(_emailController.text) == null &&
-           _validateRequired(_nombreController.text, 'El nombre') == null &&
+    return _validateRequired(_nombreController.text, 'El nombre') == null &&
            _validateRequired(_apellidoController.text, 'El apellido') == null &&
-           _fechaNacimiento != null;
+           _fechaNacimiento != null &&
+           _validateEmail(_emailController.text) == null &&
+           _validatePhone(_telefonoController.text) == null &&
+           _validatePassword(_passwordController.text) == null &&
+           _validateConfirmPassword(_confirmPasswordController.text) == null;
   }
 
   // Validar paso 2 (Información Deportiva)
   bool _validateStep2() {
-    return _validatePassword(_passwordController.text) == null &&
-           _validateConfirmPassword(_confirmPasswordController.text) == null &&
-           _validatePhone(_telefonoController.text) == null &&
-           _posicionSeleccionada != null;
+    return _posicionSeleccionada != null;
   }
 
   // Registrar usuario
@@ -522,33 +517,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
         ),
         const SizedBox(height: 25),
 
-        // Correo electrónico
-        TextFormField(
-          controller: _emailController,
-          focusNode: _emailFocus,
-          textInputAction: TextInputAction.next,
-          onFieldSubmitted: (_) => _nombreFocus.requestFocus(),
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-            labelText: 'Correo electrónico',
-            hintText: 'tu@email.com',
-            prefixIcon: const Icon(Icons.email_outlined),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: primary, width: 2),
-            ),
-          ),
-          validator: _validateEmail,
-        ),
-
-        const SizedBox(height: 20),
-
         // Nombre
         TextFormField(
           controller: _nombreController,
@@ -581,7 +549,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
           controller: _apellidoController,
           focusNode: _apellidoFocus,
           textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.done,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_emailFocus),
           decoration: InputDecoration(
             labelText: 'Apellido',
             hintText: 'Tu apellido',
@@ -628,6 +597,129 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
             }
             return null;
           },
+        ),
+
+        const SizedBox(height: 20),
+
+        // Correo electrónico
+        TextFormField(
+          controller: _emailController,
+          focusNode: _emailFocus,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _telefonoFocus.requestFocus(),
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            labelText: 'Correo electrónico',
+            hintText: 'tu@email.com',
+            prefixIcon: const Icon(Icons.email_outlined),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: primary, width: 2),
+            ),
+          ),
+          validator: _validateEmail,
+        ),
+
+        const SizedBox(height: 20),
+
+        // Teléfono
+        TextFormField(
+          controller: _telefonoController,
+          focusNode: _telefonoFocus,
+          keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(15),
+          ],
+          decoration: InputDecoration(
+            labelText: 'Teléfono',
+            hintText: '+57 300 123 4567',
+            prefixIcon: const Icon(Icons.phone_outlined),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: primary, width: 2),
+            ),
+          ),
+          validator: _validatePhone,
+        ),
+
+        const SizedBox(height: 20),
+
+        // Contraseña
+        TextFormField(
+          controller: _passwordController,
+          focusNode: _passwordFocus,
+          obscureText: _obscurePassword,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _confirmPasswordFocus.requestFocus(),
+          decoration: InputDecoration(
+            labelText: 'Contraseña',
+            hintText: 'Mínimo 8 caracteres',
+            prefixIcon: const Icon(Icons.lock_outline),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: primary, width: 2),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              ),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+          ),
+          validator: _validatePassword,
+        ),
+
+        const SizedBox(height: 20),
+
+        // Confirmar contraseña
+        TextFormField(
+          controller: _confirmPasswordController,
+          focusNode: _confirmPasswordFocus,
+          obscureText: _obscureConfirmPassword,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            labelText: 'Confirmar contraseña',
+            hintText: 'Repite tu contraseña',
+            prefixIcon: const Icon(Icons.lock_outline),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: primary, width: 2),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureConfirmPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              ),
+              onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+            ),
+          ),
+          validator: _validateConfirmPassword,
         ),
 
         const SizedBox(height: 30),
@@ -678,102 +770,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
           ),
         ),
         const SizedBox(height: 25),
-
-        // Contraseña
-        TextFormField(
-          controller: _passwordController,
-          focusNode: _passwordFocus,
-          obscureText: _obscurePassword,
-          textInputAction: TextInputAction.next,
-          onFieldSubmitted: (_) => _confirmPasswordFocus.requestFocus(),
-          decoration: InputDecoration(
-            labelText: 'Contraseña',
-            hintText: 'Mínimo 8 caracteres',
-            prefixIcon: const Icon(Icons.lock_outline),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: primary, width: 2),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-              ),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-            ),
-          ),
-          validator: _validatePassword,
-        ),
-
-        const SizedBox(height: 20),
-
-        // Confirmar contraseña
-        TextFormField(
-          controller: _confirmPasswordController,
-          focusNode: _confirmPasswordFocus,
-          obscureText: _obscureConfirmPassword,
-          textInputAction: TextInputAction.next,
-          onFieldSubmitted: (_) => _telefonoFocus.requestFocus(),
-          decoration: InputDecoration(
-            labelText: 'Confirmar contraseña',
-            hintText: 'Repite tu contraseña',
-            prefixIcon: const Icon(Icons.lock_outline),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: primary, width: 2),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscureConfirmPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-              ),
-              onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-            ),
-          ),
-          validator: _validateConfirmPassword,
-        ),
-
-        const SizedBox(height: 20),
-
-        // Teléfono
-        TextFormField(
-          controller: _telefonoController,
-          focusNode: _telefonoFocus,
-          keyboardType: TextInputType.phone,
-          textInputAction: TextInputAction.done,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(15),
-          ],
-          decoration: InputDecoration(
-            labelText: 'Teléfono',
-            hintText: '+57 300 123 4567',
-            prefixIcon: const Icon(Icons.phone_outlined),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: primary, width: 2),
-            ),
-          ),
-          validator: _validatePhone,
-        ),
-
-        const SizedBox(height: 20),
 
         // Posición
         DropdownButtonFormField<String>(
@@ -853,7 +849,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Club es opcional, los demás campos son obligatorios',
+                  'La posición es obligatoria, el club es opcional',
                   style: TextStyle(
                     color: primary,
                     fontSize: 13,
