@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'registrarse.dart';
 import 'recuperar.dart';
+import '../pantallas/principal.dart';
 
 // Pantalla de Login de Soccer Life
 // Este archivo define la UI y la lógica básica de validación/UX del formulario
@@ -35,10 +36,21 @@ class _InicioSesionPageState extends State<InicioSesionPage> {
   }
 
   void _login() {
-  // Acción de login (placeholder). Si la validación pasa, muestra SnackBar.
+  // Acción de login (placeholder). Si la validación pasa, navega a la pantalla principal.
     if (_formKey.currentState?.validate() ?? false) {
+      // Mostrar mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Iniciando sesión...')),
+        const SnackBar(
+          content: Text('¡Inicio de sesión exitoso!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      
+      // Navegar a la pantalla principal y remover todas las pantallas anteriores
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const PrincipalPage()),
+        (route) => false,
       );
     }
   }
