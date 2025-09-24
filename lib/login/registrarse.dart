@@ -379,31 +379,70 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el encabezado con el título y subtítulo.
+  /// Construye el encabezado con el logo, título y subtítulo (IGUAL QUE INICIO DE SESIÓN).
   Widget _buildPremiumHeader() {
     return Column(
       children: [
-        ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Colors.white, Color(0xFF00f5ff)],
-          ).createShader(bounds),
-          child: const Text(
-            'Crear Cuenta',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              letterSpacing: 1,
+        // Logo limpio y redondito flotando sobre tu imagen (IGUAL QUE INICIO DE SESIÓN)
+        Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(60),
+            // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(60),
+            child: Image.asset(
+              'images/logo.png',
+              fit: BoxFit.cover,
             ),
           ),
         ),
+        
+        const SizedBox(height: 24),
+        
+        // Título principal limpio y profesional (IGUAL QUE INICIO DE SESIÓN)
+        Center(
+          child: ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [
+                Color(0xFF00f5ff),
+                Color(0xFF00d4aa),
+                Color(0xFFffffff),
+              ],
+            ).createShader(bounds),
+            child: const Text(
+              'Soccer Life',
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+        ),
+        
         const SizedBox(height: 8),
-        Text(
-          'Únete a la élite del fútbol',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.7),
-            fontWeight: FontWeight.w300,
+        
+        // Subtítulo elegante y limpio
+        Center(
+          child: Text(
+            'Crear Cuenta',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white.withOpacity(0.8),
+              fontWeight: FontWeight.w300,
+              letterSpacing: 1,
+            ),
           ),
         ),
       ],
@@ -680,7 +719,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   
   /// Widget reutilizable para un menú desplegable con estilo premium.
   Widget _buildPremiumDropdown() {
-    bool isFocused = false; // Simulación, se puede mejorar con FocusNode.
     return DropdownButtonFormField<String>(
       value: _posicionSeleccionada,
       onChanged: (value) => setState(() => _posicionSeleccionada = value),
@@ -697,7 +735,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         labelText: 'Posición',
         prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withOpacity(0.7)),
         labelStyle: TextStyle(
-          color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withOpacity(0.7),
+          color: Colors.white.withOpacity(0.7),
           fontWeight: FontWeight.w500,
         ),
         filled: true,

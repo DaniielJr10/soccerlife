@@ -431,67 +431,67 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       height: 200,
       child: Column(
         children: [
-          // Logo con efecto de escala
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.2),
-                    Colors.white.withOpacity(0.1),
-                  ],
+          // Logo limpio y redondito flotando sobre tu imagen (IGUAL QUE INICIO DE SESIÓN)
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(60),
+              // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Image.asset(
-                  'images/logo.png',
-                  fit: BoxFit.contain,
-                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(60),
+              child: Image.asset(
+                'images/logo.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),
           
           const SizedBox(height: 24),
           
-          // Título principal con gradiente
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [Color(0xFF00b4db), Color(0xFF0083b0)],
-            ).createShader(bounds),
-            child: const Text(
-              'Recuperar Contraseña',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 1.2,
+          // Título limpio y profesional (IGUAL QUE INICIO DE SESIÓN)
+          Center(
+            child: ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  Color(0xFF00f5ff),
+                  Color(0xFF00d4aa),
+                  Color(0xFFffffff),
+                ],
+              ).createShader(bounds),
+              child: const Text(
+                'Soccer Life',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 2,
+                ),
               ),
             ),
           ),
           
           const SizedBox(height: 12),
           
-          // Subtítulo
-          Text(
-            'Recupera tu acceso de forma segura',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
-              fontWeight: FontWeight.w400,
+          // Subtítulo elegante y limpio (IGUAL QUE INICIO DE SESIÓN)
+          Center(
+            child: Text(
+              'Recuperar Contraseña',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w300,
+                letterSpacing: 1,
+              ),
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
