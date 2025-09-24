@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui';
 
-// Pantalla de Recuperación de Contraseña de Soccer Life
-// Este archivo define la UI y la lógica para el proceso de recuperación de contraseña.
-// Permite al usuario elegir entre recibir un código por email o SMS.
-// Envía un código de verificación de 6 dígitos al método seleccionado.
-// Incluye pantalla de verificación de código con campos individuales.
-
-/// Pantalla de recuperación de contraseña que permite al usuario recibir
-/// un código de verificación por email o número de celular.
+/// 🚀 PANTALLA DE RECUPERAR CONTRASEÑA PREMIUM - SOCCER LIFE
+/// 
+/// Recuperación ultra-moderna con animaciones, glassmorphism y efectos premium
+/// Diseño consistente con las pantallas de login y registro para una experiencia
+/// cohesiva y profesional. Con el mismo fondo espectacular de championsfondo.png
+/// 
+/// ✨ Características Premium:
+/// - Animaciones fluidas y naturales
+/// - Glassmorphism y efectos de cristal
+/// - Gradientes dinámicos animados
+/// - Micro-interacciones en cada elemento
+/// - Feedback visual inmediato
+/// - Transiciones cinematográficas
+/// - Pantalla de éxito espectacular
 class RecuperarPasswordPage extends StatefulWidget {
   const RecuperarPasswordPage({super.key});
 
@@ -16,43 +23,107 @@ class RecuperarPasswordPage extends StatefulWidget {
   State<RecuperarPasswordPage> createState() => _RecuperarPasswordPageState();
 }
 
-class _RecuperarPasswordPageState extends State<RecuperarPasswordPage> {
-  // ===== Controladores y estado del formulario =====
-  // FormKey para validación del formulario
+class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
+    with TickerProviderStateMixin {
+  // ===== 🎬 CONTROLADORES DE ANIMACIÓN =====
+  
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late AnimationController _scaleController;
+  
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+  
+  // ===== 📝 CONTROLADORES DE FORMULARIO =====
+  
   final _formKey = GlobalKey<FormState>();
-  // FormKey para validación del código
   final _codigoFormKey = GlobalKey<FormState>();
-  // Controlador para el campo de email
   final _emailController = TextEditingController();
-  // Controlador para el campo de teléfono
   final _telefonoController = TextEditingController();
-  // Controladores para los 6 campos del código
   final List<TextEditingController> _codigoControllers = List.generate(6, (index) => TextEditingController());
-  // Nodos de foco para los campos del código
   final List<FocusNode> _codigoFocusNodes = List.generate(6, (index) => FocusNode());
-  // Nodo de foco para el campo de email
   final _emailFocus = FocusNode();
-  // Nodo de foco para el campo de teléfono
   final _telefonoFocus = FocusNode();
-  // Método seleccionado para envío (email o sms)
+  
+  // ===== 🎛️ ESTADOS DE LA INTERFAZ =====
+  
   String _metodoSeleccionado = 'email';
-  // Estado para mostrar si el código fue enviado
   bool _codigoEnviado = false;
-  // Estado para mostrar loading durante el envío
   bool _enviando = false;
-  // Estado para mostrar loading durante verificación
   bool _verificando = false;
-  // Código generado (para simulación)
+  bool _emailFocused = false;
+  bool _telefonoFocused = false;
+  bool _recuperacionExitosa = false;
   String _codigoGenerado = '';
 
   @override
+  void initState() {
+    super.initState();
+    _initializeAnimations();
+    _setupFocusListeners();
+    _startEntryAnimation();
+  }
+
+  /// 🎨 Inicializar animaciones esenciales
+  void _initializeAnimations() {
+    // Animación de fade para la entrada general
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
+    );
+
+    // Animación de slide para elementos
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack));
+
+    // Animación de escala para efectos especiales
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
+  }
+
+  /// 🎯 Configurar listeners para efectos de focus
+  void _setupFocusListeners() {
+    _emailFocus.addListener(() {
+      setState(() => _emailFocused = _emailFocus.hasFocus);
+    });
+    _telefonoFocus.addListener(() {
+      setState(() => _telefonoFocused = _telefonoFocus.hasFocus);
+    });
+  }
+
+  /// 🚀 Iniciar animaciones de entrada
+  void _startEntryAnimation() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _fadeController.forward();
+      _slideController.forward();
+      _scaleController.forward();
+    });
+  }
+
+  @override
   void dispose() {
-    // Liberar recursos de controladores y focos cuando la pantalla se destruye
+    _fadeController.dispose();
+    _slideController.dispose();
+    _scaleController.dispose();
     _emailController.dispose();
     _telefonoController.dispose();
     _emailFocus.dispose();
     _telefonoFocus.dispose();
-    // Liberar recursos de los controladores del código
     for (var controller in _codigoControllers) {
       controller.dispose();
     }
@@ -62,79 +133,168 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage> {
     super.dispose();
   }
 
-  // ===== Función para enviar código de verificación =====
-  void _enviarCodigoVerificacion() async {
-    // Validar que el formulario esté correcto antes de proceder
+  // ===== 🔐 LÓGICA DE RECUPERACIÓN PREMIUM =====
+  
+  /// Envía código de verificación con animaciones y feedback premium
+  Future<void> _enviarCodigoVerificacion() async {
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        _enviando = true;
-      });
-
-      // Simular delay de envío de código (en una app real aquí iría la llamada al API)
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Generar código aleatorio de 6 dígitos para mostrar al usuario
+      setState(() => _enviando = true);
+      
+      // Haptic feedback para sensación premium
+      HapticFeedback.lightImpact();
+      
+      // Simular proceso de envío
+      await Future.delayed(const Duration(milliseconds: 2000));
+      
+      // Generar código de 6 dígitos
       _codigoGenerado = (100000 + (900000 * (DateTime.now().millisecondsSinceEpoch % 1000) / 1000)).floor().toString();
-
-      setState(() {
-        _enviando = false;
-        _codigoEnviado = true;
-      });
-
-      // Mostrar confirmación al usuario con el código enviado
+      
       if (mounted) {
-        final destino = _metodoSeleccionado == 'email' 
-            ? _emailController.text 
-            : _telefonoController.text;
+        setState(() {
+          _enviando = false;
+          _codigoEnviado = true;
+        });
+        
+        // Feedback de éxito con vibración
+        HapticFeedback.mediumImpact();
+        
+        // SnackBar premium con gradiente
+        final destino = _metodoSeleccionado == 'email' ? _emailController.text : _telefonoController.text;
         final metodo = _metodoSeleccionado == 'email' ? 'correo' : 'SMS';
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Código $_codigoGenerado enviado por $metodo a $destino'),
-            backgroundColor: Colors.green.shade600,
+            content: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF00b4db), Color(0xFF0083b0)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          '¡Código enviado exitosamente!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          'Código $_codigoGenerado enviado por $metodo a $destino',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            margin: const EdgeInsets.all(16),
             duration: const Duration(seconds: 4),
           ),
         );
       }
+    } else {
+      HapticFeedback.heavyImpact();
     }
   }
 
-  // ===== Función para verificar el código ingresado =====
-  void _verificarCodigo() async {
-    // Construir código completo desde los 6 campos
+  /// Verificar código con animaciones y feedback premium
+  Future<void> _verificarCodigo() async {
     final codigoIngresado = _codigoControllers.map((c) => c.text).join();
     
     if (codigoIngresado.length == 6) {
-      setState(() {
-        _verificando = true;
-      });
-
-      // Simular verificación del código
-      await Future.delayed(const Duration(seconds: 1));
-
-      setState(() {
-        _verificando = false;
-      });
+      setState(() => _verificando = true);
+      
+      // Haptic feedback
+      HapticFeedback.lightImpact();
+      
+      // Simular verificación
+      await Future.delayed(const Duration(milliseconds: 1500));
+      
+      setState(() => _verificando = false);
 
       if (mounted) {
         if (codigoIngresado == _codigoGenerado) {
-          // Código correcto - mostrar éxito
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('¡Código verificado! Redirigiendo...'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          // Aquí podrías navegar a la pantalla de nueva contraseña
+          // Código correcto - mostrar pantalla de éxito
+          HapticFeedback.mediumImpact();
+          
+          setState(() => _recuperacionExitosa = true);
+          
+          // Iniciar animación de éxito
+          _scaleController.reset();
+          _scaleController.forward();
         } else {
-          // Código incorrecto - mostrar error
+          // Código incorrecto - mostrar error premium
+          HapticFeedback.heavyImpact();
+          
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Código incorrecto. Inténtalo de nuevo.'),
-              backgroundColor: Colors.red,
+            SnackBar(
+              content: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFe74c3c), Color(0xFFc0392b)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.error, color: Colors.white, size: 24),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Código incorrecto',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            'Inténtalo de nuevo o reenvía el código',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.all(16),
+              duration: const Duration(seconds: 3),
             ),
           );
-          // Limpiar campos del código
+          
+          // Limpiar campos y enfocar
           for (var controller in _codigoControllers) {
             controller.clear();
           }
@@ -144,565 +304,889 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage> {
     }
   }
 
-  // ===== Función para regresar a la pantalla anterior =====
+  /// Regresar a la pantalla anterior con haptic feedback
   void _regresarLogin() {
+    HapticFeedback.lightImpact();
     Navigator.of(context).pop();
   }
 
+  // ===== 🔍 VALIDADORES PREMIUM =====
+  
+  /// Valida el formato del correo electrónico
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return 'El correo es obligatorio';
+    if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+      return 'Ingresa un correo válido';
+    }
+    return null;
+  }
+
+  /// Valida el formato del número de teléfono
+  String? _validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
+    if (value.length < 10) return 'El número debe tener 10 dígitos';
+    return null;
+  }
+
+  // ===== 🎨 CONSTRUCCIÓN DE LA INTERFAZ PREMIUM =====
+  
   @override
   Widget build(BuildContext context) {
-    // ===== Configuración de tema y colores =====
-    final theme = Theme.of(context);
-    final primary = Colors.green.shade800;
+    // Si la recuperación fue exitosa, mostrar pantalla de éxito
+    if (_recuperacionExitosa) {
+      return _buildSuccessScreen();
+    }
 
     return Scaffold(
-      // Evitar solapamiento con el teclado en pantallas pequeñas
-      resizeToAvoidBottomInset: true,
-      body: Container(
-        // ===== Fondo con gradiente suave =====
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: _regresarLogin,
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        ),
+      ),
+      body: AnimatedBuilder(
+        animation: _fadeAnimation,
+        builder: (context, child) {
+          return Opacity(
+            opacity: _fadeAnimation.value,
+            child: Stack(
+              children: [
+                // ===== 🏆 FONDO CON IMAGEN DE FÚTBOL =====
+                _buildFootballBackground(),
+                
+                // ===== 📱 CONTENIDO PRINCIPAL =====
+                SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 40),
+                        
+                        // ===== ⚽ HEADER PREMIUM FUTBOLÍSTICO =====
+                        SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildPremiumHeader(),
+                        ),
+                        
+                        const SizedBox(height: 50),
+                        
+                        // ===== 🎯 FORMULARIO FLOTANTE =====
+                        SlideTransition(
+                          position: _slideAnimation,
+                          child: _codigoEnviado 
+                            ? _buildVerificationScreen()
+                            : _buildRecoveryForm(),
+                        ),
+                        
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ===== 🏆 FONDO CON IMAGEN DE FÚTBOL =====
+  
+  /// Crea un fondo espectacular con la imagen de championsfondo.png
+  Widget _buildFootballBackground() {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('images/championsfondo.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFFE9F5EE),
-              Colors.white,
+              Colors.black.withOpacity(0.1),
+              Colors.black.withOpacity(0.2),
+              Colors.black.withOpacity(0.3),
             ],
-          ),
-        ),
-        child: SafeArea(
-          // ===== Layout principal con scroll para evitar overflow =====
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: ConstrainedBox(
-                  // Asegurar que ocupe toda la altura disponible
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight > 32 ? constraints.maxHeight - 32 : 0
-                  ),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // ===== Encabezado con botón de regreso =====
-                        Row(
-                          children: [
-                            // Botón de regreso a la pantalla anterior
-                            IconButton(
-                              onPressed: _regresarLogin,
-                              icon: const Icon(Icons.arrow_back_ios),
-                              tooltip: 'Regresar',
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
-
-                        // ===== Logo y título de la aplicación =====
-                        Column(
-                          children: [
-                            const SizedBox(height: 30),
-                            // Logo de la aplicación
-                            Align(
-                              child: Image.asset(
-                                'images/logo.png',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            // Título principal
-                            Text(
-                              'Soccer Life',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                color: Colors.green.shade700,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            // Subtítulo descriptivo de la pantalla
-                            Text(
-                              'Recuperar contraseña',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 40),
-
-                        // ===== Contenido principal condicional =====
-                        // Mostrar diferentes contenidos según el estado del proceso
-                        if (!_codigoEnviado) ...[
-                          // ===== Formulario de recuperación =====
-                          _buildFormularioRecuperacion(theme, primary),
-                        ] else ...[
-                          // ===== Pantalla de verificación de código =====
-                          _buildPantallaVerificacion(theme, primary),
-                        ],
-
-                        // Espacio flexible para empujar el contenido inferior
-                        const Spacer(),
-
-                        // ===== Botón inferior para regresar al login =====
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: SizedBox(
-                            height: 50,
-                            child: OutlinedButton(
-                              onPressed: _regresarLogin,
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: primary, width: 1.5),
-                                foregroundColor: primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text('Volver al inicio de sesión'),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
       ),
     );
   }
 
-  // ===== Widget del formulario de recuperación =====
-  Widget _buildFormularioRecuperacion(ThemeData theme, Color primary) {
-    return Form(
-      key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+  // ===== ⚽ HEADER PREMIUM FUTBOLÍSTICO =====
+  
+  /// Header espectacular con logo y elementos temáticos de fútbol
+  Widget _buildPremiumHeader() {
+    return SizedBox(
+      height: 200,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ===== Explicación del proceso =====
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade200),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.security,
-                  color: Colors.blue.shade600,
-                  size: 24,
+          // Logo con efecto de escala
+          ScaleTransition(
+            scale: _scaleAnimation,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withOpacity(0.2),
+                    Colors.white.withOpacity(0.1),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Selecciona cómo quieres recibir tu código de verificación de 6 dígitos.',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.blue.shade800,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 20,
+                    spreadRadius: 2,
                   ),
-                  textAlign: TextAlign.center,
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Image.asset(
+                  'images/logo.png',
+                  fit: BoxFit.contain,
                 ),
-              ],
+              ),
             ),
           ),
-
-          const SizedBox(height: 25),
-
-          // ===== Selección de método (Email o SMS) =====
-          Text(
-            'Método de verificación',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+          
+          const SizedBox(height: 24),
+          
+          // Título principal con gradiente
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [Color(0xFF00b4db), Color(0xFF0083b0)],
+            ).createShader(bounds),
+            child: const Text(
+              'Recuperar Contraseña',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 1.2,
+              ),
             ),
           ),
+          
           const SizedBox(height: 12),
           
-          Row(
-            children: [
-              // Opción Email
-              Expanded(
-                child: InkWell(
-                  onTap: () => setState(() => _metodoSeleccionado = 'email'),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: _metodoSeleccionado == 'email' ? primary.withOpacity(0.1) : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _metodoSeleccionado == 'email' ? primary : Colors.grey.shade300,
-                        width: _metodoSeleccionado == 'email' ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.email_outlined,
-                          color: _metodoSeleccionado == 'email' ? primary : Colors.grey.shade600,
-                          size: 32,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Email',
-                          style: TextStyle(
-                            color: _metodoSeleccionado == 'email' ? primary : Colors.grey.shade600,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Opción SMS
-              Expanded(
-                child: InkWell(
-                  onTap: () => setState(() => _metodoSeleccionado = 'sms'),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: _metodoSeleccionado == 'sms' ? primary.withOpacity(0.1) : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _metodoSeleccionado == 'sms' ? primary : Colors.grey.shade300,
-                        width: _metodoSeleccionado == 'sms' ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.sms_outlined,
-                          color: _metodoSeleccionado == 'sms' ? primary : Colors.grey.shade600,
-                          size: 32,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'SMS',
-                          style: TextStyle(
-                            color: _metodoSeleccionado == 'sms' ? primary : Colors.grey.shade600,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 25),
-
-          // ===== Campo según método seleccionado =====
-          if (_metodoSeleccionado == 'email') ...[
-            // Campo de email
-            TextFormField(
-              controller: _emailController,
-              focusNode: _emailFocus,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _enviarCodigoVerificacion(),
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Correo electrónico',
-                hintText: 'tu@email.com',
-                prefixIcon: const Icon(Icons.email_outlined),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: primary, width: 2),
-                ),
-              ),
-              // ===== Validación del campo email =====
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Ingresa tu correo electrónico';
-                }
-                // Validación de formato de email usando RegExp
-                if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
-                  return 'Ingresa un correo válido';
-                }
-                return null;
-              },
+          // Subtítulo
+          Text(
+            'Recupera tu acceso de forma segura',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white.withOpacity(0.8),
+              fontWeight: FontWeight.w400,
             ),
-          ] else ...[
-            // Campo de teléfono
-            TextFormField(
-              controller: _telefonoController,
-              focusNode: _telefonoFocus,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _enviarCodigoVerificacion(),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
-              ],
-              decoration: InputDecoration(
-                labelText: 'Número de celular',
-                hintText: '3001234567',
-                prefixIcon: const Icon(Icons.phone_outlined),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: primary, width: 2),
-                ),
-              ),
-              // ===== Validación del campo teléfono =====
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Ingresa tu número de celular';
-                }
-                if (value.length < 10) {
-                  return 'El número debe tener 10 dígitos';
-                }
-                return null;
-              },
-            ),
-          ],
-
-          const SizedBox(height: 30),
-
-          // ===== Botón para enviar código =====
-          SizedBox(
-            height: 50,
-            child: FilledButton(
-              onPressed: _enviando ? null : _enviarCodigoVerificacion,
-              style: FilledButton.styleFrom(
-                backgroundColor: primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                // Deshabilitar cuando está enviando
-                disabledBackgroundColor: Colors.grey.shade400,
-              ),
-              child: _enviando
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text('Enviando...'),
-                      ],
-                    )
-                  : Text('Enviar código por ${_metodoSeleccionado == 'email' ? 'correo' : 'SMS'}'),
-            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  // ===== Widget de pantalla de verificación de código =====
-  Widget _buildPantallaVerificacion(ThemeData theme, Color primary) {
-    return Form(
-      key: _codigoFormKey,
-      child: Column(
-        children: [
-          // ===== Icono de verificación =====
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.lock_clock_outlined,
-              size: 40,
-              color: Colors.blue.shade600,
-            ),
+  // ===== 🎨 WIDGETS PREMIUM REUTILIZABLES =====
+  
+  /// Selector de método premium con glassmorphism
+  Widget _buildMethodSelector() {
+    return Row(
+      children: [
+        // Opción Email
+        Expanded(
+          child: _buildMethodOption(
+            icon: Icons.email_outlined,
+            label: 'Email',
+            isSelected: _metodoSeleccionado == 'email',
+            onTap: () => setState(() => _metodoSeleccionado = 'email'),
           ),
-
-          const SizedBox(height: 24),
-
-          // ===== Título de verificación =====
-          Text(
-            'Verificar código',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: primary,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
+        ),
+        const SizedBox(width: 16),
+        // Opción SMS
+        Expanded(
+          child: _buildMethodOption(
+            icon: Icons.sms_outlined,
+            label: 'SMS',
+            isSelected: _metodoSeleccionado == 'sms',
+            onTap: () => setState(() => _metodoSeleccionado = 'sms'),
           ),
+        ),
+      ],
+    );
+  }
 
-          const SizedBox(height: 16),
-
-          // ===== Información del envío =====
-          Container(
-            padding: const EdgeInsets.all(16),
+  /// Opción individual del selector de método
+  Widget _buildMethodOption({
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green.shade200),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected 
+                  ? const Color(0xFF00b4db) 
+                  : Colors.white.withOpacity(0.3),
+                width: isSelected ? 2 : 1,
+              ),
+              gradient: LinearGradient(
+                colors: isSelected 
+                  ? [
+                      const Color(0xFF00b4db).withOpacity(0.2),
+                      const Color(0xFF0083b0).withOpacity(0.1),
+                    ]
+                  : [
+                      Colors.white.withOpacity(0.1),
+                      Colors.white.withOpacity(0.05),
+                    ],
+              ),
             ),
             child: Column(
               children: [
-                Text(
-                  'Código enviado por ${_metodoSeleccionado == 'email' ? 'correo a:' : 'SMS a:'}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
+                Icon(
+                  icon,
+                  color: isSelected 
+                    ? const Color(0xFF00b4db) 
+                    : Colors.white.withOpacity(0.7),
+                  size: 32,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
-                  _metodoSeleccionado == 'email' ? _emailController.text : _telefonoController.text,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: primary,
+                  label,
+                  style: TextStyle(
+                    color: isSelected 
+                      ? const Color(0xFF00b4db) 
+                      : Colors.white.withOpacity(0.7),
                     fontWeight: FontWeight.w600,
+                    fontSize: 16,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
 
-          const SizedBox(height: 30),
+  /// Campo de texto premium con glassmorphism
+  Widget _buildPremiumTextField({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String label,
+    required String hint,
+    required IconData icon,
+    required bool isFocused,
+    required String? Function(String?) validator,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isFocused 
+            ? const Color(0xFF00b4db)
+            : Colors.white.withOpacity(0.3),
+          width: isFocused ? 2 : 1,
+        ),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(isFocused ? 0.15 : 0.1),
+            Colors.black.withOpacity(isFocused ? 0.25 : 0.15),
+          ],
+        ),
+        boxShadow: isFocused ? [
+          BoxShadow(
+            color: const Color(0xFF00b4db).withOpacity(0.3),
+            blurRadius: 15,
+            spreadRadius: 0,
+          ),
+        ] : null,
+      ),
+      child: TextFormField(
+        controller: controller,
+        focusNode: focusNode,
+        keyboardType: keyboardType,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.7)),
+          labelStyle: TextStyle(
+            color: isFocused ? const Color(0xFF00b4db) : Colors.white.withOpacity(0.7),
+            fontWeight: FontWeight.w500,
+          ),
+          hintStyle: TextStyle(
+            color: Colors.white.withOpacity(0.5),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          errorStyle: const TextStyle(
+            color: Color(0xFFe74c3c),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        validator: validator,
+      ),
+    );
+  }
 
-          // ===== Campos para el código de 6 dígitos =====
-          Text(
-            'Ingresa el código de 6 dígitos',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+  /// Botón premium con gradiente y efectos
+  Widget _buildPremiumButton({
+    required VoidCallback? onTap,
+    required String text,
+    bool isLoading = false,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: 56,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF00b4db),
+            Color(0xFF0083b0),
+            Color(0xFF00a8cc),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF00b4db).withOpacity(0.4),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Center(
+              child: isLoading
+                ? const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        'Enviando...',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 20),
+        ),
+      ),
+    );
+  }
 
-          // Fila de campos para el código
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(6, (index) {
-              return SizedBox(
-                width: 45,
-                height: 55,
-                child: TextFormField(
-                  controller: _codigoControllers[index],
-                  focusNode: _codigoFocusNodes[index],
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  maxLength: 1,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    counterText: '',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: primary, width: 2),
-                    ),
-                  ),
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  onChanged: (value) {
-                    // Auto-focus al siguiente campo cuando se ingresa un dígito
-                    if (value.isNotEmpty && index < 5) {
-                      _codigoFocusNodes[index + 1].requestFocus();
-                    }
-                    // Auto-verificar cuando se completan los 6 dígitos
-                    if (index == 5 && value.isNotEmpty) {
-                      _verificarCodigo();
-                    }
-                  },
-                  onTap: () {
-                    // Seleccionar todo el texto al hacer tap
-                    _codigoControllers[index].selection = TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _codigoControllers[index].text.length,
-                    );
-                  },
+  // ===== 🎯 FORMULARIO DE RECUPERACIÓN PREMIUM =====
+  
+  /// Formulario flotante para seleccionar método de recuperación
+  Widget _buildRecoveryForm() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            // Explicación del proceso con glassmorphism
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
                 ),
-              );
-            }),
-          ),
-
-          const SizedBox(height: 30),
-
-          // ===== Botón de verificar =====
-          SizedBox(
-            height: 50,
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: _verificando ? null : _verificarCodigo,
-              style: FilledButton.styleFrom(
-                backgroundColor: primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withOpacity(0.15),
+                    Colors.white.withOpacity(0.05),
+                  ],
                 ),
-                disabledBackgroundColor: Colors.grey.shade400,
               ),
-              child: _verificando
-                  ? const Row(
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.security,
+                    color: Color(0xFF00b4db),
+                    size: 32,
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Selecciona cómo quieres recibir tu código de verificación',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 32),
+            
+            // Selección de método premium
+            _buildMethodSelector(),
+            
+            const SizedBox(height: 24),
+            
+            // Campo dinámico según método seleccionado
+            _metodoSeleccionado == 'email'
+              ? _buildPremiumTextField(
+                  controller: _emailController,
+                  focusNode: _emailFocus,
+                  label: 'Correo Electrónico',
+                  hint: 'tu@email.com',
+                  icon: Icons.email_outlined,
+                  isFocused: _emailFocused,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: _validateEmail,
+                )
+              : _buildPremiumTextField(
+                  controller: _telefonoController,
+                  focusNode: _telefonoFocus,
+                  label: 'Número de Celular',
+                  hint: '3001234567',
+                  icon: Icons.phone_outlined,
+                  isFocused: _telefonoFocused,
+                  keyboardType: TextInputType.phone,
+                  validator: _validatePhone,
+                ),
+            
+            const SizedBox(height: 32),
+            
+            // Botón de enviar código
+            _buildPremiumButton(
+              onTap: _enviando ? null : _enviarCodigoVerificacion,
+              text: 'Enviar código por ${_metodoSeleccionado == 'email' ? 'correo' : 'SMS'}',
+              isLoading: _enviando,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===== 📱 PANTALLA DE VERIFICACIÓN PREMIUM =====
+  
+  /// Pantalla de verificación de código con diseño premium
+  Widget _buildVerificationScreen() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Form(
+        key: _codigoFormKey,
+        child: Column(
+          children: [
+            // Icono de verificación con glassmorphism
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF00b4db).withOpacity(0.2),
+                    const Color(0xFF0083b0).withOpacity(0.1),
+                  ],
+                ),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: const Icon(
+                Icons.lock_clock_outlined,
+                size: 48,
+                color: Color(0xFF00b4db),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Título de verificación con gradiente
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [Color(0xFF00b4db), Color(0xFF0083b0)],
+              ).createShader(bounds),
+              child: const Text(
+                'Verificar Código',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Información del envío con glassmorphism
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withOpacity(0.15),
+                    Colors.white.withOpacity(0.05),
+                  ],
+                ),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'Código enviado por ${_metodoSeleccionado == 'email' ? 'correo a:' : 'SMS a:'}',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _metodoSeleccionado == 'email' ? _emailController.text : _telefonoController.text,
+                    style: const TextStyle(
+                      color: Color(0xFF00b4db),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Título para los campos del código
+            const Text(
+              'Ingresa el código de 6 dígitos',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            
+            const SizedBox(height: 24),
+
+            // Campos para el código de 6 dígitos con glassmorphism
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(6, (index) {
+                return SizedBox(
+                  width: 45,
+                  height: 55,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1,
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.white.withOpacity(0.1),
+                          Colors.black.withOpacity(0.15),
+                        ],
+                      ),
+                    ),
+                    child: TextFormField(
+                      controller: _codigoControllers[index],
+                      focusNode: _codigoFocusNodes[index],
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      maxLength: 1,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        counterText: '',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      onChanged: (value) {
+                        // Auto-focus al siguiente campo cuando se ingresa un dígito
+                        if (value.isNotEmpty && index < 5) {
+                          _codigoFocusNodes[index + 1].requestFocus();
+                        }
+                        // Auto-verificar cuando se completan los 6 dígitos
+                        if (index == 5 && value.isNotEmpty) {
+                          _verificarCodigo();
+                        }
+                      },
+                      onTap: () {
+                        // Seleccionar todo el texto al hacer tap
+                        _codigoControllers[index].selection = TextSelection(
+                          baseOffset: 0,
+                          extentOffset: _codigoControllers[index].text.length,
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Botón de verificar
+            _buildPremiumButton(
+              onTap: _verificando ? null : _verificarCodigo,
+              text: 'Verificar código',
+              isLoading: _verificando,
+            ),
+
+            const SizedBox(height: 24),
+
+            // Botón de reenviar código con glassmorphism
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withOpacity(0.1),
+                    Colors.white.withOpacity(0.05),
+                  ],
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    setState(() {
+                      _codigoEnviado = false;
+                      // Limpiar campos del código
+                      for (var controller in _codigoControllers) {
+                        controller.clear();
+                      }
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        Icon(
+                          Icons.refresh,
+                          color: Colors.white.withOpacity(0.7),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Reenviar código',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.7),
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Text('Verificando...'),
                       ],
-                    )
-                  : const Text('Verificar código'),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          const SizedBox(height: 20),
-
-          // ===== Botón de reenviar código =====
-          TextButton.icon(
-            onPressed: () {
-              setState(() {
-                _codigoEnviado = false;
-                // Limpiar campos del código
-                for (var controller in _codigoControllers) {
-                  controller.clear();
-                }
-              });
-            },
-            icon: const Icon(Icons.refresh),
-            label: const Text('Reenviar código'),
-            style: TextButton.styleFrom(
-              foregroundColor: primary,
+  // ===== 🎉 PANTALLA DE ÉXITO ESPECTACULAR =====
+  
+  /// Pantalla de éxito con animaciones y confetti
+  Widget _buildSuccessScreen() {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Fondo con imagen
+          _buildFootballBackground(),
+          
+          // Contenido de éxito
+          Center(
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Container(
+                margin: const EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 1,
+                  ),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.15),
+                      Colors.white.withOpacity(0.05),
+                    ],
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Ícono de éxito con gradiente
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF2ecc71), Color(0xFF27ae60)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF2ecc71).withOpacity(0.4),
+                            blurRadius: 20,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.check_circle,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Título de éxito
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Color(0xFF2ecc71), Color(0xFF27ae60)],
+                      ).createShader(bounds),
+                      child: const Text(
+                        '¡Código Verificado!',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Descripción
+                    Text(
+                      'Tu identidad ha sido verificada exitosamente. Ahora puedes crear una nueva contraseña.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withOpacity(0.8),
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Botón de continuar
+                    _buildPremiumButton(
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        Navigator.of(context).pop();
+                        // Aquí navegarías a la pantalla de nueva contraseña
+                      },
+                      text: 'Crear Nueva Contraseña',
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Botón secundario para volver al login
+                    TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Volver al inicio de sesión',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
