@@ -33,7 +33,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   // Gestionan el contenido de cada campo de texto del formulario.
   final _emailController = TextEditingController();
   final _nombreController = TextEditingController();
-  final _apellidoController = TextEditingController();
   final _fechaNacimientoController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -44,7 +43,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   // Gestionan el foco de los campos para mejorar la navegación y los efectos visuales.
   final _emailFocus = FocusNode();
   final _nombreFocus = FocusNode();
-  final _apellidoFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
   final _telefonoFocus = FocusNode();
@@ -83,24 +81,22 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   /// Libera todos los recursos (controladores, nodos de foco) para evitar fugas de memoria.
   @override
   void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
-    _pageController.dispose();
-    _emailController.dispose();
-    _nombreController.dispose();
-    _apellidoController.dispose();
-    _fechaNacimientoController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _telefonoController.dispose();
-    _clubController.dispose();
-    _emailFocus.dispose();
-    _nombreFocus.dispose();
-    _apellidoFocus.dispose();
-    _passwordFocus.dispose();
-    _confirmPasswordFocus.dispose();
-    _telefonoFocus.dispose();
-    _clubFocus.dispose();
+  _fadeController.dispose();
+  _slideController.dispose();
+  _pageController.dispose();
+  _emailController.dispose();
+  _nombreController.dispose();
+  _fechaNacimientoController.dispose();
+  _passwordController.dispose();
+  _confirmPasswordController.dispose();
+  _telefonoController.dispose();
+  _clubController.dispose();
+  _emailFocus.dispose();
+  _nombreFocus.dispose();
+  _passwordFocus.dispose();
+  _confirmPasswordFocus.dispose();
+  _telefonoFocus.dispose();
+  _clubFocus.dispose();
     super.dispose();
   }
 
@@ -119,7 +115,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   /// Esto permite cambiar la UI dinámicamente cuando un campo está seleccionado.
   void _setupFocusListeners() {
     final allFocusNodes = [
-      _nombreFocus, _apellidoFocus, _emailFocus, _telefonoFocus,
+      _nombreFocus, _emailFocus, _telefonoFocus,
       _passwordFocus, _confirmPasswordFocus, _clubFocus
     ];
     for (var node in allFocusNodes) {
@@ -528,16 +524,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             hint: 'Tu nombre',
             icon: Icons.person_outline,
             validator: (v) => _validateRequired(v, 'El nombre'),
-            onFieldSubmitted: (_) => _apellidoFocus.requestFocus(),
-          ),
-          const SizedBox(height: 16),
-          _buildPremiumTextField(
-            controller: _apellidoController,
-            focusNode: _apellidoFocus,
-            label: 'Apellido',
-            hint: 'Tu apellido',
-            icon: Icons.person_outline,
-            validator: (v) => _validateRequired(v, 'El apellido'),
             onFieldSubmitted: (_) => _selectDate(),
           ),
           const SizedBox(height: 16),
