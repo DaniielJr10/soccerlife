@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui';
+import 'dart:math';
 
 /// 🚀 PANTALLA DE RECUPERAR CONTRASEÑA PREMIUM - SOCCER LIFE
 /// 
@@ -146,8 +146,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       // Simular proceso de envío
       await Future.delayed(const Duration(milliseconds: 2000));
       
-      // Generar código de 6 dígitos
-      _codigoGenerado = (100000 + (900000 * (DateTime.now().millisecondsSinceEpoch % 1000) / 1000)).floor().toString();
+  // Generar código de 6 dígitos seguro
+  _codigoGenerado = (Random().nextInt(900000) + 100000).toString();
       
       if (mounted) {
         setState(() {
@@ -323,9 +323,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
   /// Valida el formato del número de teléfono
   String? _validatePhone(String? value) {
-    if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
-    if (value.length < 10) return 'El número debe tener 10 dígitos';
-    return null;
+  if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
+  if (!RegExp(r'^\d{10} $').hasMatch(value)) return 'El número debe tener 10 dígitos numéricos';
+  return null;
   }
 
   // ===== 🎨 CONSTRUCCIÓN DE LA INTERFAZ PREMIUM =====
@@ -357,23 +357,20 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               children: [
                 // ===== 🏆 FONDO CON IMAGEN DE FÚTBOL =====
                 _buildFootballBackground(),
-                
                 // ===== 📱 CONTENIDO PRINCIPAL =====
                 SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(height: 40),
-                        
+                        const SizedBox(height: 20),
                         // ===== ⚽ HEADER PREMIUM FUTBOLÍSTICO =====
                         SlideTransition(
                           position: _slideAnimation,
                           child: _buildPremiumHeader(),
                         ),
-                        
-                        const SizedBox(height: 50),
-                        
+                        const SizedBox(height: 20),
                         // ===== 🎯 FORMULARIO FLOTANTE =====
                         SlideTransition(
                           position: _slideAnimation,
@@ -381,8 +378,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                             ? _buildVerificationScreen()
                             : _buildRecoveryForm(),
                         ),
-                        
-                        const SizedBox(height: 30),
+                        SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 20),
                       ],
                     ),
                   ),
@@ -427,74 +423,72 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   
   /// Header espectacular con logo y elementos temáticos de fútbol
   Widget _buildPremiumHeader() {
-    return SizedBox(
-      height: 200,
-      child: Column(
-        children: [
-          // Logo limpio y redondito flotando sobre tu imagen (IGUAL QUE INICIO DE SESIÓN)
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(60),
-              // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Logo limpio y redondito flotando sobre tu imagen (IGUAL QUE INICIO DE SESIÓN)
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Image.asset(
+              'images/logo.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Título limpio y profesional (IGUAL QUE INICIO DE SESIÓN)
+        Center(
+          child: ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [
+                Color(0xFF00f5ff),
+                Color(0xFF00d4aa),
+                Color(0xFFffffff),
               ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(60),
-              child: Image.asset(
-                'images/logo.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 24),
-          
-          // Título limpio y profesional (IGUAL QUE INICIO DE SESIÓN)
-          Center(
-            child: ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [
-                  Color(0xFF00f5ff),
-                  Color(0xFF00d4aa),
-                  Color(0xFFffffff),
-                ],
-              ).createShader(bounds),
-              child: const Text(
-                'Soccer Life',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 2,
-                ),
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 12),
-          
-          // Subtítulo elegante y limpio (IGUAL QUE INICIO DE SESIÓN)
-          Center(
-            child: Text(
-              'Recuperar Contraseña',
+            ).createShader(bounds),
+            child: const Text(
+              'Soccer Life',
               style: TextStyle(
-                fontSize: 16,
-                color: Colors.white.withOpacity(0.8),
-                fontWeight: FontWeight.w300,
-                letterSpacing: 1,
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 1.5,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+        
+        const SizedBox(height: 6),
+        
+        // Subtítulo elegante y limpio (IGUAL QUE INICIO DE SESIÓN)
+        Center(
+          child: Text(
+            'Recuperar Contraseña',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withOpacity(0.8),
+              fontWeight: FontWeight.w300,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -669,7 +663,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      height: 56,
+      height: 48,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -697,7 +691,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Center(
               child: isLoading
                 ? const Row(
@@ -749,9 +743,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
           children: [
             // Explicación del proceso con glassmorphism
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: Colors.white.withOpacity(0.3),
                   width: 1,
@@ -768,16 +762,16 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   const Icon(
                     Icons.security,
                     color: Color(0xFF00b4db),
-                    size: 32,
+                    size: 28,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   const Text(
                     'Selecciona cómo quieres recibir tu código de verificación',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      height: 1.4,
+                      height: 1.3,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -785,12 +779,12 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               ),
             ),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
             
             // Selección de método premium
             _buildMethodSelector(),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             
             // Campo dinámico según método seleccionado
             _metodoSeleccionado == 'email'
@@ -815,7 +809,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   validator: _validatePhone,
                 ),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
             
             // Botón de enviar código
             _buildPremiumButton(
@@ -841,8 +835,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
           children: [
             // Icono de verificación con glassmorphism
             Container(
-              width: 100,
-              height: 100,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
@@ -858,12 +852,12 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               ),
               child: const Icon(
                 Icons.lock_clock_outlined,
-                size: 48,
+                size: 36,
                 color: Color(0xFF00b4db),
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
 
             // Título de verificación con gradiente
             ShaderMask(
@@ -873,14 +867,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               child: const Text(
                 'Verificar Código',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // Información del envío con glassmorphism
             Container(
@@ -922,28 +916,28 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
 
             // Título para los campos del código
             const Text(
               'Ingresa el código de 6 dígitos',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
             ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
             // Campos para el código de 6 dígitos con glassmorphism
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(6, (index) {
                 return SizedBox(
-                  width: 45,
-                  height: 55,
+                  width: 40,
+                  height: 50,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
@@ -998,7 +992,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               }),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
 
             // Botón de verificar
             _buildPremiumButton(
@@ -1007,7 +1001,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               isLoading: _verificando,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
             // Botón de reenviar código con glassmorphism
             Container(
