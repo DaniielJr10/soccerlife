@@ -191,9 +191,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.2), // Transparente arriba
-              Colors.black.withOpacity(0.1), // Más transparente en el medio  
-              Colors.black.withOpacity(0.3), // Un poco más oscuro abajo
+            // Un poco más oscuro abajo
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -364,9 +362,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Ingresa tu contraseña';
-                }
-                if (value.length < 6) {
-                  return 'La contraseña debe tener al menos 6 caracteres';
                 }
                 return null;
               },
