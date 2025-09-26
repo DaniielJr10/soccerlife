@@ -22,21 +22,71 @@ class _PrincipalPageState extends State<PrincipalPage> {
   // ===== VARIABLES DE ESTADO =====
   
   /// Índice de la pestaña seleccionada en el bottom navigation
-  /// 0: Inicio, 1: Estadísticas, 2: Partidos, 3: Entrenamientos, 4: Perfil
+  /// 0: Inicio, 1: Partidos, 2: Entrenamientos, 3: Estadísticas, 4: Perfil
   int _selectedIndex = 0;
+
+  // ===== MÉTODOS PARA CONTENIDO DE TABS =====
+
+  /// Devuelve el contenido de la pestaña seleccionada según el nuevo orden
+  Widget _buildTabContent() {
+    switch (_selectedIndex) {
+      case 0:
+        return _buildHomeTab();
+      case 1:
+        return _buildOtherTab('Partidos');
+      case 2:
+        return _buildOtherTab('Entrenamientos');
+      case 3:
+        return _buildOtherTab('Estadísticas');
+      case 4:
+        return _buildOtherTab('Perfil');
+      default:
+        return _buildHomeTab();
+    }
+  }
+
+  /// Construye el contenido para una pestaña en desarrollo
+  Widget _buildOtherTab(String nombre) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.construction,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '$nombre - En desarrollo',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Esta funcionalidad estará disponible pronto',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   // ===== MÉTODO PRINCIPAL DE CONSTRUCCIÓN =====
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Fondo gris claro para toda la aplicación
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        // Mostrar contenido según la pestaña seleccionada
-        child: _selectedIndex == 0 ? _buildHomeTab() : _buildOtherTabs(),
+        child: _buildTabContent(),
       ),
-      // Barra de navegación inferior personalizada
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
@@ -420,56 +470,14 @@ class _PrincipalPageState extends State<PrincipalPage> {
 
   // ===== ACTIVIDAD RECIENTE ELIMINADA =====
 
-  // ===== CONSTRUCCIÓN DE OTRAS PESTAÑAS =====
-  
-  /// Construye el contenido para pestañas aún no implementadas
-  /// Muestra un mensaje indicando que están en desarrollo
-  Widget _buildOtherTabs() {
-    final List<String> tabNames = ['Estadísticas', 'Partidos', 'Entrenamientos', 'Perfil'];
-    
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Ícono de construcción
-          Icon(
-            Icons.construction,
-            size: 64,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          
-          // Título indicando desarrollo
-          Text(
-            '${tabNames[_selectedIndex - 1]} - En desarrollo',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          
-          // Mensaje descriptivo
-          Text(
-            'Esta funcionalidad estará disponible pronto',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // ...existing code...
 
   // ===== CONSTRUCCIÓN DE BARRA DE NAVEGACIÓN INFERIOR =====
   
   /// Construye la barra de navegación inferior con 5 pestañas
-  /// Incluye: Inicio, Estadísticas, Partidos, Entrenamientos, Perfil
+  /// Incluye: Inicio, Partidos, Entrenamientos, Estadísticas, Perfil
   Widget _buildBottomNavigationBar() {
     return Container(
-      // Sombra superior para separar la barra del contenido
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -482,23 +490,15 @@ class _PrincipalPageState extends State<PrincipalPage> {
       child: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
-        
-        // Configuración visual de la barra
-        type: BottomNavigationBarType.fixed, // Para mostrar todas las pestañas
+        type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: Colors.green[600], // Color para pestaña seleccionada
-        unselectedItemColor: Colors.grey[400], // Color para pestañas no seleccionadas
+        selectedItemColor: Colors.green[600],
+        unselectedItemColor: Colors.grey[400],
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-        
-        // Definición de las pestañas
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Estadísticas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sports_soccer),
@@ -507,6 +507,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),
             label: 'Entrenamientos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.analytics),
+            label: 'Estadísticas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
