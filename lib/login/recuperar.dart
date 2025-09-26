@@ -2,20 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 
-/// 🚀 PANTALLA DE RECUPERAR CONTRASEÑA PREMIUM - SOCCER LIFE
-/// 
-/// Recuperación ultra-moderna con animaciones, glassmorphism y efectos premium
-/// Diseño consistente con las pantallas de login y registro para una experiencia
-/// cohesiva y profesional. Con el mismo fondo espectacular de championsfondo.png
-/// 
-/// ✨ Características Premium:
-/// - Animaciones fluidas y naturales
-/// - Glassmorphism y efectos de cristal
-/// - Gradientes dinámicos animados
-/// - Micro-interacciones en cada elemento
-/// - Feedback visual inmediato
-/// - Transiciones cinematográficas
-/// - Pantalla de éxito espectacular
+/// Pantalla de recuperación de contraseña de Soccer Life
+/// Permite a los usuarios recuperar su contraseña mediante email o SMS
+/// con un proceso de verificación de código de 6 dígitos
 class RecuperarPasswordPage extends StatefulWidget {
   const RecuperarPasswordPage({super.key});
 
@@ -25,18 +14,16 @@ class RecuperarPasswordPage extends StatefulWidget {
 
 class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     with TickerProviderStateMixin {
-  // ===== 🎬 CONTROLADORES DE ANIMACIÓN =====
   
+  // Controladores para las animaciones de entrada
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late AnimationController _scaleController;
-  
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
   
-  // ===== 📝 CONTROLADORES DE FORMULARIO =====
-  
+  // Controladores para los formularios
   final _formKey = GlobalKey<FormState>();
   final _codigoFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -46,28 +33,27 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   final _emailFocus = FocusNode();
   final _telefonoFocus = FocusNode();
   
-  // ===== 🎛️ ESTADOS DE LA INTERFAZ =====
-  
-  String _metodoSeleccionado = 'email';
-  bool _codigoEnviado = false;
-  bool _enviando = false;
-  bool _verificando = false;
-  bool _emailFocused = false;
-  bool _telefonoFocused = false;
-  bool _recuperacionExitosa = false;
-  String _codigoGenerado = '';
+  // Estados de la interfaz
+  String _metodoSeleccionado = 'email'; // Método seleccionado para recibir el código
+  bool _codigoEnviado = false; // Si ya se envió el código de verificación
+  bool _enviando = false; // Si está en proceso de envío
+  bool _verificando = false; // Si está verificando el código ingresado
+  bool _emailFocused = false; // Si el campo email tiene foco
+  bool _telefonoFocused = false; // Si el campo teléfono tiene foco
+  bool _recuperacionExitosa = false; // Si la recuperación fue exitosa
+  String _codigoGenerado = ''; // Código generado para la verificación
 
   @override
   void initState() {
     super.initState();
-    _initializeAnimations();
-    _setupFocusListeners();
-    _startEntryAnimation();
+    _inicializarAnimaciones();
+    _configurarListenersFocus();
+    _iniciarAnimacionesEntrada();
   }
 
-  /// 🎨 Inicializar animaciones esenciales
-  void _initializeAnimations() {
-    // Animación de fade para la entrada general
+  // Configura todas las animaciones de la pantalla
+  void _inicializarAnimaciones() {
+    // Animación de aparición gradual
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -76,7 +62,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
     );
 
-    // Animación de slide para elementos
+    // Animación de deslizamiento desde abajo
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -96,8 +82,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  /// 🎯 Configurar listeners para efectos de focus
-  void _setupFocusListeners() {
+  // Configura los listeners para detectar cuando los campos tienen foco
+  void _configurarListenersFocus() {
     _emailFocus.addListener(() {
       setState(() => _emailFocused = _emailFocus.hasFocus);
     });
@@ -106,8 +92,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     });
   }
 
-  /// 🚀 Iniciar animaciones de entrada
-  void _startEntryAnimation() {
+  // Inicia las animaciones de entrada de la pantalla
+  void _iniciarAnimacionesEntrada() {
     Future.delayed(const Duration(milliseconds: 100), () {
       _fadeController.forward();
       _slideController.forward();
@@ -133,21 +119,21 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     super.dispose();
   }
 
-  // ===== 🔐 LÓGICA DE RECUPERACIÓN PREMIUM =====
+  // Lógica principal de recuperación de contraseña
   
-  /// Envía código de verificación con animaciones y feedback premium
+  // Envía el código de verificación al email o teléfono seleccionado
   Future<void> _enviarCodigoVerificacion() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _enviando = true);
       
-      // Haptic feedback para sensación premium
+      // Proporciona retroalimentación táctil al usuario
       HapticFeedback.lightImpact();
       
-      // Simular proceso de envío
+      // Simula el tiempo que toma enviar el código
       await Future.delayed(const Duration(milliseconds: 2000));
       
-  // Generar código de 6 dígitos seguro
-  _codigoGenerado = (Random().nextInt(900000) + 100000).toString();
+      // Genera un código aleatorio de 6 dígitos
+      _codigoGenerado = (Random().nextInt(900000) + 100000).toString();
       
       if (mounted) {
         setState(() {
@@ -155,10 +141,10 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
           _codigoEnviado = true;
         });
         
-        // Feedback de éxito con vibración
+        // Confirma el éxito con vibración
         HapticFeedback.mediumImpact();
         
-        // SnackBar premium con gradiente
+        // Muestra mensaje de confirmación con estilo
         final destino = _metodoSeleccionado == 'email' ? _emailController.text : _telefonoController.text;
         final metodo = _metodoSeleccionado == 'email' ? 'correo' : 'SMS';
         
@@ -216,33 +202,33 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     }
   }
 
-  /// Verificar código con animaciones y feedback premium
+  // Verifica si el código ingresado es correcto
   Future<void> _verificarCodigo() async {
     final codigoIngresado = _codigoControllers.map((c) => c.text).join();
     
     if (codigoIngresado.length == 6) {
       setState(() => _verificando = true);
       
-      // Haptic feedback
+      // Retroalimentación táctil durante la verificación
       HapticFeedback.lightImpact();
       
-      // Simular verificación
+      // Simula el proceso de verificación
       await Future.delayed(const Duration(milliseconds: 1500));
       
       setState(() => _verificando = false);
 
       if (mounted) {
         if (codigoIngresado == _codigoGenerado) {
-          // Código correcto - mostrar pantalla de éxito
+          // El código es correcto, mostrar pantalla de éxito
           HapticFeedback.mediumImpact();
           
           setState(() => _recuperacionExitosa = true);
           
-          // Iniciar animación de éxito
+          // Inicia la animación de la pantalla de éxito
           _scaleController.reset();
           _scaleController.forward();
         } else {
-          // Código incorrecto - mostrar error premium
+          // El código es incorrecto, mostrar mensaje de error
           HapticFeedback.heavyImpact();
           
           ScaffoldMessenger.of(context).showSnackBar(
@@ -294,7 +280,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             ),
           );
           
-          // Limpiar campos y enfocar
+          // Limpia los campos del código y enfoca el primero
           for (var controller in _codigoControllers) {
             controller.clear();
           }
@@ -304,15 +290,15 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     }
   }
 
-  /// Regresar a la pantalla anterior con haptic feedback
+  // Regresa a la pantalla de inicio de sesión
   void _regresarLogin() {
     HapticFeedback.lightImpact();
     Navigator.of(context).pop();
   }
 
-  // ===== 🔍 VALIDADORES PREMIUM =====
+  // Validadores para los campos del formulario
   
-  /// Valida el formato del correo electrónico
+  // Valida que el correo electrónico tenga un formato correcto
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) return 'El correo es obligatorio';
     if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
@@ -328,7 +314,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   return null;
   }
 
-  // ===== 🎨 CONSTRUCCIÓN DE LA INTERFAZ PREMIUM =====
+  // Construcción de la interfaz de usuario
   
   @override
   Widget build(BuildContext context) {
@@ -355,9 +341,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             opacity: _fadeAnimation.value,
             child: Stack(
               children: [
-                // ===== 🏆 FONDO CON IMAGEN DE FÚTBOL =====
+                // Fondo con la imagen de fútbol
                 _buildFootballBackground(),
-                // ===== 📱 CONTENIDO PRINCIPAL =====
+                // Contenido principal de la pantalla
                 SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -365,13 +351,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 20),
-                        // ===== ⚽ HEADER PREMIUM FUTBOLÍSTICO =====
+                        // Header con logo y título
                         SlideTransition(
                           position: _slideAnimation,
-                          child: _buildPremiumHeader(),
+                          child: _buildHeader(),
                         ),
                         const SizedBox(height: 20),
-                        // ===== 🎯 FORMULARIO FLOTANTE =====
+                        // Formulario principal
                         SlideTransition(
                           position: _slideAnimation,
                           child: _codigoEnviado 
@@ -391,9 +377,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // ===== 🏆 FONDO CON IMAGEN DE FÚTBOL =====
+  // Métodos para construir los elementos de la interfaz
   
-  /// Crea un fondo espectacular con la imagen de championsfondo.png
+  // Crea el fondo con la imagen de fútbol
   Widget _buildFootballBackground() {
     return Container(
       decoration: const BoxDecoration(
@@ -419,20 +405,17 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // ===== ⚽ HEADER PREMIUM FUTBOLÍSTICO =====
-  
-  /// Header espectacular con logo y elementos temáticos de fútbol
-  Widget _buildPremiumHeader() {
+  // Header con el logo y título de la aplicación
+  Widget _buildHeader() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Logo limpio y redondito flotando sobre tu imagen (IGUAL QUE INICIO DE SESIÓN)
+        // Logo de la aplicación
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40),
-            // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.3),
@@ -452,31 +435,34 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         
         const SizedBox(height: 12),
         
-        // Título limpio y profesional (IGUAL QUE INICIO DE SESIÓN)
+        // Título principal de la aplicación
         Center(
-          child: ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [
-                Color(0xFF00f5ff),
-                Color(0xFF00d4aa),
-                Color(0xFFffffff),
+          child: Text(
+            'Soccer Life',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: const Color(0xFF00f5ff),
+              letterSpacing: 1.5,
+              shadows: [
+                Shadow(
+                  offset: const Offset(2, 2),
+                  blurRadius: 8,
+                  color: Colors.black.withOpacity(0.8),
+                ),
+                Shadow(
+                  offset: const Offset(-1, -1),
+                  blurRadius: 4,
+                  color: Colors.black.withOpacity(0.5),
+                ),
               ],
-            ).createShader(bounds),
-            child: const Text(
-              'Soccer Life',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 1.5,
-              ),
             ),
           ),
         ),
         
         const SizedBox(height: 6),
         
-        // Subtítulo elegante y limpio (IGUAL QUE INICIO DE SESIÓN)
+        // Subtítulo indicando la función de la pantalla
         Center(
           child: Text(
             'Recuperar Contraseña',
@@ -492,13 +478,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // ===== 🎨 WIDGETS PREMIUM REUTILIZABLES =====
+  // Widgets auxiliares para la construcción de la interfaz
   
-  /// Selector de método premium con glassmorphism
+  // Selector para elegir el método de recuperación (Email o SMS)
   Widget _buildMethodSelector() {
     return Row(
       children: [
-        // Opción Email
+        // Opción para recibir código por Email
         Expanded(
           child: _buildMethodOption(
             icon: Icons.email_outlined,
@@ -508,7 +494,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
           ),
         ),
         const SizedBox(width: 16),
-        // Opción SMS
+        // Opción para recibir código por SMS
         Expanded(
           child: _buildMethodOption(
             icon: Icons.sms_outlined,
@@ -521,7 +507,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  /// Opción individual del selector de método
+  // Opción individual para el selector de método
   Widget _buildMethodOption({
     required IconData icon,
     required String label,
@@ -588,8 +574,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  /// Campo de texto premium con glassmorphism
-  Widget _buildPremiumTextField({
+  // Campo de texto estilizado para el formulario
+  Widget _buildTextField({
     required TextEditingController controller,
     required FocusNode focusNode,
     required String label,
@@ -655,8 +641,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  /// Botón premium con gradiente y efectos
-  Widget _buildPremiumButton({
+  // Botón estilizado para las acciones principales
+  Widget _buildButton({
     required VoidCallback? onTap,
     required String text,
     bool isLoading = false,
@@ -731,9 +717,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // ===== 🎯 FORMULARIO DE RECUPERACIÓN PREMIUM =====
-  
-  /// Formulario flotante para seleccionar método de recuperación
+  // Formulario principal para la recuperación
   Widget _buildRecoveryForm() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -741,7 +725,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         key: _formKey,
         child: Column(
           children: [
-            // Explicación del proceso con glassmorphism
+            // Explicación del proceso
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -781,14 +765,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             
             const SizedBox(height: 20),
             
-            // Selección de método premium
+            // Selector del método de recuperación
             _buildMethodSelector(),
             
             const SizedBox(height: 16),
             
-            // Campo dinámico según método seleccionado
+            // Campo que cambia según el método seleccionado
             _metodoSeleccionado == 'email'
-              ? _buildPremiumTextField(
+              ? _buildTextField(
                   controller: _emailController,
                   focusNode: _emailFocus,
                   label: 'Correo Electrónico',
@@ -798,7 +782,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   keyboardType: TextInputType.emailAddress,
                   validator: _validateEmail,
                 )
-              : _buildPremiumTextField(
+              : _buildTextField(
                   controller: _telefonoController,
                   focusNode: _telefonoFocus,
                   label: 'Número de Celular',
@@ -812,7 +796,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             const SizedBox(height: 20),
             
             // Botón de enviar código
-            _buildPremiumButton(
+            _buildButton(
               onTap: _enviando ? null : _enviarCodigoVerificacion,
               text: 'Enviar código por ${_metodoSeleccionado == 'email' ? 'correo' : 'SMS'}',
               isLoading: _enviando,
@@ -823,9 +807,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // ===== 📱 PANTALLA DE VERIFICACIÓN PREMIUM =====
-  
-  /// Pantalla de verificación de código con diseño premium
+  // Pantalla de verificación del código
   Widget _buildVerificationScreen() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -833,7 +815,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         key: _codigoFormKey,
         child: Column(
           children: [
-            // Icono de verificación con glassmorphism
+            // Icono de verificación
             Container(
               width: 70,
               height: 70,
@@ -859,24 +841,31 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
             const SizedBox(height: 20),
 
-            // Título de verificación con gradiente
-            ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [Color(0xFF00b4db), Color(0xFF0083b0)],
-              ).createShader(bounds),
-              child: const Text(
-                'Verificar Código',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+            // Título de la sección de verificación
+            Text(
+              'Verificar Código',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF00f5ff),
+                shadows: [
+                  Shadow(
+                    offset: const Offset(2, 2),
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.8),
+                  ),
+                  Shadow(
+                    offset: const Offset(-1, -1),
+                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ],
               ),
             ),
 
             const SizedBox(height: 16),
 
-            // Información del envío con glassmorphism
+            // Información sobre el envío del código
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -931,7 +920,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             
             const SizedBox(height: 16),
 
-            // Campos para el código de 6 dígitos con glassmorphism
+            // Campos para ingresar el código de 6 dígitos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(6, (index) {
@@ -970,17 +959,17 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                         contentPadding: EdgeInsets.zero,
                       ),
                       onChanged: (value) {
-                        // Auto-focus al siguiente campo cuando se ingresa un dígito
+                        // Pasa automáticamente al siguiente campo
                         if (value.isNotEmpty && index < 5) {
                           _codigoFocusNodes[index + 1].requestFocus();
                         }
-                        // Auto-verificar cuando se completan los 6 dígitos
+                        // Verifica automáticamente cuando se completen todos los campos
                         if (index == 5 && value.isNotEmpty) {
                           _verificarCodigo();
                         }
                       },
                       onTap: () {
-                        // Seleccionar todo el texto al hacer tap
+                        // Selecciona todo el texto del campo al tocarlo
                         _codigoControllers[index].selection = TextSelection(
                           baseOffset: 0,
                           extentOffset: _codigoControllers[index].text.length,
@@ -995,7 +984,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             const SizedBox(height: 20),
 
             // Botón de verificar
-            _buildPremiumButton(
+            _buildButton(
               onTap: _verificando ? null : _verificarCodigo,
               text: 'Verificar código',
               isLoading: _verificando,
@@ -1003,7 +992,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
             const SizedBox(height: 16),
 
-            // Botón de reenviar código con glassmorphism
+            // Botón para reenviar el código
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
@@ -1025,7 +1014,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     HapticFeedback.lightImpact();
                     setState(() {
                       _codigoEnviado = false;
-                      // Limpiar campos del código
+                      // Limpia todos los campos del código
                       for (var controller in _codigoControllers) {
                         controller.clear();
                       }
@@ -1062,9 +1051,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // ===== 🎉 PANTALLA DE ÉXITO ESPECTACULAR =====
-  
-  /// Pantalla de éxito con animaciones y confetti
+  // Pantalla que se muestra cuando la verificación es exitosa
   Widget _buildSuccessScreen() {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -1096,7 +1083,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Ícono de éxito con gradiente
+                    // Ícono de éxito
                     Container(
                       width: 100,
                       height: 100,
@@ -1139,7 +1126,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     
                     const SizedBox(height: 16),
                     
-                    // Descripción
+                    // Mensaje explicativo
                     Text(
                       'Tu identidad ha sido verificada exitosamente. Ahora puedes crear una nueva contraseña.',
                       style: TextStyle(
@@ -1153,7 +1140,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     const SizedBox(height: 32),
                     
                     // Botón de continuar
-                    _buildPremiumButton(
+                    _buildButton(
                       onTap: () {
                         HapticFeedback.mediumImpact();
                         Navigator.of(context).pop();
@@ -1164,7 +1151,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     
                     const SizedBox(height: 16),
                     
-                    // Botón secundario para volver al login
+                    // Opción para volver al inicio de sesión
                     TextButton(
                       onPressed: () {
                         HapticFeedback.lightImpact();

@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui';
 import 'registrarse.dart';
 import 'recuperar.dart';
 import '../pantallas/principal.dart';
 
-/// 🚀 PANTALLA DE INICIO DE SESIÓN PREMIUM - SOCCER LIFE
-/// 
-/// Login ultra-moderno con animaciones, glassmorphism y efectos premium
-/// Diseño inspirado en las mejores apps del mundo con micro-interacciones
-/// y elementos visuales que impresionan desde el primer momento.
-/// 
-/// ✨ Características Premium:
-/// - Animaciones fluidas y naturales
-/// - Glassmorphism y efectos de cristal
-/// - Gradientes dinámicos animados
-/// - Micro-interacciones en cada elemento
-/// - Feedback visual inmediato
-/// - Transiciones cinematográficas
+/// Pantalla de inicio de sesión de Soccer Life
+/// Permite a los usuarios autenticarse en la aplicación con su email y contraseña
 class InicioSesionPage extends StatefulWidget {
   const InicioSesionPage({super.key});
 
@@ -27,28 +15,25 @@ class InicioSesionPage extends StatefulWidget {
 
 class _InicioSesionPageState extends State<InicioSesionPage>
     with TickerProviderStateMixin {
-  // ===== 🎬 CONTROLADORES DE ANIMACIÓN =====
   
+  // Controladores para las animaciones de entrada suave
   late AnimationController _fadeController;
   late AnimationController _slideController;
-  
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   
-  // ===== 📝 CONTROLADORES DE FORMULARIO =====
-  
+  // Controladores para el formulario de login
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   
-  // ===== 🎛️ ESTADOS DE LA INTERFAZ =====
-  
-  bool _obscurePassword = true;
-  bool _isLoading = false;
-  bool _emailFocused = false;
-  bool _passwordFocused = false;
+  // Estados de la interfaz para controlar la visibilidad y efectos
+  bool _obscurePassword = true; // Ocultar/mostrar contraseña
+  bool _isLoading = false; // Estado de carga durante el login
+  bool _emailFocused = false; // Si el campo email está enfocado
+  bool _passwordFocused = false; // Si el campo contraseña está enfocado
 
   @override
   void initState() {
@@ -58,9 +43,9 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     _startEntryAnimation();
   }
 
-  /// 🎨 Inicializar animaciones esenciales
+  /// Configura las animaciones que se ejecutan cuando se carga la pantalla
   void _initializeAnimations() {
-    // Animación de fade para la entrada general
+    // Animación que hace aparecer gradualmente todos los elementos
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -69,7 +54,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
     );
 
-    // Animación de slide para elementos
+    // Animación que desliza los elementos desde abajo hacia arriba
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -78,13 +63,9 @@ class _InicioSesionPageState extends State<InicioSesionPage>
       begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack));
-
-
-
-
   }
 
-  /// 🎯 Configurar listeners para efectos de focus
+  /// Escucha cuando los campos de texto reciben o pierden el foco para cambiar su estilo
   void _setupFocusListeners() {
     _emailFocus.addListener(() {
       setState(() => _emailFocused = _emailFocus.hasFocus);
@@ -94,7 +75,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     });
   }
 
-  /// 🚀 Iniciar animaciones de entrada
+  /// Ejecuta las animaciones de entrada con un pequeño retraso
   void _startEntryAnimation() {
     Future.delayed(const Duration(milliseconds: 100), () {
       _fadeController.forward();
@@ -102,8 +83,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     });
   }
 
-  // ===== 🧹 LIMPIEZA DE RECURSOS =====
-  
+  /// Libera todos los recursos cuando se destruye la pantalla para evitar fugas de memoria
   @override
   void dispose() {
     _fadeController.dispose();
@@ -115,107 +95,29 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     super.dispose();
   }
 
-  // ===== 🔐 LÓGICA DE AUTENTICACIÓN PREMIUM =====
-  
-  /// Maneja el login con animaciones y feedback visual premium
+  /// Procesa el inicio de sesión del usuario
+  /// Valida los datos, simula la autenticación y navega a la pantalla principal
   Future<void> _login() async {
+    // Solo proceder si el formulario es válido
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
       
-      // Haptic feedback para sensación premium
-      HapticFeedback.lightImpact();
-      
-      // Simular proceso de autenticación
-      await Future.delayed(const Duration(milliseconds: 2000));
+      // Simular llamada al servidor (en producción sería una API real)
+      await Future.delayed(const Duration(milliseconds: 1000));
       
       if (mounted) {
-        // Feedback de éxito con vibración
-        HapticFeedback.mediumImpact();
+        setState(() => _isLoading = false);
         
-        // SnackBar premium con gradiente
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.check_circle, color: Colors.white, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '¡Bienvenido de vuelta!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          'Iniciando tu experiencia futbolística...',
-                          style: TextStyle(fontSize: 12, color: Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            margin: const EdgeInsets.all(16),
-            duration: const Duration(seconds: 3),
-          ),
+        // Navegar a la pantalla principal y limpiar el historial de navegación
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const PrincipalPage()),
+          (route) => false,
         );
-        
-        // Navegación con transición premium
-        await Future.delayed(const Duration(milliseconds: 800));
-        
-        if (mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const PrincipalPage(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.easeInOutCubicEmphasized;
-                
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-                
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: FadeTransition(opacity: animation, child: child),
-                );
-              },
-              transitionDuration: const Duration(milliseconds: 800),
-            ),
-            (route) => false,
-          );
-        }
       }
-      
-      setState(() => _isLoading = false);
-    } else {
-      // Feedback de error
-      HapticFeedback.heavyImpact();
     }
   }
 
-  // ===== 🎨 CONSTRUCCIÓN DE LA INTERFAZ PREMIUM =====
-  
+  /// Construye la interfaz principal de la pantalla de login
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,83 +130,69 @@ class _InicioSesionPageState extends State<InicioSesionPage>
             opacity: _fadeAnimation.value,
             child: Stack(
               children: [
-                // ===== 🏟️ FONDO DE IMAGEN DE FÚTBOL =====
+                // Fondo con imagen del estadio de fútbol
                 _buildFootballBackground(),
                 
-                // ===== CONTENIDO PRINCIPAL =====
+                // Contenido principal de la pantalla
                 SafeArea(
-                    child: CustomScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      slivers: [
-                        // ===== HEADER PREMIUM CON LOGO ANIMADO =====
-                        SliverToBoxAdapter(
-                          child: SlideTransition(
-                            position: _slideAnimation,
-                            child: _buildPremiumHeader(),
-                          ),
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      // Encabezado con logo y título de la app
+                      SliverToBoxAdapter(
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildHeader(),
                         ),
-                        
-                        // ===== FORMULARIO GLASSMORPHISM =====
-                        SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: SlideTransition(
-                            position: _slideAnimation,
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildGlassmorphismCard(),
-                                  const SizedBox(height: 32),
-                                  _buildRegisterSection(),
-                                ],
-                              ),
+                      ),
+                      
+                      // Formulario de login y botón de registro
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildLoginForm(),
+                                const SizedBox(height: 32),
+                                _buildRegisterButton(),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
           );
         },
       ),
     );
   }
 
-  // ===== �️ FONDO CON IMAGEN DE FÚTBOL =====
-  
-  /// Crea un fondo espectacular con imagen real de campo de fútbol
+  /// Crea el fondo de la pantalla con la imagen del estadio y un overlay oscuro sutil
   Widget _buildFootballBackground() {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          // 🏆 USANDO TU IMAGEN PERSONALIZADA: championsfondo.png
           image: AssetImage('images/championsfondo.png'),
-          
-          // 🔥 OTRAS OPCIONES (descomenta para cambiar):
-          // Opción 1: Campo de fútbol profesional
-          // image: NetworkImage('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'),
-          
-          // Opción 2: Estadio épico 
-          // image: NetworkImage('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'),
-          
-          // Opción 3: Campo con luces nocturnas
-          // image: NetworkImage('https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'),
-          
           fit: BoxFit.cover,
         ),
       ),
       child: Container(
-        // 🎨 Overlay SÚPER ligero para que se vea tu imagen de fondo
+        // Overlay oscuro muy ligero para mejorar la legibilidad del texto
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.2), // Muy transparente arriba
-              Colors.black.withOpacity(0.1), // Casi transparente en medio  
+              Colors.black.withOpacity(0.2), // Transparente arriba
+              Colors.black.withOpacity(0.1), // Más transparente en el medio  
               Colors.black.withOpacity(0.3), // Un poco más oscuro abajo
             ],
             stops: const [0.0, 0.5, 1.0],
@@ -316,26 +204,22 @@ class _InicioSesionPageState extends State<InicioSesionPage>
 
 
 
-  // ===== ⚽ HEADER PREMIUM FUTBOLÍSTICO =====
-  
-  /// Header espectacular con logo y elementos temáticos de fútbol
-  Widget _buildPremiumHeader() {
+  /// Construye el encabezado con el logo de Soccer Life y el título principal
+  Widget _buildHeader() {
     return Container(
       height: 280,
       child: Stack(
         children: [
-          // Contenido principal del header limpio
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo limpio y redondito flotando sobre tu imagen
+                // Logo de la aplicación con sombra
                 Container(
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(60),
-                    // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.3),
@@ -355,40 +239,39 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                 
                 const SizedBox(height: 24),
                 
-                // Título limpio y profesional
-                Center(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [
-                        Color(0xFF00f5ff),
-                        Color(0xFF00d4aa),
-                        Color(0xFFffffff),
-                      ],
-                    ).createShader(bounds),
-                    child: const Text(
-                      'Soccer Life',
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: 2,
+                // Nombre de la aplicación
+                Text(
+                  'Soccer Life',
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFF00f5ff),
+                    letterSpacing: 2,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(2, 2),
+                        blurRadius: 8,
+                        color: Colors.black.withOpacity(0.8),
                       ),
-                    ),
+                      Shadow(
+                        offset: const Offset(-1, -1),
+                        blurRadius: 4,
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    ],
                   ),
                 ),
                 
                 const SizedBox(height: 8),
                 
-                // Subtítulo elegante y limpio
-                Center(
-                  child: Text(
-                    'Tu Evolución Futbolística',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1,
-                    ),
+                // Eslogan de la aplicación
+                Text(
+                  'Tu Evolución Futbolística',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white.withOpacity(0.8),
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 1,
                   ),
                 ),
               ],
@@ -401,142 +284,132 @@ class _InicioSesionPageState extends State<InicioSesionPage>
 
 
 
-  // ===== 🎯 FORMULARIO FLOTANTE DIRECTO =====
-  
-  /// Campos flotando directamente sobre tu imagen championsfondo.png
-  Widget _buildGlassmorphismCard() {
+  /// Construye el formulario de login con los campos de email y contraseña
+  Widget _buildLoginForm() {
     return Container(
-      // 🔥 SIN DECORACIÓN - Solo los campos flotando sobre tu imagen
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Form(
         key: _formKey,
         child: Column(
-                children: [
-                  // Título del formulario
-                  ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [Colors.white, Color(0xFF00f5ff)],
-                    ).createShader(bounds),
-                    child: Text(
-                      'Iniciar Sesión',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: 1,
-                        // 🎯 Sombra para que se vea bien sobre tu imagen de fondo
-                        shadows: [
-                          Shadow(
-                            offset: const Offset(2, 2),
-                            blurRadius: 8,
-                            color: Colors.black.withOpacity(0.8),
-                          ),
-                          Shadow(
-                            offset: const Offset(-1, -1),
-                            blurRadius: 4,
-                            color: Colors.black.withOpacity(0.5),
-                          ),
-                        ],
-                      ),
-                    ),
+          children: [
+            // Título del formulario de login
+            Text(
+              'Iniciar Sesión',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF00f5ff),
+                letterSpacing: 1,
+                // Sombra para que se vea bien sobre la imagen de fondo
+                shadows: [
+                  Shadow(
+                    offset: const Offset(2, 2),
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.8),
                   ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Campo de email 
-                  _buildPremiumTextField(
-                    controller: _emailController,
-                    focusNode: _emailFocus,
-                    label: 'Correo electrónico',
-                    hint: 'tu@email.com',
-                    icon: Icons.email_outlined,
-                    keyboardType: TextInputType.emailAddress,
-                    isFocused: _emailFocused,
-                    onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Ingresa tu correo electrónico';
-                      }
-                      if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
-                        return 'Ingresa un correo electrónico válido';
-                      }
-                      return null;
-                    },
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Campo de contraseña 
-                  _buildPremiumTextField(
-                    controller: _passwordController,
-                    focusNode: _passwordFocus,
-                    label: 'Contraseña',
-                    hint: '••••••••',
-                    icon: Icons.lock_outline,
-                    obscureText: _obscurePassword,
-                    isFocused: _passwordFocused,
-                    onFieldSubmitted: (_) => _login(),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                        HapticFeedback.selectionClick();
-                      },
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                        color: Colors.white.withOpacity(0.7),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ingresa tu contraseña';
-                      }
-                      if (value.length < 6) {
-                        return 'La contraseña debe tener al menos 6 caracteres';
-                      }
-                      return null;
-                    },
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Botón de ingresar
-                  _buildPremiumButton(),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Enlace de recuperar
-                  TextButton(
-                    onPressed: () {
-                      HapticFeedback.selectionClick();
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => const RecuperarPasswordPage(),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(opacity: animation, child: child);
-                          },
-                        ),
-                      );
-                    },
-                    child: Text(
-                      '¿Olvidaste tu contraseña?',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                  Shadow(
+                    offset: const Offset(-1, -1),
+                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.5),
                   ),
                 ],
+              ),
+            ),
+            
+            const SizedBox(height: 32),
+            
+            // Campo para ingresar el email
+            _buildTextField(
+              controller: _emailController,
+              focusNode: _emailFocus,
+              label: 'Correo electrónico',
+              hint: 'tu@email.com',
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              isFocused: _emailFocused,
+              onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Ingresa tu correo electrónico';
+                }
+                if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+                  return 'Ingresa un correo electrónico válido';
+                }
+                return null;
+              },
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Campo para ingresar la contraseña
+            _buildTextField(
+              controller: _passwordController,
+              focusNode: _passwordFocus,
+              label: 'Contraseña',
+              hint: '••••••••',
+              icon: Icons.lock_outline,
+              obscureText: _obscurePassword,
+              isFocused: _passwordFocused,
+              onFieldSubmitted: (_) => _login(),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                  HapticFeedback.selectionClick();
+                },
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                  color: Colors.white.withOpacity(0.7),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Ingresa tu contraseña';
+                }
+                if (value.length < 6) {
+                  return 'La contraseña debe tener al menos 6 caracteres';
+                }
+                return null;
+              },
+            ),
+            
+            const SizedBox(height: 32),
+            
+            // Botón principal para iniciar sesión
+            _buildLoginButton(),
+            
+            const SizedBox(height: 20),
+            
+            // Enlace para recuperar contraseña olvidada
+            TextButton(
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => const RecuperarPasswordPage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                  ),
+                );
+              },
+              child: Text(
+                '¿Olvidaste tu contraseña?',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  // ===== ✨ CAMPO DE TEXTO PREMIUM =====
-  
-  /// Crea campos de texto con efectos premium y animaciones
-  Widget _buildPremiumTextField({
+  /// Crea un campo de texto personalizado con estilo moderno y efectos visuales
+  Widget _buildTextField({
     required TextEditingController controller,
     required FocusNode focusNode,
     required String label,
@@ -561,9 +434,8 @@ class _InicioSesionPageState extends State<InicioSesionPage>
         ),
         gradient: LinearGradient(
           colors: [
-            // 🔥 Campos flotantes súper elegantes sobre tu imagen
-            Colors.black.withOpacity(isFocused ? 0.3 : 0.2), // Fondo oscuro sutil
-            Colors.black.withOpacity(isFocused ? 0.25 : 0.15), // Para contraste con texto blanco
+            Colors.black.withOpacity(isFocused ? 0.3 : 0.2), 
+            Colors.black.withOpacity(isFocused ? 0.25 : 0.15),
           ],
         ),
         boxShadow: isFocused ? [
@@ -609,10 +481,8 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     );
   }
 
-  // ===== 🚀 BOTÓN PREMIUM CON GRADIENTE =====
-  
-  /// Botón de login con efectos premium y carga animada
-  Widget _buildPremiumButton() {
+  /// Construye el botón principal de login con gradiente y animación de carga
+  Widget _buildLoginButton() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       height: 56,
@@ -672,10 +542,8 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     );
   }
 
-  // ===== 🎨 SECCIÓN DE REGISTRO PREMIUM =====
-  
-  /// Botón de registro con diseño glassmorphism
-  Widget _buildRegisterSection() {
+  /// Construye el botón que permite navegar a la pantalla de registro
+  Widget _buildRegisterButton() {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),

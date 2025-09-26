@@ -2,10 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// 🚀 PANTALLA DE REGISTRO PREMIUM - SOCCER LIFE
-///
-/// UI de registro ultra-moderna con 2 pasos, animaciones y un diseño
-/// consistente con la pantalla de inicio de sesión.
+/// Pantalla de registro de Soccer Life
+/// Permite crear una nueva cuenta en dos pasos: información personal y deportiva
 class RegistrarsePage extends StatefulWidget {
   const RegistrarsePage({super.key});
 
@@ -14,23 +12,19 @@ class RegistrarsePage extends StatefulWidget {
 }
 
 class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderStateMixin {
-  // ===== 🎬 CONTROLADORES DE ANIMACIÓN =====
-  // Controlan las animaciones de fade y slide para una entrada suave.
+  
+  // Controladores para las animaciones
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // ===== 📝 ESTADOS DEL FORMULARIO =====
-  // Clave global para identificar y validar el formulario.
+  // Estados del formulario
   final _formKey = GlobalKey<FormState>();
-  // Controlador para manejar el PageView de los pasos de registro.
   final _pageController = PageController();
-  // Mantiene el paso actual del formulario (0 para personal, 1 para deportivo).
-  int _currentStep = 0;
+  int _currentStep = 0; // Paso actual (0: personal, 1: deportivo)
 
-  // ===== ✍️ CONTROLADORES DE TEXTO =====
-  // Gestionan el contenido de cada campo de texto del formulario.
+  // Controladores de los campos de texto
   final _emailController = TextEditingController();
   final _nombreController = TextEditingController();
   final _fechaNacimientoController = TextEditingController();
@@ -39,46 +33,36 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   final _telefonoController = TextEditingController();
   final _clubController = TextEditingController();
 
-  // ===== 🎯 NODOS DE FOCO =====
-  // Gestionan el foco de los campos para mejorar la navegación y los efectos visuales.
+  // Nodos de foco para los campos
   final _emailFocus = FocusNode();
   final _nombreFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
   final _telefonoFocus = FocusNode();
   final _clubFocus = FocusNode();
-  // Mapa para rastrear el estado de foco de cada nodo y aplicar estilos dinámicos.
-  final Map<FocusNode, bool> _focusStates = {};
+  final Map<FocusNode, bool> _focusStates = {}; // Estado de foco de cada campo
 
-  // ===== 🎛️ ESTADOS DE LA INTERFAZ =====
-  // Controlan la visibilidad de las contraseñas.
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  // Controla si se muestra el indicador de carga.
-  bool _isLoading = false;
-  // Controla si se muestra la pantalla de éxito.
-  bool _registroExitoso = false;
-  // Almacena la fecha de nacimiento seleccionada.
-  DateTime? _fechaNacimiento;
-  // Almacena la posición de fútbol seleccionada.
-  String? _posicionSeleccionada;
+  // Estados de la interfaz
+  bool _obscurePassword = true; // Ocultar contraseña principal
+  bool _obscureConfirmPassword = true; // Ocultar confirmación de contraseña
+  bool _isLoading = false; // Indicador de carga durante el registro
+  bool _registroExitoso = false; // Si el registro fue exitoso
+  DateTime? _fechaNacimiento; // Fecha de nacimiento seleccionada
+  String? _posicionSeleccionada; // Posición de fútbol seleccionada
 
-  // Lista de posiciones disponibles para el jugador.
+  // Posiciones disponibles para elegir
   final List<String> _posiciones = [
     'Arquero', 'Defensa Central', 'Lateral', 'Volante', 'Extremo', 'Delantero',
   ];
 
-  /// Se ejecuta una vez cuando el widget se inserta en el árbol de widgets.
-  /// Aquí se inicializan las animaciones y los listeners.
   @override
   void initState() {
     super.initState();
-    _initializeAnimations();
-    _setupFocusListeners();
-    _startEntryAnimation();
+    _inicializarAnimaciones();
+    _configurarListenersFocus();
+    _iniciarAnimacionesEntrada();
   }
 
-  /// Libera todos los recursos (controladores, nodos de foco) para evitar fugas de memoria.
   @override
   void dispose() {
     _fadeController.dispose();
@@ -100,10 +84,10 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     super.dispose();
   }
 
-  // ===== 🎨 LÓGICA DE LA INTERFAZ Y ANIMACIONES =====
-
-  /// Inicializa los controladores y las curvas de las animaciones de entrada.
-  void _initializeAnimations() {
+  // Métodos para configurar las animaciones y eventos
+  
+  // Configura las animaciones de entrada de la pantalla
+  void _inicializarAnimaciones() {
     _fadeController = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this);
     _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic);
     _slideController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
@@ -111,9 +95,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         .animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack));
   }
 
-  /// Configura listeners para cada nodo de foco.
-  /// Esto permite cambiar la UI dinámicamente cuando un campo está seleccionado.
-  void _setupFocusListeners() {
+  // Configura los eventos de foco para todos los campos
+  void _configurarListenersFocus() {
     final allFocusNodes = [
       _nombreFocus, _emailFocus, _telefonoFocus,
       _passwordFocus, _confirmPasswordFocus, _clubFocus
@@ -126,28 +109,28 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     }
   }
 
-  /// Inicia las animaciones de entrada con un pequeño retraso.
-  void _startEntryAnimation() {
+  // Inicia las animaciones de entrada
+  void _iniciarAnimacionesEntrada() {
     Future.delayed(const Duration(milliseconds: 100), () {
       _fadeController.forward();
       _slideController.forward();
     });
   }
 
-  // ===== 🔐 LÓGICA DE VALIDACIÓN Y REGISTRO =====
+  // Métodos de validación para los campos del formulario
 
-  /// Valida el formato del correo electrónico.
+  // Valida que el correo tenga un formato correcto
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) return 'El correo es obligatorio';
     if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
       return 'Ingresa un correo válido';
     }
-    // Simulación para verificar si el correo ya existe.
+    // Verifica si el correo ya está registrado (simulación)
     if (value.toLowerCase() == 'admin@soccerlife.com') return 'El correo ya está registrado';
     return null;
   }
 
-  /// Valida la fortaleza de la contraseña.
+  // Valida que la contraseña sea segura
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'La contraseña es obligatoria';
     if (value.length < 8) return 'Debe tener al menos 8 caracteres';
@@ -157,14 +140,14 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     return null;
   }
 
-  /// Valida que las contraseñas coincidan.
+  // Valida que ambas contraseñas sean iguales
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) return 'Confirma tu contraseña';
     if (value != _passwordController.text) return 'Las contraseñas no coinciden';
     return null;
   }
 
-  /// Valida el formato del número de teléfono.
+  // Valida el formato del teléfono
   String? _validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
     if (!RegExp(r'^[+]?[0-9]{10,15}$').hasMatch(value.replaceAll(' ', ''))) {
@@ -173,13 +156,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     return null;
   }
 
-  /// Valida que un campo no esté vacío.
+  // Valida que un campo requerido no esté vacío
   String? _validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName es obligatorio';
     return null;
   }
 
-  /// Muestra un selector de fecha y actualiza el estado.
+  // Muestra el selector de fecha de nacimiento
   Future<void> _selectDate() async {
     HapticFeedback.selectionClick();
     final DateTime? picked = await showDatePicker(
@@ -188,7 +171,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       firstDate: DateTime(1950),
       lastDate: DateTime.now().subtract(const Duration(days: 4380)), // 12 años
       builder: (context, child) {
-        // Tema oscuro para el selector de fecha, a juego con la UI.
+        // Aplica tema oscuro al selector de fecha
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
@@ -212,7 +195,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     }
   }
 
-  /// Valida el paso actual y avanza al siguiente.
+  // Avanza al siguiente paso si la validación es correcta
   void _nextStep() {
     HapticFeedback.lightImpact();
     if (_formKey.currentState?.validate() ?? false) {
@@ -222,11 +205,11 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         curve: Curves.easeInOutCubic,
       );
     } else {
-      HapticFeedback.heavyImpact(); // Feedback de error si la validación falla.
+      HapticFeedback.heavyImpact(); // Vibración de error
     }
   }
 
-  /// Retrocede al paso anterior.
+  // Retrocede al paso anterior
   void _previousStep() {
     HapticFeedback.lightImpact();
     setState(() => _currentStep = 0);
@@ -236,7 +219,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Valida el formulario final y simula el registro de usuario.
+  // Procesa el registro del usuario
   Future<void> _registrarUsuario() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
        HapticFeedback.heavyImpact();
@@ -246,29 +229,28 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     setState(() => _isLoading = true);
     HapticFeedback.lightImpact();
     
-    // Simula una llamada a la API.
+    // Simula el proceso de registro en el servidor
     await Future.delayed(const Duration(seconds: 2));
     
     if (mounted) {
       setState(() {
         _isLoading = false;
-        _registroExitoso = true; // Muestra la pantalla de éxito.
+        _registroExitoso = true; // Muestra pantalla de éxito
       });
       HapticFeedback.mediumImpact();
     }
   }
 
-  // ===== 🎨 CONSTRUCCIÓN DE LA INTERFAZ PREMIUM =====
+  // Construcción de la interfaz de usuario
 
-  /// Método principal que construye la UI de la pantalla.
   @override
   Widget build(BuildContext context) {
-    // Si el registro fue exitoso, muestra la pantalla de éxito.
+    // Si el registro fue exitoso, muestra la pantalla de éxito
     if (_registroExitoso) {
       return _buildSuccessScreen();
     }
 
-    // Construye la pantalla principal de registro.
+    // Pantalla principal de registro
     return Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
@@ -287,7 +269,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             opacity: _fadeAnimation.value,
             child: Stack(
               children: [
-                _buildFootballBackground(), // Fondo de pantalla.
+                _buildFootballBackground(), // Fondo con imagen de fútbol
                 SafeArea(
                   child: SlideTransition(
                     position: _slideAnimation,
@@ -301,7 +283,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              _buildFloatingForm(), // Contenido principal del formulario.
+                              _buildFloatingForm(), // Formulario principal
                             ],
                           ),
                         ),
@@ -317,7 +299,9 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el fondo con la imagen de fútbol y un degradado oscuro.
+  // Métodos para construir los elementos de la interfaz
+
+  // Crea el fondo con imagen de fútbol y degradado
   Widget _buildFootballBackground() {
     return Container(
       decoration: const BoxDecoration(
@@ -343,25 +327,25 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el formulario flotante que contiene todos los elementos de registro.
+  // Construye el formulario principal con todos los pasos
   Widget _buildFloatingForm() {
     return Form(
       key: _formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildPremiumHeader(),
+          _buildHeader(),
           const SizedBox(height: 4),
           _buildProgressIndicator(),
           const SizedBox(height: 16),
           SizedBox(
-            height: 450, // Altura ajustada para el contenido del PageView
+            height: 450, // Altura fija para el contenido
             child: PageView(
               controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(), // Deshabilita el scroll por gesto.
+              physics: const NeverScrollableScrollPhysics(), // Sin scroll manual
               children: [
-                _buildInformacionPersonal(), // Paso 1
-                _buildInformacionDeportiva(), // Paso 2
+                _buildInformacionPersonal(), // Paso 1: Datos personales
+                _buildInformacionDeportiva(), // Paso 2: Datos deportivos
               ],
             ),
           ),
@@ -372,11 +356,11 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el encabezado con el logo, título y subtítulo optimizado.
-  Widget _buildPremiumHeader() {
+  // Construye el header con logo y título
+  Widget _buildHeader() {
     return Column(
       children: [
-        // Logo ultra compacto
+        // Logo de la aplicación
         Container(
           width: 60,
           height: 60,
@@ -401,31 +385,34 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         
         const SizedBox(height: 6),
         
-        // Título principal ultra compacto
+        // Título principal de la aplicación
         Center(
-          child: ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [
-                Color(0xFF00f5ff),
-                Color(0xFF00d4aa),
-                Color(0xFFffffff),
+          child: Text(
+            'Soccer Life',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: const Color(0xFF00f5ff),
+              letterSpacing: 1.0,
+              shadows: [
+                Shadow(
+                  offset: const Offset(2, 2),
+                  blurRadius: 8,
+                  color: Colors.black.withOpacity(0.8),
+                ),
+                Shadow(
+                  offset: const Offset(-1, -1),
+                  blurRadius: 4,
+                  color: Colors.black.withOpacity(0.5),
+                ),
               ],
-            ).createShader(bounds),
-            child: const Text(
-              'Soccer Life',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 1.0,
-              ),
             ),
           ),
         ),
         
         const SizedBox(height: 1),
         
-        // Subtítulo ultra compacto
+        // Subtítulo indicando la función
         Center(
           child: Text(
             'Crear Cuenta',
@@ -441,7 +428,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el indicador de progreso de los pasos (Personal -> Deportivo).
+  // Construye el indicador de progreso entre pasos
   Widget _buildProgressIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -455,7 +442,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: const [Color(0xFF00f5ff), Color(0xFF00d4aa)],
-                stops: [_currentStep == 0 ? 0.0 : 1.0, 1.0], // Anima el degradado.
+                stops: [_currentStep == 0 ? 0.0 : 1.0, 1.0], // Progreso animado
               ),
               borderRadius: BorderRadius.circular(1),
             ),
@@ -466,7 +453,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye un círculo y etiqueta para un paso individual del indicador.
+  // Construye un indicador individual para cada paso
   Widget _buildStepIndicator(int step, String label) {
     final isActive = step <= _currentStep;
     return Column(
@@ -506,14 +493,14 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye los campos del formulario para la información personal (Paso 1).
+  // Construye los campos del primer paso (información personal)
   Widget _buildInformacionPersonal() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 16),
         child: Column(
           children: [
-            _buildPremiumTextField(
+            _buildTextField(
               controller: _nombreController,
               focusNode: _nombreFocus,
               label: 'Nombre',
@@ -523,7 +510,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               onFieldSubmitted: (_) => _selectDate(),
             ),
             const SizedBox(height: 12),
-            _buildPremiumTextField(
+            _buildTextField(
               controller: _fechaNacimientoController,
               label: 'Fecha de nacimiento',
               hint: 'DD/MM/YYYY',
@@ -533,7 +520,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               validator: (v) => _fechaNacimiento == null ? 'Selecciona tu fecha' : null,
             ),
             const SizedBox(height: 12),
-            _buildPremiumTextField(
+            _buildTextField(
               controller: _emailController,
               focusNode: _emailFocus,
               label: 'Correo electrónico',
@@ -544,7 +531,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               onFieldSubmitted: (_) => _telefonoFocus.requestFocus(),
             ),
             const SizedBox(height: 12),
-             _buildPremiumTextField(
+             _buildTextField(
               controller: _telefonoController,
               focusNode: _telefonoFocus,
               label: 'Teléfono',
@@ -556,7 +543,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
             ),
             const SizedBox(height: 12),
-            _buildPremiumTextField(
+            _buildTextField(
               controller: _passwordController,
               focusNode: _passwordFocus,
               label: 'Contraseña',
@@ -571,7 +558,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               ),
             ),
             const SizedBox(height: 12),
-            _buildPremiumTextField(
+            _buildTextField(
               controller: _confirmPasswordController,
               focusNode: _confirmPasswordFocus,
               label: 'Confirmar contraseña',
@@ -590,15 +577,15 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye los campos del formulario para la información deportiva (Paso 2).
+  // Construye los campos del segundo paso (información deportiva)
   Widget _buildInformacionDeportiva() {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Column(
         children: [
-          _buildPremiumDropdown(),
+          _buildDropdown(),
           const SizedBox(height: 12),
-          _buildPremiumTextField(
+          _buildTextField(
             controller: _clubController,
             focusNode: _clubFocus,
             label: 'Club actual (opcional)',
@@ -610,19 +597,19 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye los botones de navegación (Siguiente, Anterior, Crear cuenta).
+  // Construye los botones de navegación entre pasos
   Widget _buildNavigationButtons() {
     return Column(
       children: [
-        _buildPremiumButton(
+        _buildButton(
           onTap: _isLoading ? null : (_currentStep == 0 ? _nextStep : _registrarUsuario),
           text: _currentStep == 0 ? 'Siguiente' : 'Crear mi cuenta',
           isLoading: _isLoading,
         ),
         const SizedBox(height: 6),
-        // Muestra el botón "Anterior" solo en el segundo paso.
+        // Botón "Anterior" solo en el segundo paso
         if (_currentStep == 1)
-          _buildGlassButton(
+          _buildSecondaryButton(
             onTap: _previousStep,
             text: 'Anterior',
           ),
@@ -630,10 +617,10 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  // ===== 🧩 WIDGETS REUTILIZABLES PREMIUM =====
+  // Widgets auxiliares reutilizables
 
-  /// Widget reutilizable para un campo de texto con estilo premium.
-  Widget _buildPremiumTextField({
+  // Campo de texto con estilo personalizado
+  Widget _buildTextField({
     required TextEditingController controller,
     FocusNode? focusNode,
     required String label,
@@ -699,8 +686,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
   
-  /// Widget reutilizable para un menú desplegable con estilo premium.
-  Widget _buildPremiumDropdown() {
+  // Menú desplegable para seleccionar posición
+  Widget _buildDropdown() {
     return DropdownButtonFormField<String>(
       value: _posicionSeleccionada,
       onChanged: (value) => setState(() => _posicionSeleccionada = value),
@@ -740,7 +727,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el botón para mostrar/ocultar la contraseña.
+  // Botón para mostrar/ocultar contraseña
   Widget _buildObscureToggle(VoidCallback onPressed, bool isObscure) {
     return IconButton(
       onPressed: () {
@@ -754,8 +741,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye el botón principal con gradiente y efecto de sombra.
-  Widget _buildPremiumButton({
+  // Botón principal con estilo gradiente
+  Widget _buildButton({
     required VoidCallback? onTap,
     required String text,
     bool isLoading = false,
@@ -805,8 +792,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye un botón secundario con efecto de cristal.
-  Widget _buildGlassButton({required VoidCallback onTap, required String text}) {
+  // Botón secundario con efecto transparente
+  Widget _buildSecondaryButton({required VoidCallback onTap, required String text}) {
     return SizedBox(
       height: 48,
       width: double.infinity,
@@ -837,7 +824,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  /// Construye la pantalla de éxito que se muestra después de un registro correcto.
+  // Pantalla de éxito mostrada tras el registro
   Widget _buildSuccessScreen() {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -903,7 +890,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                           ),
                         ),
                         const SizedBox(height: 32),
-                        _buildPremiumButton(
+                        _buildButton(
                           onTap: () => Navigator.of(context).pop(),
                           text: 'Comenzar',
                         ),
