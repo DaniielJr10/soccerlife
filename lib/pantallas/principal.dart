@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'partidos.dart';
 
 /// Pantalla principal de Soccer Life
 /// 
@@ -33,7 +34,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
       case 0:
         return _buildHomeTab();
       case 1:
-        return _buildOtherTab('Partidos');
+        return const PartidosPage();
       case 2:
         return _buildOtherTab('Entrenamientos');
       case 3:
@@ -379,7 +380,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
               Icons.sports_soccer,
               Colors.blue,
               () {
-                // TODO: Navegar a pantalla de partidos
+                setState(() => _selectedIndex = 1);
               },
             ),
             _buildFeatureCard(
