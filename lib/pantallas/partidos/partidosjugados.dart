@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'partidosfuturos.dart';
 
-/// Pantalla de gestión de partidos de Soccer Life
-/// Permite registrar partidos jugados y programar partidos futuros
-class PartidosPage extends StatefulWidget {
-  const PartidosPage({super.key});
+/// Pantalla de partidos jugados de Soccer Life
+/// Permite registrar y gestionar partidos ya jugados
+class PartidosJugadosPage extends StatefulWidget {
+  const PartidosJugadosPage({super.key});
 
   @override
-  State<PartidosPage> createState() => _PartidosPageState();
+  State<PartidosJugadosPage> createState() => _PartidosJugadosPageState();
 }
 
-class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMixin {
+class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   
-  // Controlador para las tabs
-  late TabController _tabController;
-  
-  // Listas para almacenar los partidos
+  // Lista para almacenar los partidos jugados
   final List<PartidoJugado> _partidosJugados = [];
-  final List<PartidoFuturo> _partidosFuturos = [];
   
-  // Controlador para el formulario de partido jugado
+  // Controladores para el formulario de partido jugado
   final _formJugadoKey = GlobalKey<FormState>();
   final _fechaJugadoController = TextEditingController();
   final _equipoContrarioJugadoController = TextEditingController();
@@ -30,22 +26,12 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
   final _asistenciasController = TextEditingController();
   final _notasJugadoController = TextEditingController();
   
-  // Controlador para el formulario de partido futuro
-  final _formFuturoKey = GlobalKey<FormState>();
-  final _fechaFuturoController = TextEditingController();
-  final _lugarController = TextEditingController();
-  final _horaController = TextEditingController();
-  final _equipoRivalController = TextEditingController();
-  final _notasFuturoController = TextEditingController();
-  
   // Variables para los dropdowns
   String? _posicionSeleccionada;
   String? _tarjetasSeleccionadas;
   
-  // Variables de estado
+  // Variable de estado
   DateTime? _fechaPartidoJugado;
-  DateTime? _fechaPartidoFuturo;
-  TimeOfDay? _horaPartidoFuturo;
 
   final List<String> _posiciones = [
     'Arquero', 'Defensa Central', 'Lateral Derecho', 'Lateral Izquierdo',
@@ -60,13 +46,11 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _cargarPartidosEjemplo(); // Cargar algunos datos de ejemplo
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _fechaJugadoController.dispose();
     _equipoContrarioJugadoController.dispose();
     _golesAFavorController.dispose();
@@ -75,11 +59,6 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     _golesAnotadosController.dispose();
     _asistenciasController.dispose();
     _notasJugadoController.dispose();
-    _fechaFuturoController.dispose();
-    _lugarController.dispose();
-    _horaController.dispose();
-    _equipoRivalController.dispose();
-    _notasFuturoController.dispose();
     super.dispose();
   }
 
@@ -101,31 +80,26 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
       PartidoJugado(
         fecha: DateTime.now().subtract(const Duration(days: 14)),
         equipoContrario: 'FC Barcelona',
-        golesAFavor: 0,
+        golesAFavor: 1,
         golesEnContra: 3,
         minutosJugados: 75,
+        posicion: 'Extremo Derecho',
+        golesAnotados: 0,
+        asistencias: 1,
+        tarjetas: 'Ninguna',
+        notas: 'Partido difícil, nos superaron en el medio campo'
+      ),
+      PartidoJugado(
+        fecha: DateTime.now().subtract(const Duration(days: 21)),
+        equipoContrario: 'Atlético Madrid',
+        golesAFavor: 0,
+        golesEnContra: 0,
+        minutosJugados: 90,
         posicion: 'Volante Central',
         golesAnotados: 0,
         asistencias: 0,
-        tarjetas: 'Ninguna',
-        notas: 'Partido difícil, salí lesionado'
-      ),
-    ]);
-
-    _partidosFuturos.addAll([
-      PartidoFuturo(
-        fecha: DateTime.now().add(const Duration(days: 7)),
-        lugar: 'Estadio El Campín',
-        hora: const TimeOfDay(hour: 16, minute: 0),
-        equipoRival: 'Atlético Nacional',
-        notas: 'Partido importante por la liga'
-      ),
-      PartidoFuturo(
-        fecha: DateTime.now().add(const Duration(days: 14)),
-        lugar: 'Estadio Nemesio Camacho',
-        hora: const TimeOfDay(hour: 20, minute: 30),
-        equipoRival: 'Millonarios FC',
-        notas: 'Clásico capitalino'
+        tarjetas: 'Amarilla',
+        notas: 'Empate defensivo, poca ocasiones de gol'
       ),
     ]);
   }
@@ -134,22 +108,56 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Partidos Jugados',
+          style: TextStyle(
+            color: Colors.grey[800],
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.event_available, color: const Color(0xFF0065F8)),
+            onPressed: () => _navegarAPartidosFuturos(),
+            tooltip: 'Partidos Futuros',
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Header con título
+            // Header con navegación a partidos futuros
             _buildHeader(),
-            // Tabs
-            _buildTabBar(),
-            // Contenido de las tabs
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildPartidosJugadosTab(),
-                  _buildPartidosFuturosTab(),
-                ],
+            const SizedBox(height: 20),
+            // Botón para agregar nuevo partido jugado
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildAddButton(
+                'Registrar Partido Jugado',
+                Icons.add_box,
+                () => _mostrarFormularioPartidoJugado(),
               ),
+            ),
+            const SizedBox(height: 20),
+            // Lista de partidos jugados
+            Expanded(
+              child: _partidosJugados.isEmpty
+                  ? _buildEmptyState('No hay partidos registrados', Icons.sports_soccer)
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: _partidosJugados.length,
+                      itemBuilder: (context, index) {
+                        return _buildPartidoJugadoCard(_partidosJugados[index], index);
+                      },
+                    ),
             ),
           ],
         ),
@@ -157,24 +165,92 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     );
   }
 
-  // Construye el header con título
+  // Construye el header dividido en dos secciones
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.grey[300]!,
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          Icon(
-            Icons.sports_soccer,
-            color: const Color(0xFF0065F8),
-            size: 28,
+          // Sección Partidos Jugados (activa)
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.horizontal(left: Radius.circular(15)),
+                color: const Color(0xFF0065F8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.sports_soccer,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Partidos Jugados',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(width: 12),
-          Text(
-            'Mis Partidos',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
+          // Divisor
+          Container(
+            width: 1,
+            height: 48,
+            color: Colors.grey[300],
+          ),
+          // Sección Partidos Futuros (inactiva/navegable)
+          Expanded(
+            child: GestureDetector(
+              onTap: _navegarAPartidosFuturos,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.horizontal(right: Radius.circular(15)),
+                  color: Colors.transparent,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.event_available,
+                      color: Colors.grey[600],
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Partidos Futuros',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -182,90 +258,13 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     );
   }
 
-  // Construye la barra de tabs
-  Widget _buildTabBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: Colors.grey[200],
+  // Navegar a partidos futuros
+  void _navegarAPartidosFuturos() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PartidosFuturosPage(),
       ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: const Color.fromARGB(240, 16, 233, 248),
-        ),
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.grey[600],
-        labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        tabs: const [
-          Tab(text: 'Partidos Jugados'),
-          Tab(text: 'Partidos Futuros'),
-        ],
-      ),
-    );
-  }
-
-  // Tab de partidos jugados
-  Widget _buildPartidosJugadosTab() {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        // Botón para agregar nuevo partido jugado
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: _buildAddButton(
-            'Registrar Partido Jugado',
-            Icons.add_box,
-            () => _mostrarFormularioPartidoJugado(),
-          ),
-        ),
-        const SizedBox(height: 20),
-        // Lista de partidos jugados
-        Expanded(
-          child: _partidosJugados.isEmpty
-              ? _buildEmptyState('No hay partidos registrados', Icons.sports_soccer)
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: _partidosJugados.length,
-                  itemBuilder: (context, index) {
-                    return _buildPartidoJugadoCard(_partidosJugados[index], index);
-                  },
-                ),
-        ),
-      ],
-    );
-  }
-
-  // Tab de partidos futuros
-  Widget _buildPartidosFuturosTab() {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        // Botón para agregar nuevo partido futuro
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: _buildAddButton(
-            'Programar Partido',
-            Icons.event_available,
-            () => _mostrarFormularioPartidoFuturo(),
-          ),
-        ),
-        const SizedBox(height: 20),
-        // Lista de partidos futuros
-        Expanded(
-          child: _partidosFuturos.isEmpty
-              ? _buildEmptyState('No hay partidos programados', Icons.event)
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: _partidosFuturos.length,
-                  itemBuilder: (context, index) {
-                    return _buildPartidoFuturoCard(_partidosFuturos[index], index);
-                  },
-                ),
-        ),
-      ],
     );
   }
 
@@ -411,77 +410,6 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     );
   }
 
-  // Card de partido futuro
-  Widget _buildPartidoFuturoCard(PartidoFuturo partido, int index) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: const Color(0xFF0065F8).withOpacity(0.1),
-        border: Border.all(
-          color: const Color(0xFF0065F8).withOpacity(0.3),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header del partido
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  partido.equipoRival,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ),
-              Icon(
-                Icons.schedule,
-                color: const Color(0xFF0065F8),
-                size: 24,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Información del partido
-          _buildInfoRow('Fecha', _formatDate(partido.fecha)),
-          _buildInfoRow('Hora', _formatTime(partido.hora)),
-          _buildInfoRow('Lugar', partido.lugar),
-          if (partido.notas.isNotEmpty)
-            _buildInfoRow('Notas', partido.notas),
-          const SizedBox(height: 10),
-          // Botones de acción
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: () => _editarPartidoFuturo(partido, index),
-                icon: const Icon(Icons.edit, color: Color(0xFF0065F8)),
-              ),
-              IconButton(
-                onPressed: () => _eliminarPartidoFuturo(index),
-                icon: const Icon(Icons.delete, color: Colors.red),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   // Fila de información
   Widget _buildInfoRow(String label, String value) {
     return Padding(
@@ -522,21 +450,6 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _buildFormularioPartidoJugado(),
-    );
-  }
-
-  // Muestra el formulario para programar partido futuro
-  void _mostrarFormularioPartidoFuturo([PartidoFuturo? partido, int? index]) {
-    if (partido != null) {
-      _cargarDatosPartidoFuturo(partido);
-    } else {
-      _limpiarFormularioFuturo();
-    }
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _buildFormularioPartidoFuturo(partido, index),
     );
   }
 
@@ -707,113 +620,6 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     );
   }
 
-  // Formulario de partido futuro
-  Widget _buildFormularioPartidoFuturo([PartidoFuturo? partido, int? index]) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Handle del modal
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            width: 50,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  partido != null ? 'Editar Partido' : 'Programar Partido',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-          // Formulario
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Form(
-                key: _formFuturoKey,
-                child: Column(
-                  children: [
-                    _buildDateField(
-                      'Fecha del partido',
-                      _fechaFuturoController,
-                      () => _selectDateFuturo(),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTimeField(
-                      'Hora del partido',
-                      _horaController,
-                      () => _selectTimeFuturo(),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Lugar del partido',
-                      _lugarController,
-                      'Estadio o cancha donde se jugará',
-                      Icons.location_on,
-                      validator: _validateRequired,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Equipo rival',
-                      _equipoRivalController,
-                      'Nombre del equipo rival',
-                      Icons.groups,
-                      validator: _validateRequired,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Notas adicionales',
-                      _notasFuturoController,
-                      'Comentarios o recordatorios...',
-                      Icons.note,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 30),
-                    _buildSubmitButton(
-                      partido != null ? 'Actualizar Partido' : 'Programar Partido',
-                      () => _guardarPartidoFuturo(partido, index),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // Campo de texto personalizado
   Widget _buildTextField(
     String label,
@@ -863,36 +669,6 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
         labelText: label,
         hintText: 'Seleccionar fecha',
         prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF0065F8)),
-        suffixIcon: const Icon(Icons.arrow_drop_down, color: Color(0xFF0065F8)),
-        labelStyle: const TextStyle(color: Color(0xFF0065F8)),
-        hintStyle: TextStyle(color: Colors.grey[500]),
-        filled: true,
-        fillColor: Colors.grey[50],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF1E3A8A)),
-        ),
-        errorStyle: const TextStyle(color: Colors.red),
-      ),
-    );
-  }
-
-  // Campo de hora
-  Widget _buildTimeField(String label, TextEditingController controller, VoidCallback onTap) {
-    return TextFormField(
-      controller: controller,
-      readOnly: true,
-      onTap: onTap,
-      validator: (value) => value?.isEmpty ?? true ? 'Selecciona una hora' : null,
-      style: TextStyle(color: Colors.grey[800]),
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: 'Seleccionar hora',
-        prefixIcon: const Icon(Icons.access_time, color: Color(0xFF0065F8)),
         suffixIcon: const Icon(Icons.arrow_drop_down, color: Color(0xFF0065F8)),
         labelStyle: const TextStyle(color: Color(0xFF0065F8)),
         hintStyle: TextStyle(color: Colors.grey[500]),
@@ -1021,7 +797,7 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     return null;
   }
 
-  // Selectors de fecha y hora
+  // Selector de fecha
   Future<void> _selectDateJugado() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -1050,61 +826,7 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     }
   }
 
-  Future<void> _selectDateFuturo() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF0065F8),
-              onPrimary: Colors.white,
-              surface: Color(0xFF1a1a2e),
-              onSurface: Colors.white,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _fechaPartidoFuturo = picked;
-        _fechaFuturoController.text = _formatDate(picked);
-      });
-    }
-  }
-
-  Future<void> _selectTimeFuturo() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 16, minute: 0),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF0065F8),
-              onPrimary: Colors.white,
-              surface: Color(0xFF1a1a2e),
-              onSurface: Colors.white,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _horaPartidoFuturo = picked;
-        _horaController.text = _formatTime(picked);
-      });
-    }
-  }
-
-  // Métodos de guardado
+  // Método de guardado
   void _guardarPartidoJugado() {
     if (_formJugadoKey.currentState?.validate() ?? false) {
       final partido = PartidoJugado(
@@ -1130,37 +852,7 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     }
   }
 
-  void _guardarPartidoFuturo([PartidoFuturo? partidoOriginal, int? index]) {
-    if (_formFuturoKey.currentState?.validate() ?? false) {
-      final partido = PartidoFuturo(
-        fecha: _fechaPartidoFuturo!,
-        lugar: _lugarController.text,
-        hora: _horaPartidoFuturo!,
-        equipoRival: _equipoRivalController.text,
-        notas: _notasFuturoController.text,
-      );
-
-      setState(() {
-        if (partidoOriginal != null && index != null) {
-          _partidosFuturos[index] = partido;
-        } else {
-          _partidosFuturos.add(partido);
-        }
-        _partidosFuturos.sort((a, b) => a.fecha.compareTo(b.fecha));
-      });
-
-      Navigator.pop(context);
-      _mostrarMensajeExito(partidoOriginal != null 
-          ? 'Partido actualizado correctamente' 
-          : 'Partido programado correctamente');
-    }
-  }
-
-  // Métodos de edición y eliminación
-  void _editarPartidoFuturo(PartidoFuturo partido, int index) {
-    _mostrarFormularioPartidoFuturo(partido, index);
-  }
-
+  // Método de eliminación
   void _eliminarPartidoJugado(int index) {
     _mostrarDialogoConfirmacion(
       'Eliminar partido',
@@ -1168,19 +860,6 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
       () {
         setState(() {
           _partidosJugados.removeAt(index);
-        });
-        _mostrarMensajeExito('Partido eliminado');
-      },
-    );
-  }
-
-  void _eliminarPartidoFuturo(int index) {
-    _mostrarDialogoConfirmacion(
-      'Eliminar partido',
-      '¿Estás seguro de que deseas eliminar este partido programado?',
-      () {
-        setState(() {
-          _partidosFuturos.removeAt(index);
         });
         _mostrarMensajeExito('Partido eliminado');
       },
@@ -1202,32 +881,8 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
     _fechaPartidoJugado = null;
   }
 
-  void _limpiarFormularioFuturo() {
-    _fechaFuturoController.clear();
-    _lugarController.clear();
-    _horaController.clear();
-    _equipoRivalController.clear();
-    _notasFuturoController.clear();
-    _fechaPartidoFuturo = null;
-    _horaPartidoFuturo = null;
-  }
-
-  void _cargarDatosPartidoFuturo(PartidoFuturo partido) {
-    _fechaPartidoFuturo = partido.fecha;
-    _fechaFuturoController.text = _formatDate(partido.fecha);
-    _lugarController.text = partido.lugar;
-    _horaPartidoFuturo = partido.hora;
-    _horaController.text = _formatTime(partido.hora);
-    _equipoRivalController.text = partido.equipoRival;
-    _notasFuturoController.text = partido.notas;
-  }
-
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-  }
-
-  String _formatTime(TimeOfDay time) {
-    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
   void _mostrarMensajeExito(String mensaje) {
@@ -1265,7 +920,7 @@ class _PartidosPageState extends State<PartidosPage> with TickerProviderStateMix
   }
 }
 
-// Modelos de datos
+// Modelo de datos para Partido Jugado
 class PartidoJugado {
   final DateTime fecha;
   final String equipoContrario;
@@ -1288,22 +943,6 @@ class PartidoJugado {
     required this.golesAnotados,
     required this.asistencias,
     required this.tarjetas,
-    required this.notas,
-  });
-}
-
-class PartidoFuturo {
-  final DateTime fecha;
-  final String lugar;
-  final TimeOfDay hora;
-  final String equipoRival;
-  final String notas;
-
-  PartidoFuturo({
-    required this.fecha,
-    required this.lugar,
-    required this.hora,
-    required this.equipoRival,
     required this.notas,
   });
 }
