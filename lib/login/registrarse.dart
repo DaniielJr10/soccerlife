@@ -81,22 +81,22 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   /// Libera todos los recursos (controladores, nodos de foco) para evitar fugas de memoria.
   @override
   void dispose() {
-  _fadeController.dispose();
-  _slideController.dispose();
-  _pageController.dispose();
-  _emailController.dispose();
-  _nombreController.dispose();
-  _fechaNacimientoController.dispose();
-  _passwordController.dispose();
-  _confirmPasswordController.dispose();
-  _telefonoController.dispose();
-  _clubController.dispose();
-  _emailFocus.dispose();
-  _nombreFocus.dispose();
-  _passwordFocus.dispose();
-  _confirmPasswordFocus.dispose();
-  _telefonoFocus.dispose();
-  _clubFocus.dispose();
+    _fadeController.dispose();
+    _slideController.dispose();
+    _pageController.dispose();
+    _emailController.dispose();
+    _nombreController.dispose();
+    _fechaNacimientoController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _telefonoController.dispose();
+    _clubController.dispose();
+    _emailFocus.dispose();
+    _nombreFocus.dispose();
+    _passwordFocus.dispose();
+    _confirmPasswordFocus.dispose();
+    _telefonoFocus.dispose();
+    _clubFocus.dispose();
     super.dispose();
   }
 
@@ -289,27 +289,24 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               children: [
                 _buildFootballBackground(), // Fondo de pantalla.
                 SafeArea(
-                  child: CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const SizedBox(height: 40),
-                                _buildFloatingForm(), // Contenido principal del formulario.
-                                const SizedBox(height: 40),
-                              ],
-                            ),
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildFloatingForm(), // Contenido principal del formulario.
+                            ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -354,11 +351,11 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildPremiumHeader(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 4),
           _buildProgressIndicator(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           SizedBox(
-            height: 450, // Altura fija para el PageView que contiene los pasos.
+            height: 450, // Altura ajustada para el contenido del PageView
             child: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(), // Deshabilita el scroll por gesto.
@@ -368,34 +365,33 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           _buildNavigationButtons(),
         ],
       ),
     );
   }
 
-  /// Construye el encabezado con el logo, título y subtítulo (IGUAL QUE INICIO DE SESIÓN).
+  /// Construye el encabezado con el logo, título y subtítulo optimizado.
   Widget _buildPremiumHeader() {
     return Column(
       children: [
-        // Logo limpio y redondito flotando sobre tu imagen (IGUAL QUE INICIO DE SESIÓN)
+        // Logo ultra compacto
         Container(
-          width: 120,
-          height: 120,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(60),
-            // 🎯 Sombra sutil para que resalte sobre tu imagen de fondo
+            borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(60),
+            borderRadius: BorderRadius.circular(30),
             child: Image.asset(
               'images/logo.png',
               fit: BoxFit.cover,
@@ -403,9 +399,9 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           ),
         ),
         
-        const SizedBox(height: 24),
+        const SizedBox(height: 6),
         
-        // Título principal limpio y profesional (IGUAL QUE INICIO DE SESIÓN)
+        // Título principal ultra compacto
         Center(
           child: ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
@@ -418,26 +414,26 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             child: const Text(
               'Soccer Life',
               style: TextStyle(
-                fontSize: 36,
+                fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
-                letterSpacing: 2,
+                letterSpacing: 1.0,
               ),
             ),
           ),
         ),
         
-        const SizedBox(height: 8),
+        const SizedBox(height: 1),
         
-        // Subtítulo elegante y limpio
+        // Subtítulo ultra compacto
         Center(
           child: Text(
             'Crear Cuenta',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 11,
               color: Colors.white.withOpacity(0.8),
               fontWeight: FontWeight.w300,
-              letterSpacing: 1,
+              letterSpacing: 0.5,
             ),
           ),
         ),
@@ -513,95 +509,95 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   /// Construye los campos del formulario para la información personal (Paso 1).
   Widget _buildInformacionPersonal() {
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        children: [
-          _buildPremiumTextField(
-            controller: _nombreController,
-            focusNode: _nombreFocus,
-            label: 'Nombre',
-            hint: 'Tu nombre',
-            icon: Icons.person_outline,
-            validator: (v) => _validateRequired(v, 'El nombre'),
-            onFieldSubmitted: (_) => _selectDate(),
-          ),
-          const SizedBox(height: 16),
-          _buildPremiumTextField(
-            controller: _fechaNacimientoController,
-            label: 'Fecha de nacimiento',
-            hint: 'DD/MM/YYYY',
-            icon: Icons.calendar_today_outlined,
-            readOnly: true,
-            onTap: _selectDate,
-            validator: (v) => _fechaNacimiento == null ? 'Selecciona tu fecha' : null,
-          ),
-          const SizedBox(height: 16),
-          _buildPremiumTextField(
-            controller: _emailController,
-            focusNode: _emailFocus,
-            label: 'Correo electrónico',
-            hint: 'tu@email.com',
-            icon: Icons.email_outlined,
-            keyboardType: TextInputType.emailAddress,
-            validator: _validateEmail,
-            onFieldSubmitted: (_) => _telefonoFocus.requestFocus(),
-          ),
-          const SizedBox(height: 16),
-           _buildPremiumTextField(
-            controller: _telefonoController,
-            focusNode: _telefonoFocus,
-            label: 'Teléfono',
-            hint: '300 123 4567',
-            icon: Icons.phone_outlined,
-            keyboardType: TextInputType.phone,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            validator: _validatePhone,
-            onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
-          ),
-          const SizedBox(height: 16),
-          _buildPremiumTextField(
-            controller: _passwordController,
-            focusNode: _passwordFocus,
-            label: 'Contraseña',
-            hint: 'Mínimo 8 caracteres',
-            icon: Icons.lock_outline,
-            obscureText: _obscurePassword,
-            validator: _validatePassword,
-            onFieldSubmitted: (_) => _confirmPasswordFocus.requestFocus(),
-            suffixIcon: _buildObscureToggle(
-              () => setState(() => _obscurePassword = !_obscurePassword),
-              _obscurePassword,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16, bottom: 16),
+        child: Column(
+          children: [
+            _buildPremiumTextField(
+              controller: _nombreController,
+              focusNode: _nombreFocus,
+              label: 'Nombre',
+              hint: 'Tu nombre',
+              icon: Icons.person_outline,
+              validator: (v) => _validateRequired(v, 'El nombre'),
+              onFieldSubmitted: (_) => _selectDate(),
             ),
-          ),
-          const SizedBox(height: 16),
-          _buildPremiumTextField(
-            controller: _confirmPasswordController,
-            focusNode: _confirmPasswordFocus,
-            label: 'Confirmar contraseña',
-            hint: 'Repite tu contraseña',
-            icon: Icons.lock_outline,
-            obscureText: _obscureConfirmPassword,
-            validator: _validateConfirmPassword,
-            suffixIcon: _buildObscureToggle(
-              () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-              _obscureConfirmPassword,
+            const SizedBox(height: 12),
+            _buildPremiumTextField(
+              controller: _fechaNacimientoController,
+              label: 'Fecha de nacimiento',
+              hint: 'DD/MM/YYYY',
+              icon: Icons.calendar_today_outlined,
+              readOnly: true,
+              onTap: _selectDate,
+              validator: (v) => _fechaNacimiento == null ? 'Selecciona tu fecha' : null,
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            _buildPremiumTextField(
+              controller: _emailController,
+              focusNode: _emailFocus,
+              label: 'Correo electrónico',
+              hint: 'tu@email.com',
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              validator: _validateEmail,
+              onFieldSubmitted: (_) => _telefonoFocus.requestFocus(),
+            ),
+            const SizedBox(height: 12),
+             _buildPremiumTextField(
+              controller: _telefonoController,
+              focusNode: _telefonoFocus,
+              label: 'Teléfono',
+              hint: '300 123 4567',
+              icon: Icons.phone_outlined,
+              keyboardType: TextInputType.phone,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              validator: _validatePhone,
+              onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
+            ),
+            const SizedBox(height: 12),
+            _buildPremiumTextField(
+              controller: _passwordController,
+              focusNode: _passwordFocus,
+              label: 'Contraseña',
+              hint: 'Mínimo 8 caracteres',
+              icon: Icons.lock_outline,
+              obscureText: _obscurePassword,
+              validator: _validatePassword,
+              onFieldSubmitted: (_) => _confirmPasswordFocus.requestFocus(),
+              suffixIcon: _buildObscureToggle(
+                () => setState(() => _obscurePassword = !_obscurePassword),
+                _obscurePassword,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildPremiumTextField(
+              controller: _confirmPasswordController,
+              focusNode: _confirmPasswordFocus,
+              label: 'Confirmar contraseña',
+              hint: 'Repite tu contraseña',
+              icon: Icons.lock_outline,
+              obscureText: _obscureConfirmPassword,
+              validator: _validateConfirmPassword,
+              suffixIcon: _buildObscureToggle(
+                () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                _obscureConfirmPassword,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   /// Construye los campos del formulario para la información deportiva (Paso 2).
   Widget _buildInformacionDeportiva() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(top: 8),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
       child: Column(
         children: [
           _buildPremiumDropdown(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildPremiumTextField(
             controller: _clubController,
             focusNode: _clubFocus,
@@ -623,7 +619,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           text: _currentStep == 0 ? 'Siguiente' : 'Crear mi cuenta',
           isLoading: _isLoading,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 6),
         // Muestra el botón "Anterior" solo en el segundo paso.
         if (_currentStep == 1)
           _buildGlassButton(
@@ -696,7 +692,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           ),
           hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
         ),
       ),
@@ -726,6 +722,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         ),
         filled: true,
         fillColor: Colors.black.withOpacity(0.2),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
@@ -765,7 +762,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      height: 56,
+      height: 48,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -811,7 +808,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   /// Construye un botón secundario con efecto de cristal.
   Widget _buildGlassButton({required VoidCallback onTap, required String text}) {
     return SizedBox(
-      height: 56,
+      height: 48,
       width: double.infinity,
       child: Material(
         color: Colors.transparent,
