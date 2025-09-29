@@ -98,22 +98,20 @@ class _PrincipalPageState extends State<PrincipalPage> {
   /// Incluye: AppBar, tarjeta de bienvenida, estadísticas, funciones y actividad
   Widget _buildHomeTab() {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Tarjeta de bienvenida del usuario
-            _buildWelcomeCard(),
-            const SizedBox(height: 20),
-            // Estadísticas rápidas (goles, asistencias, partidos)
-            _buildQuickStats(),
-            const SizedBox(height: 20),
-            // Grid de funciones principales
-            _buildMainFeatures(),
-            // Eliminado: Actividad reciente
-          ],
-        ),
+      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 100.0), // Agregamos padding bottom para el BottomNavigationBar
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Tarjeta de bienvenida del usuario
+          _buildWelcomeCard(),
+          const SizedBox(height: 16),
+          // Estadísticas rápidas (goles, asistencias, partidos)
+          _buildQuickStats(),
+          const SizedBox(height: 16),
+          // Grid de funciones principales
+          _buildMainFeatures(),
+          // Eliminado: Actividad reciente
+        ],
       ),
     );
   }
@@ -127,7 +125,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
   Widget _buildWelcomeCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         // Gradiente azul para destacar la tarjeta
         gradient: LinearGradient(
@@ -145,48 +143,42 @@ class _PrincipalPageState extends State<PrincipalPage> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              // Avatar del usuario con ícono de fútbol
-              const CircleAvatar(
-                radius: 25,
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.sports_soccer,
-                  color: Colors.blue,
-                  size: 30,
+          // Avatar del usuario con ícono de fútbol
+          const CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white,
+            child: Icon(
+              Icons.sports_soccer,
+              color: Colors.blue,
+              size: 26,
+            ),
+          ),
+          const SizedBox(width: 12),
+          
+          // Mensajes de bienvenida
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '¡Bienvenido Daniel Jr',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 15),
-              
-              // Mensajes de bienvenida
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '¡Bienvenido Daniel Jr',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Continúa tu viaje futbolístico',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                Text(
+                  'Continúa tu viaje futbolístico',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                  ),
                 ),
-              ),
-              
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -205,21 +197,21 @@ class _PrincipalPageState extends State<PrincipalPage> {
         const Text(
           'Estadísticas Rápidas',
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Color(0xFF222B45),
             letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         // Grid de 2x2 con tarjetas premium
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.3,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.4,
           children: [
             _buildPremiumStatCard(
               title: 'Partidos',
@@ -282,28 +274,28 @@ class _PrincipalPageState extends State<PrincipalPage> {
     return Container(
       decoration: BoxDecoration(
         gradient: gradient,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.18),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.18),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            padding: const EdgeInsets.all(10),
-            child: Icon(icon, color: Colors.white, size: 30),
+            padding: const EdgeInsets.all(8),
+            child: Icon(icon, color: Colors.white, size: 24),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,17 +305,17 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   value,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 26,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 1.0,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   title,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.2,
                   ),
@@ -349,21 +341,21 @@ class _PrincipalPageState extends State<PrincipalPage> {
         const Text(
           'Funciones Principales',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         
         // Grid de 2x2 con las funciones principales
         GridView.count(
           shrinkWrap: true, // Para que no ocupe más espacio del necesario
           physics: const NeverScrollableScrollPhysics(), // Deshabilitar scroll propio
           crossAxisCount: 2, // 2 columnas
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1.2, // Proporción ancho/alto de cada tarjeta
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1.3, // Proporción ancho/alto de cada tarjeta
           children: [
             _buildFeatureCard(
               'Entrenamientos',
@@ -417,7 +409,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -425,7 +417,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
-              blurRadius: 8,
+              blurRadius: 6,
               offset: const Offset(0, 2),
             ),
           ],
@@ -435,33 +427,35 @@ class _PrincipalPageState extends State<PrincipalPage> {
           children: [
             // Contenedor del ícono con fondo coloreado
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: color, size: 28),
+              child: Icon(icon, color: color, size: 24),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             
             // Título de la función
             Text(
               title,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             
             // Descripción de la función
             Text(
               description,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Colors.grey,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

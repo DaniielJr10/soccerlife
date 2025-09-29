@@ -203,12 +203,15 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Partidos Jugados',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Flexible(
+                    child: Text(
+                      'Partidos Jugados',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -240,12 +243,15 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'Partidos Futuros',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[600],
+                    Flexible(
+                      child: Text(
+                        'Partidos Futuros',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600],
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -294,12 +300,15 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             children: [
               Icon(icon, color: Colors.white, size: 24),
               const SizedBox(width: 10),
-              Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -321,11 +330,17 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             color: Colors.grey[400],
           ),
           const SizedBox(height: 20),
-          Text(
-            message,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
             ),
           ),
         ],
@@ -368,6 +383,8 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[800],
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
               Text(
@@ -435,6 +452,8 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                 fontSize: 14,
                 color: Colors.grey[800],
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: value.length > 50 ? 2 : 1,
             ),
           ),
         ],
@@ -445,250 +464,228 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   // Muestra el formulario para registrar partido jugado
   void _mostrarFormularioPartidoJugado() {
     _limpiarFormularioJugado();
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => _buildFormularioPartidoJugado(),
     );
   }
 
   // Formulario de partido jugado
   Widget _buildFormularioPartidoJugado() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Handle del modal
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            width: 50,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Registrar Partido Jugado',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+    return Dialog(
+      insetPadding: const EdgeInsets.all(16),
+      child: Container(
+        width: double.maxFinite,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0065F8),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Registrar Partido',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close, color: Colors.grey[600]),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  ),
+                ],
+              ),
             ),
-          ),
-          // Formulario
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Form(
-                key: _formJugadoKey,
-                child: Column(
-                  children: [
-                    _buildDateField(
-                      'Fecha del partido',
-                      _fechaJugadoController,
-                      () => _selectDateJugado(),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Equipo contrario',
-                      _equipoContrarioJugadoController,
-                      'Nombre del equipo rival',
-                      Icons.groups,
-                      validator: _validateRequired,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextField(
-                            'Goles a favor',
-                            _golesAFavorController,
-                            '0',
-                            Icons.sports_soccer,
-                            keyboardType: TextInputType.number,
-                            validator: _validateNumber,
+            // Formulario scrollable
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Form(
+                  key: _formJugadoKey,
+                  child: Column(
+                    children: [
+                      _buildCompactField(
+                        'Fecha',
+                        _fechaJugadoController,
+                        Icons.calendar_today,
+                        readOnly: true,
+                        onTap: () => _selectDateJugado(),
+                        validator: (value) => value?.isEmpty ?? true ? 'Requerido' : null,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Equipo contrario',
+                        _equipoContrarioJugadoController,
+                        Icons.groups,
+                        validator: _validateRequired,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildCompactField(
+                              'Goles a favor',
+                              _golesAFavorController,
+                              Icons.sports_soccer,
+                              keyboardType: TextInputType.number,
+                              validator: _validateNumber,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildTextField(
-                            'Goles en contra',
-                            _golesEnContraController,
-                            '0',
-                            Icons.sports_soccer,
-                            keyboardType: TextInputType.number,
-                            validator: _validateNumber,
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: _buildCompactField(
+                              'Goles en contra',
+                              _golesEnContraController,
+                              Icons.sports_soccer,
+                              keyboardType: TextInputType.number,
+                              validator: _validateNumber,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Minutos jugados',
-                      _minutosJugadosController,
-                      '90',
-                      Icons.timer,
-                      keyboardType: TextInputType.number,
-                      validator: _validateMinutes,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      'Posición jugada',
-                      _posicionSeleccionada,
-                      _posiciones,
-                      (value) => setState(() => _posicionSeleccionada = value),
-                      Icons.person,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextField(
-                            'Goles anotados',
-                            _golesAnotadosController,
-                            '0',
-                            Icons.sports_soccer,
-                            keyboardType: TextInputType.number,
-                            validator: _validateNumber,
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Minutos',
+                        _minutosJugadosController,
+                        Icons.timer,
+                        keyboardType: TextInputType.number,
+                        validator: _validateMinutes,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactDropdown(
+                        'Posición',
+                        _posicionSeleccionada,
+                        _posiciones,
+                        (value) => setState(() => _posicionSeleccionada = value),
+                        Icons.person,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildCompactField(
+                              'Goles',
+                              _golesAnotadosController,
+                              Icons.sports_soccer,
+                              keyboardType: TextInputType.number,
+                              validator: _validateNumber,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildTextField(
-                            'Asistencias',
-                            _asistenciasController,
-                            '0',
-                            Icons.sports_soccer,
-                            keyboardType: TextInputType.number,
-                            validator: _validateNumber,
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: _buildCompactField(
+                              'Asistencias',
+                              _asistenciasController,
+                              Icons.sports_soccer,
+                              keyboardType: TextInputType.number,
+                              validator: _validateNumber,
+                            ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactDropdown(
+                        'Tarjetas',
+                        _tarjetasSeleccionadas,
+                        _tarjetas,
+                        (value) => setState(() => _tarjetasSeleccionadas = value),
+                        Icons.credit_card,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Notas',
+                        _notasJugadoController,
+                        Icons.note,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: _guardarPartidoJugado,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0065F8),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text('Guardar', style: TextStyle(fontSize: 14)),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      'Tarjetas recibidas',
-                      _tarjetasSeleccionadas,
-                      _tarjetas,
-                      (value) => setState(() => _tarjetasSeleccionadas = value),
-                      Icons.credit_card,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Notas adicionales',
-                      _notasJugadoController,
-                      'Comentarios del partido...',
-                      Icons.note,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 30),
-                    _buildSubmitButton('Guardar Partido', _guardarPartidoJugado),
-                    const SizedBox(height: 20),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // Campo de texto personalizado
-  Widget _buildTextField(
+  // Campo compacto para el Dialog
+  Widget _buildCompactField(
     String label,
     TextEditingController controller,
-    String hint,
     IconData icon, {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     int maxLines = 1,
+    bool readOnly = false,
+    VoidCallback? onTap,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
       maxLines: maxLines,
-      style: TextStyle(color: Colors.grey[800]),
+      readOnly: readOnly,
+      onTap: onTap,
+      style: const TextStyle(fontSize: 12),
       decoration: InputDecoration(
         labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon, color: const Color(0xFF0065F8)),
-        labelStyle: const TextStyle(color: Color(0xFF0065F8)),
-        hintStyle: TextStyle(color: Colors.grey[500]),
+        prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
+        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF0065F8)),
         filled: true,
         fillColor: Colors.grey[50],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           borderSide: const BorderSide(color: Color(0xFF0065F8)),
         ),
-        errorStyle: const TextStyle(color: Colors.red),
+        errorStyle: const TextStyle(fontSize: 10),
+        isDense: true,
       ),
     );
   }
 
-  // Campo de fecha
-  Widget _buildDateField(String label, TextEditingController controller, VoidCallback onTap) {
-    return TextFormField(
-      controller: controller,
-      readOnly: true,
-      onTap: onTap,
-      validator: (value) => value?.isEmpty ?? true ? 'Selecciona una fecha' : null,
-      style: TextStyle(color: Colors.grey[800]),
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: 'Seleccionar fecha',
-        prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF0065F8)),
-        suffixIcon: const Icon(Icons.arrow_drop_down, color: Color(0xFF0065F8)),
-        labelStyle: const TextStyle(color: Color(0xFF0065F8)),
-        hintStyle: TextStyle(color: Colors.grey[500]),
-        filled: true,
-        fillColor: Colors.grey[50],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF1E3A8A)),
-        ),
-        errorStyle: const TextStyle(color: Colors.red),
-      ),
-    );
-  }
-
-  // Campo dropdown personalizado
-  Widget _buildDropdownField(
+  // Dropdown compacto para el Dialog
+  Widget _buildCompactDropdown(
     String label,
     String? value,
     List<String> items,
@@ -698,67 +695,32 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     return DropdownButtonFormField<String>(
       value: value,
       onChanged: onChanged,
-      validator: (value) => value == null ? 'Selecciona una opción' : null,
-      dropdownColor: Colors.white,
-      style: TextStyle(color: Colors.grey[800]),
+      validator: (value) => value == null ? 'Requerido' : null,
+      style: const TextStyle(fontSize: 12, color: Colors.black87),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF0065F8)),
-        labelStyle: const TextStyle(color: Color(0xFF0065F8)),
+        prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
+        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF0065F8)),
         filled: true,
         fillColor: Colors.grey[50],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           borderSide: const BorderSide(color: Color(0xFF0065F8)),
         ),
-        errorStyle: const TextStyle(color: Colors.red),
+        errorStyle: const TextStyle(fontSize: 10),
+        isDense: true,
       ),
       items: items.map((item) {
         return DropdownMenuItem(
           value: item,
-          child: Text(item),
+          child: Text(item, style: const TextStyle(fontSize: 12)),
         );
       }).toList(),
-    );
-  }
-
-  // Botón de envío
-  Widget _buildSubmitButton(String text, VoidCallback onPressed) {
-    return Container(
-      width: double.infinity,
-      height: 50,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: const Color(0xFF0065F8),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(15),
-          child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -900,8 +862,17 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: Text(titulo, style: TextStyle(color: Colors.grey[800])),
-        content: Text(mensaje, style: TextStyle(color: Colors.grey[600])),
+        title: Text(
+          titulo, 
+          style: TextStyle(color: Colors.grey[800]),
+          overflow: TextOverflow.ellipsis,
+        ),
+        content: Text(
+          mensaje, 
+          style: TextStyle(color: Colors.grey[600]),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 3,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
