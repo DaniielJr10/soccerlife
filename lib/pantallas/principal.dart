@@ -1,7 +1,39 @@
 import 'package:flutter/material.dart';
 import 'partidos/partidosjugados.dart';
+import 'partidos/partidosfuturos.dart';
 import 'entrenamientos/anteriores.dart';
+import 'entrenamientos/proximos.dart';
 import 'perfil.dart';
+
+/// Modelo simple para partido próximo
+class PartidoProximo {
+  final DateTime fecha;
+  final String equipoRival;
+  final String lugar;
+  final TimeOfDay hora;
+
+  PartidoProximo({
+    required this.fecha,
+    required this.equipoRival,
+    required this.lugar,
+    required this.hora,
+  });
+}
+
+/// Modelo simple para entrenamiento próximo
+class EntrenamientoProximo {
+  final DateTime fecha;
+  final String tipo;
+  final String objetivos;
+  final String ubicacion;
+
+  EntrenamientoProximo({
+    required this.fecha,
+    required this.tipo,
+    required this.objetivos,
+    required this.ubicacion,
+  });
+}
 
 /// Pantalla principal de Soccer Life
 /// 
@@ -27,6 +59,24 @@ class _PrincipalPageState extends State<PrincipalPage> {
   /// Índice de la pestaña seleccionada en el bottom navigation
   /// 0: Inicio, 1: Partidos, 2: Entrenamientos, 3: Estadísticas, 4: Perfil
   int _selectedIndex = 0;
+
+  // ===== DATOS DE EJEMPLO =====
+  
+  /// Próximo partido programado
+  final PartidoProximo _proximoPartido = PartidoProximo(
+    fecha: DateTime.now().add(const Duration(days: 3)),
+    equipoRival: 'Valencia CF',
+    lugar: 'Estadio Santiago Bernabéu',
+    hora: const TimeOfDay(hour: 16, minute: 0),
+  );
+  
+  /// Próximo entrenamiento programado
+  final EntrenamientoProximo _proximoEntrenamiento = EntrenamientoProximo(
+    fecha: DateTime.now().add(const Duration(days: 2)),
+    tipo: 'Técnico',
+    objetivos: 'Centros y remates',
+    ubicacion: 'Campo principal',
+  );
 
   // ===== MÉTODOS PARA CONTENIDO DE TABS =====
 
@@ -107,15 +157,287 @@ class _PrincipalPageState extends State<PrincipalPage> {
           // Tarjeta de bienvenida del usuario
           _buildWelcomeCard(),
           const SizedBox(height: 16),
+          // Próximo partido y entrenamiento
+          _buildProximosEventos(),
+          const SizedBox(height: 16),
           // Estadísticas rápidas (goles, asistencias, partidos)
           _buildQuickStats(),
-          const SizedBox(height: 16),
-          // Grid de funciones principales
-          _buildMainFeatures(),
-          // Eliminado: Actividad reciente
+          // Eliminado: Actividad reciente y Funciones principales
         ],
       ),
     );
+  }
+
+  // ===== CONSTRUCCIÓN DE PRÓXIMOS EVENTOS =====
+  
+  /// Crea la sección de próximos eventos (partido y entrenamiento)
+  Widget _buildProximosEventos() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Título de la sección
+        const Text(
+          'Próximos Eventos',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF222B45),
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Row con las dos tarjetas
+        Row(
+          children: [
+            Expanded(child: _buildProximoPartidoCard()),
+            const SizedBox(width: 12),
+            Expanded(child: _buildProximoEntrenamientoCard()),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Construye la tarjeta del próximo partido
+  Widget _buildProximoPartidoCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PartidosFuturosPage()),
+        );
+      },
+      child: Container(
+        height: 120,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF667eea).withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Header con ícono
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.sports_soccer,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Partido',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            
+            // Información del partido
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _proximoPartido.equipoRival,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatearFecha(_proximoPartido.fecha),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 11,
+                    ),
+                  ),
+                  Text(
+                    _proximoPartido.hora.format(context),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                    ),
+                  ),
+                  Text(
+                    _proximoPartido.lugar,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Construye la tarjeta del próximo entrenamiento
+  Widget _buildProximoEntrenamientoCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EntrenamientosProximosPage()),
+        );
+      },
+      child: Container(
+        height: 120,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF00b09b), Color(0xFF96c93d)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00b09b).withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Header con ícono
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.fitness_center,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Entrenamiento',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            
+            // Información del entrenamiento
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _proximoEntrenamiento.tipo,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatearFecha(_proximoEntrenamiento.fecha),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 11,
+                    ),
+                  ),
+                  Text(
+                    _proximoEntrenamiento.objetivos,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    _proximoEntrenamiento.ubicacion,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Formatea una fecha para mostrar de manera amigable
+  String _formatearFecha(DateTime fecha) {
+    final ahora = DateTime.now();
+    final diferencia = fecha.difference(ahora).inDays;
+    
+    if (diferencia == 0) {
+      return 'Hoy';
+    } else if (diferencia == 1) {
+      return 'Mañana';
+    } else if (diferencia == 2) {
+      return 'Pasado mañana';
+    } else {
+      final meses = [
+        'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+        'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+      ];
+      return '${fecha.day} ${meses[fecha.month - 1]}';
+    }
   }
 
   // ===== APPBAR ELIMINADO =====
@@ -330,140 +652,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-
-  // ===== CONSTRUCCIÓN DE FUNCIONES PRINCIPALES =====
-  
-  /// Crea el grid de funciones principales de la aplicación
-  /// Incluye: Entrenamientos, Partidos, Estadísticas y Objetivos
-  Widget _buildMainFeatures() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Título de la sección
-        const Text(
-          'Funciones Principales',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 10),
-        
-        // Grid de 2x2 con las funciones principales
-        GridView.count(
-          shrinkWrap: true, // Para que no ocupe más espacio del necesario
-          physics: const NeverScrollableScrollPhysics(), // Deshabilitar scroll propio
-          crossAxisCount: 2, // 2 columnas
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 1.3, // Proporción ancho/alto de cada tarjeta
-          children: [
-            _buildFeatureCard(
-              'Entrenamientos',
-              'Registra y programa tus sesiones',
-              Icons.fitness_center,
-              Colors.green,
-              () {
-                setState(() => _selectedIndex = 2);
-              },
-            ),
-            _buildFeatureCard(
-              'Partidos',
-              'Gestiona tu calendario de juegos',
-              Icons.sports_soccer,
-              Colors.blue,
-              () {
-                setState(() => _selectedIndex = 1);
-              },
-            ),
-            _buildFeatureCard(
-              'Estadísticas',
-              'Analiza tu rendimiento',
-              Icons.analytics,
-              Colors.purple,
-              () {
-                // TODO: Navegar a pantalla de estadísticas
-              },
-            ),
-            _buildFeatureCard(
-              'Objetivos',
-              'Establece y sigue tus metas',
-              Icons.flag,
-              Colors.orange,
-              () {
-                // TODO: Navegar a pantalla de objetivos
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  /// Construye una tarjeta de función principal clickeable
-  /// [title] - Título de la función (ej: "Entrenamientos")
-  /// [description] - Descripción breve de la función
-  /// [icon] - Ícono representativo
-  /// [color] - Color del tema de la tarjeta
-  /// [onTap] - Función a ejecutar al tocar la tarjeta
-  Widget _buildFeatureCard(String title, String description, IconData icon, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          // Sombra para efecto de elevación
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Contenedor del ícono con fondo coloreado
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const SizedBox(height: 8),
-            
-            // Título de la función
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 2),
-            
-            // Descripción de la función
-            Text(
-              description,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Colors.grey,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   // ===== ACTIVIDAD RECIENTE ELIMINADA =====
 
