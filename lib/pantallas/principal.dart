@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'partidos/partidosjugados.dart';
+import 'perfil.dart';
 
 /// Pantalla principal de Soccer Life
 /// 
@@ -40,7 +41,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
       case 3:
         return _buildOtherTab('Estadísticas');
       case 4:
-        return _buildOtherTab('Perfil');
+        return const PerfilPage();
       default:
         return _buildHomeTab();
     }
