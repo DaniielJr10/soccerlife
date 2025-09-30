@@ -107,10 +107,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false, // Eliminar botón de volver automático
         title: Text(
           'Entrenamientos Anteriores',
           style: TextStyle(
@@ -686,7 +683,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
                   child: ElevatedButton(
                     onPressed: () => _guardarEntrenamiento(esEdicion, index),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
+                      backgroundColor: esEdicion ? const Color(0xFF0065F8) : const Color(0xFF0065F8),
                     ),
                     child: Text(
                       esEdicion ? 'Actualizar' : 'Guardar',
@@ -745,7 +742,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
           content: Text(esEdicion 
             ? 'Entrenamiento actualizado correctamente' 
             : 'Entrenamiento registrado correctamente'),
-          backgroundColor: const Color(0xFF4CAF50),
+          backgroundColor: const Color(0xFF0065F8),
         ),
       );
     }

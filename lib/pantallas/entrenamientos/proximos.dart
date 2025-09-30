@@ -621,7 +621,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                   child: ElevatedButton(
                     onPressed: () => _guardarEntrenamiento(esEdicion, index),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
+                      backgroundColor: const Color(0xFF0065F8),
                     ),
                     child: Text(
                       esEdicion ? 'Actualizar' : 'Guardar',
@@ -679,7 +679,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
           content: Text(esEdicion 
             ? 'Entrenamiento actualizado correctamente' 
             : 'Entrenamiento planificado correctamente'),
-          backgroundColor: const Color(0xFF4CAF50),
+          backgroundColor: const Color(0xFF0065F8),
         ),
       );
     }

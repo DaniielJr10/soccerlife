@@ -111,10 +111,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false, // Eliminar botón de volver automático
         title: Text(
           'Partidos Jugados',
           style: TextStyle(
@@ -417,6 +414,10 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
+                onPressed: () => _editarPartidoJugado(partido, index),
+                icon: const Icon(Icons.edit, color: Color(0xFF0065F8)),
+              ),
+              IconButton(
                 onPressed: () => _eliminarPartidoJugado(index),
                 icon: const Icon(Icons.delete, color: Colors.red),
               ),
@@ -462,16 +463,20 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   }
 
   // Muestra el formulario para registrar partido jugado
-  void _mostrarFormularioPartidoJugado() {
-    _limpiarFormularioJugado();
+  void _mostrarFormularioPartidoJugado([PartidoJugado? partido, int? index]) {
+    if (partido != null) {
+      _cargarDatosPartidoJugado(partido);
+    } else {
+      _limpiarFormularioJugado();
+    }
     showDialog(
       context: context,
-      builder: (context) => _buildFormularioPartidoJugado(),
+      builder: (context) => _buildFormularioPartidoJugado(partido, index),
     );
   }
 
   // Formulario de partido jugado
-  Widget _buildFormularioPartidoJugado() {
+  Widget _buildFormularioPartidoJugado([PartidoJugado? partido, int? index]) {
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       child: Container(
@@ -497,7 +502,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Registrar Partido',
+                      partido != null ? 'Editar Partido' : 'Registrar Partido',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -622,7 +627,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                         width: double.infinity,
                         height: 36,
                         child: ElevatedButton(
-                          onPressed: _guardarPartidoJugado,
+                          onPressed: () => _guardarPartidoJugado(partidoEditar: partido, index: index),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF0065F8),
                             foregroundColor: Colors.white,
@@ -630,7 +635,10 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text('Guardar', style: TextStyle(fontSize: 14)),
+                          child: Text(
+                            partido != null ? 'Actualizar' : 'Guardar',
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
                       ),
                     ],
@@ -789,7 +797,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   }
 
   // Método de guardado
-  void _guardarPartidoJugado() {
+  void _guardarPartidoJugado({PartidoJugado? partidoEditar, int? index}) {
     if (_formJugadoKey.currentState?.validate() ?? false) {
       final partido = PartidoJugado(
         fecha: _fechaPartidoJugado!,
@@ -805,12 +813,20 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       );
 
       setState(() {
-        _partidosJugados.add(partido);
+        if (partidoEditar != null && index != null) {
+          // Editar partido existente
+          _partidosJugados[index] = partido;
+        } else {
+          // Agregar nuevo partido
+          _partidosJugados.add(partido);
+        }
         _partidosJugados.sort((a, b) => b.fecha.compareTo(a.fecha));
       });
 
       Navigator.pop(context);
-      _mostrarMensajeExito('Partido registrado correctamente');
+      _mostrarMensajeExito(
+        partidoEditar != null ? 'Partido actualizado correctamente' : 'Partido registrado correctamente'
+      );
     }
   }
 
@@ -826,6 +842,25 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
         _mostrarMensajeExito('Partido eliminado');
       },
     );
+  }
+
+  // Métodos de edición
+  void _editarPartidoJugado(PartidoJugado partido, int index) {
+    _mostrarFormularioPartidoJugado(partido, index);
+  }
+
+  void _cargarDatosPartidoJugado(PartidoJugado partido) {
+    _fechaPartidoJugado = partido.fecha;
+    _fechaJugadoController.text = _formatDate(partido.fecha);
+    _equipoContrarioJugadoController.text = partido.equipoContrario;
+    _golesAFavorController.text = partido.golesAFavor.toString();
+    _golesEnContraController.text = partido.golesEnContra.toString();
+    _minutosJugadosController.text = partido.minutosJugados.toString();
+    _posicionSeleccionada = partido.posicion;
+    _golesAnotadosController.text = partido.golesAnotados.toString();
+    _asistenciasController.text = partido.asistencias.toString();
+    _tarjetasSeleccionadas = partido.tarjetas;
+    _notasJugadoController.text = partido.notas;
   }
 
   // Métodos auxiliares
