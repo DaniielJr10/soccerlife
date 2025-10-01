@@ -195,62 +195,17 @@ class _PrincipalPageState extends State<PrincipalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Fondo oscuro con imagen y overlay degradado, igual que login
-      backgroundColor: Colors.black,
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // Fondo con imagen y overlay degradado
-          _buildFootballBackground(),
-          SafeArea(
-            child: _buildTabContent(),
-          ),
-        ],
+      backgroundColor: const Color(0xFFF8F9FA), // Fondo claro
+      body: SafeArea(
+        child: _buildTabContent(),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  /// Fondo visual igual al login
-  Widget _buildFootballBackground() {
-    return Stack(
-      children: [
-        // Imagen de fondo
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('images/championsfondo.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        // Filtro blur premium
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Container(
-              color: Colors.black.withOpacity(0.15), // Sutil para dejar ver el fondo
-            ),
-          ),
-        ),
-        // Overlay degradado más translúcido y notorio
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withOpacity(0.45),
-                Colors.black.withOpacity(0.7),
-                Colors.black.withOpacity(0.92),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // El fondo visual oscuro ha sido eliminado para un tema claro
+  // Si se desea un fondo claro con imagen, se puede agregar aquí una versión clara
+  // pero por ahora se omite para mantener el diseño limpio y claro.
 
   // ===== CONSTRUCCIÓN DE LA PESTAÑA PRINCIPAL (INICIO) =====
   
@@ -283,128 +238,92 @@ class _PrincipalPageState extends State<PrincipalPage> {
   Widget _buildCartaJugador() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF00f5ff),
-            Color(0xFF00d4aa),
-            Color(0xFF00a8cc),
-          ],
-        ),
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.25),
-            blurRadius: 24,
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 18,
             offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
         children: [
-          // Avatar del jugador con rating
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              // Círculo del avatar
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+          // Avatar profesional con borde y sombra
+          Container(
+            width: 84,
+            height: 84,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFF4A90E2), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.10),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-                child: const Icon(
-                  Icons.person,
-                  color: Color(0xFF4A90E2),
-                  size: 40,
-                ),
+              ],
+              color: Colors.white,
+            ),
+            child: Center(
+              child: Icon(
+                Icons.person,
+                color: const Color(0xFF4A90E2),
+                size: 44,
               ),
-              // Badge del rating
-              Positioned(
-                bottom: -5,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    '${_perfilJugador.rating}',
-                    style: const TextStyle(
-                      color: Color(0xFF4A90E2),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(width: 16),
-          
+          const SizedBox(width: 20),
           // Información del jugador
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Nombre del jugador
                 Text(
                   _perfilJugador.nombre,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
+                    color: Color(0xFF2C3E50),
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Color(0xFFF5B041), size: 18),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${_perfilJugador.rating}',
+                      style: const TextStyle(
+                        color: Color(0xFF4A90E2),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(child: _buildInfoItem('Edad', '${_perfilJugador.edad}')),
+                    Expanded(child: _buildInfoItem('Número', '#${_perfilJugador.numero}')),
+                  ],
+                ),
                 const SizedBox(height: 4),
-                
-                // Información básica en grid
                 Row(
                   children: [
-                    Expanded(
-                      child: _buildInfoItem('Edad', '${_perfilJugador.edad}'),
-                    ),
-                    Expanded(
-                      child: _buildInfoItem('Número', '#${_perfilJugador.numero}'),
-                    ),
+                    Expanded(child: _buildInfoItem('Club', _perfilJugador.club)),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Row(
                   children: [
-                    Expanded(
-                      child: _buildInfoItem('Club', _perfilJugador.club),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInfoItem('Posición', _perfilJugador.posicion),
-                    ),
+                    Expanded(child: _buildInfoItem('Posición', _perfilJugador.posicion)),
                   ],
                 ),
               ],
@@ -424,7 +343,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.grey[600],
             fontSize: 11,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
@@ -433,7 +352,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: Color(0xFF2C3E50),
             fontSize: 14,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.3,
@@ -452,20 +371,13 @@ class _PrincipalPageState extends State<PrincipalPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Próximos Eventos',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF00f5ff),
+            color: Color(0xFF4A90E2),
             letterSpacing: 0.5,
-            shadows: [
-              Shadow(
-                offset: const Offset(1, 1),
-                blurRadius: 6,
-                color: Colors.black.withOpacity(0.7),
-              ),
-            ],
           ),
         ),
         const SizedBox(height: 12),
@@ -494,24 +406,16 @@ class _PrincipalPageState extends State<PrincipalPage> {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF00f5ff),
-              Color(0xFF00d4aa),
-              Color(0xFF00a8cc),
-            ],
-          ),
+          color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF00f5ff).withOpacity(0.18),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
+              color: Colors.black.withOpacity(0.07),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
           border: Border.all(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.grey.withOpacity(0.08),
             width: 1,
           ),
         ),
@@ -617,24 +521,16 @@ class _PrincipalPageState extends State<PrincipalPage> {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF00f5ff),
-              Color(0xFF00d4aa),
-              Color(0xFF00a8cc),
-            ],
-          ),
+          color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF00f5ff).withOpacity(0.18),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
+              color: Colors.black.withOpacity(0.07),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
           border: Border.all(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.grey.withOpacity(0.08),
             width: 1,
           ),
         ),
@@ -831,27 +727,20 @@ class _PrincipalPageState extends State<PrincipalPage> {
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withOpacity(0.85),
-            Colors.black.withOpacity(0.7),
-          ],
-        ),
+        borderRadius: BorderRadius.circular(18),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.25),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: Colors.white.withOpacity(0.08),
-          width: 1,
+          color: color.withOpacity(0.18),
+          width: 1.2,
         ),
       ),
       child: Column(
@@ -860,31 +749,24 @@ class _PrincipalPageState extends State<PrincipalPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(12),
+              color: color.withOpacity(0.10),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               icon,
               color: color,
-              size: 28,
+              size: 30,
             ),
           ),
           const SizedBox(height: 12),
           Flexible(
             child: Text(
               value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
+              style: const TextStyle(
+                color: Color(0xFF2C3E50),
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
-                shadows: [
-                  Shadow(
-                    offset: Offset(1, 1),
-                    blurRadius: 6,
-                    color: Colors.black.withOpacity(0.7),
-                  ),
-                ],
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -896,17 +778,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
             child: Text(
               title,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.85),
-                fontSize: 12,
+                color: color,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.2,
-                shadows: [
-                  Shadow(
-                    offset: Offset(1, 1),
-                    blurRadius: 4,
-                    color: Colors.black.withOpacity(0.5),
-                  ),
-                ],
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
