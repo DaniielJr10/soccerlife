@@ -624,22 +624,10 @@ class _PerfilPageState extends State<PerfilPage>
 
   /// Ejecuta el proceso de cierre de sesión
   void _performLogout(BuildContext context) {
-    // Aquí iría la lógica real de logout (limpiar tokens, etc.)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Cerrando sesión...'),
-        backgroundColor: Color(0xFFE74C3C),
-      ),
+    // Navegar directamente a la pantalla de inicio de sesión
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/login',
+      (route) => false,
     );
-    
-    // Simular navegación al login después de un delay
-    Future.delayed(const Duration(seconds: 2), () {
-      if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/login',
-          (route) => false,
-        );
-      }
-    });
   }
 }

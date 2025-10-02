@@ -21,21 +21,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       // ===== CONFIGURACIÓN BÁSICA DE LA APP =====
       title: 'Soccer Life',
-      
+
       // ===== CONFIGURACIÓN DEL TEMA =====
       theme: ThemeData(
-        // Paleta de colores basada en verde (color del fútbol)
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        // Usar Material Design 3 para componentes modernos
         useMaterial3: true,
       ),
-      
-      // ===== PANTALLA INICIAL =====
-      // La aplicación comienza con la pantalla de inicio de sesión
-      home: const InicioSesionPage(),
-      
+
+      // ===== RUTAS DE LA APP =====
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const InicioSesionPage(),
+        // Puedes agregar más rutas aquí si lo necesitas
+      },
+
       // ===== CONFIGURACIONES ADICIONALES =====
-      // Ocultar el banner de debug en la esquina superior derecha
       debugShowCheckedModeBanner: false,
     );
   }
