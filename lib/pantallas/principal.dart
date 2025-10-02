@@ -243,78 +243,113 @@ class _PrincipalPageState extends State<PrincipalPage> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          // Nombre del jugador
-          Text(
-            _perfilJugador.nombre,
-            style: const TextStyle(
+          // Avatar del jugador
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                _perfilJugador.nombre.substring(0, 2).toUpperCase(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  color: Color(0xFF0065F8),
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          
-          // Información en filas
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(width: 20),
+          // Información del jugador
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Nombre del jugador
+                Text(
+                  _perfilJugador.nombre,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                
+                // Información en dos columnas
+                Row(
                   children: [
-                    Text(
-                      'Club: ${_perfilJugador.club}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Posición: ${_perfilJugador.posicion}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Club: ${_perfilJugador.club}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Posición: ${_perfilJugador.posicion}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Edad: ${_perfilJugador.edad}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      'Dorsal: ${_perfilJugador.numero}',
+                const SizedBox(height: 8),
+                // Edad y Dorsal
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Edad: ${_perfilJugador.edad}',
                       style: const TextStyle(
-                        color: Color(0xFF0065F8),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Dorsal: ${_perfilJugador.numero}',
+                        style: const TextStyle(
+                          color: Color(0xFF0065F8),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -616,39 +651,35 @@ class _PrincipalPageState extends State<PrincipalPage> {
           ),
         ),
         const SizedBox(height: 16),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            return GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 1.4,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              children: [
-                _buildPremiumStatCard(
-                  title: 'Partidos',
-                  value: '24',
-                  icon: Icons.sports_basketball, // Icono de silbato/arbitro
-                ),
-                _buildPremiumStatCard(
-                  title: 'Goles',
-                  value: '15',
-                  icon: Icons.sports_soccer, // Icono de balón
-                ),
-                _buildPremiumStatCard(
-                  title: 'Asistencias',
-                  value: '7',
-                  icon: Icons.handshake,
-                ),
-                _buildPremiumStatCard(
-                  title: 'Entrenamientos',
-                  value: '30',
-                  icon: Icons.fitness_center,
-                ),
-              ],
-            );
-          },
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          childAspectRatio: 1.0, // Cambiado para cuadrados perfectos
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          children: [
+            _buildPremiumStatCard(
+              title: 'Partidos',
+              value: '24',
+              icon: Icons.sports_esports,
+            ),
+            _buildPremiumStatCard(
+              title: 'Goles',
+              value: '15',
+              icon: Icons.sports_soccer,
+            ),
+            _buildPremiumStatCard(
+              title: 'Asistencias',
+              value: '7',
+              icon: Icons.handshake,
+            ),
+            _buildPremiumStatCard(
+              title: 'Entrenamientos',
+              value: '30',
+              icon: Icons.fitness_center,
+            ),
+          ],
         ),
       ],
     );
@@ -661,7 +692,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -677,45 +707,47 @@ class _PrincipalPageState extends State<PrincipalPage> {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              color: const Color(0xFF0065F8).withOpacity(0.08),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: const Color(0xFF0065F8).withOpacity(0.08),
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF0065F8),
+                size: 20,
+              ),
             ),
-            child: Icon(
-              icon,
-              color: const Color(0xFF0065F8),
-              size: 28,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Flexible(
-            child: Text(
+            const SizedBox(height: 8),
+            Text(
               value,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 16,
                 color: Color(0xFF0065F8),
               ),
               textAlign: TextAlign.center,
             ),
-          ),
-          const SizedBox(height: 4),
-          Flexible(
-            child: Text(
+            const SizedBox(height: 4),
+            Text(
               title,
               style: const TextStyle(
                 color: Colors.black87,
-                fontSize: 14,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
