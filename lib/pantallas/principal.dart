@@ -5,6 +5,7 @@ import 'partidos/partidosfuturos.dart';
 import 'entrenamientos/anteriores.dart';
 import 'entrenamientos/proximos.dart';
 import 'perfil.dart';
+import 'estadisticas.dart';
 
 /// Modelo simple para partido próximo
 class PartidoProximo {
@@ -120,65 +121,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
       case 2:
         return const EntrenamientosAnterioresPage();
       case 3:
-        return _buildOtherTab('Estadísticas');
+        return const EstadisticasPage();
       case 4:
         return const PerfilPage();
       default:
         return _buildHomeTab();
     }
-  }
-
-  /// Construye el contenido para una pestaña en desarrollo
-  Widget _buildOtherTab(String nombre) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.white,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0065F8).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(
-                Icons.construction,
-                color: const Color(0xFF0065F8),
-                size: 48,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              nombre,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0065F8),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'En desarrollo',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF0065F8),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Esta funcionalidad estará disponible pronto',
-              style: TextStyle(
-                color: Colors.black.withOpacity(0.5),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   // ===== MÉTODO PRINCIPAL DE CONSTRUCCIÓN =====
