@@ -133,16 +133,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFF1a1a2e).withOpacity(0.95),
-            const Color(0xFF16213e).withOpacity(0.9),
-          ],
-        ),
-      ),
+      color: Colors.white,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -150,29 +141,13 @@ class _PrincipalPageState extends State<PrincipalPage> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black.withOpacity(0.4),
-                    Colors.black.withOpacity(0.3),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: const Color(0xFF00f5ff).withOpacity(0.3),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    blurRadius: 15,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                color: const Color(0xFF0065F8).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
                 Icons.construction,
-                size: 64,
-                color: const Color(0xFF00f5ff),
+                color: const Color(0xFF0065F8),
+                size: 48,
               ),
             ),
             const SizedBox(height: 24),
@@ -180,32 +155,23 @@ class _PrincipalPageState extends State<PrincipalPage> {
               nombre,
               style: const TextStyle(
                 fontSize: 24,
-                color: Colors.white,
                 fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    offset: Offset(1, 1),
-                    blurRadius: 4,
-                    color: Colors.black87,
-                  ),
-                ],
+                color: Color(0xFF0065F8),
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'En desarrollo',
               style: TextStyle(
-                fontSize: 16,
-                color: const Color(0xFF00f5ff).withOpacity(0.8),
                 fontWeight: FontWeight.w500,
+                color: Color(0xFF0065F8),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               'Esta funcionalidad estará disponible pronto',
               style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.black.withOpacity(0.5),
               ),
               textAlign: TextAlign.center,
             ),
@@ -220,223 +186,135 @@ class _PrincipalPageState extends State<PrincipalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // Fondo con imagen del estadio
-          _buildFootballBackground(),
-          // Contenido con SafeArea
-          SafeArea(
-            child: _buildTabContent(),
-          ),
-        ],
-      ),
+      body: SafeArea(child: _buildTabContent()),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  /// Crea el fondo de la pantalla con la imagen del estadio y un overlay oscuro
-  Widget _buildFootballBackground() {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('images/championsfondo.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.black.withOpacity(0.5),
-              Colors.black.withOpacity(0.3),
-              Colors.black.withOpacity(0.6),
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   // ===== CONSTRUCCIÓN DE LA PESTAÑA PRINCIPAL (INICIO) =====
   
-  /// Construye la pestaña de inicio con scroll personalizado
-  /// Incluye: AppBar, tarjeta de bienvenida, estadísticas, funciones y actividad
+  /// Construye la pestaña de inicio con scroll personalizado y diseño responsive
   Widget _buildHomeTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0), // Simplificado el padding
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Carta del jugador estilo FIFA
-          _buildCartaJugador(),
-          const SizedBox(height: 16),
-          // Próximo partido y entrenamiento
-          _buildProximosEventos(),
-          const SizedBox(height: 16),
-          // Estadísticas rápidas (goles, asistencias, partidos)
-          _buildQuickStats(),
-          // Padding extra para el bottom navigation
-          const SizedBox(height: 80),
-        ],
+    return Container(
+      color: Colors.white,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(
+          left: 20.0,
+          right: 20.0,
+          top: 20.0,
+          bottom: 100.0, // Espacio extra para la barra inferior
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Carta del jugador estilo FIFA
+            _buildCartaJugador(),
+            const SizedBox(height: 24),
+            // Próximo partido y entrenamiento
+            _buildProximosEventos(),
+            const SizedBox(height: 24),
+            // Estadísticas rápidas
+            _buildQuickStats(),
+          ],
+        ),
       ),
     );
   }
 
   // ===== CONSTRUCCIÓN DE LA CARTA DEL JUGADOR =====
   
-  /// Crea una carta de jugador estilo FIFA con información básica
+  /// Crea una carta de jugador con fondo azul
   Widget _buildCartaJugador() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          colors: [
-            Colors.black.withOpacity(0.4),
-            Colors.black.withOpacity(0.3),
-          ],
-        ),
-        border: Border.all(
-          color: const Color(0xFF00f5ff).withOpacity(0.3),
-          width: 1,
-        ),
+        color: const Color(0xFF0065F8),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: const Color(0xFF0065F8).withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar profesional con borde y sombra
-          Container(
-            width: 84,
-            height: 84,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF00f5ff), width: 3),
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF1a1a2e).withOpacity(0.9),
-                  const Color(0xFF16213e).withOpacity(0.8),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF00f5ff).withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                '${_perfilJugador.rating}',
-                style: const TextStyle(
-                  color: Color(0xFF00f5ff),
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
+          // Nombre del jugador
+          Text(
+            _perfilJugador.nombre,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 20),
-          // Información del jugador
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _perfilJugador.nombre,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                    shadows: [
-                      Shadow(
-                        offset: Offset(1, 1),
-                        blurRadius: 4,
-                        color: Colors.black87,
-                      ),
-                    ],
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Edad: ${_perfilJugador.edad}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _perfilJugador.club,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Row(
+          const SizedBox(height: 16),
+          
+          // Información en filas
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Posición: ',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
+                      'Club: ${_perfilJugador.club}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
                     Text(
-                      _perfilJugador.posicion,
+                      'Posición: ${_perfilJugador.posicion}',
                       style: const TextStyle(
-                        color: Color(0xFF00f5ff),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          // Número del jugador
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF00f5ff),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF00f5ff).withOpacity(0.4),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Text(
-              '#${_perfilJugador.numero}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
               ),
-            ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Edad: ${_perfilJugador.edad}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'Dorsal: ${_perfilJugador.numero}',
+                      style: const TextStyle(
+                        color: Color(0xFF0065F8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -455,15 +333,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFF0065F8),
             letterSpacing: 0.5,
-            shadows: [
-              Shadow(
-                offset: Offset(1, 1),
-                blurRadius: 4,
-                color: Colors.black87,
-              ),
-            ],
           ),
         ),
         const SizedBox(height: 12),
@@ -478,7 +349,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Construye la tarjeta del próximo partido
+  /// Construye la tarjeta del próximo partido con diseño mejorado
   Widget _buildProximoPartidoCard() {
     return GestureDetector(
       onTap: () {
@@ -488,25 +359,20 @@ class _PrincipalPageState extends State<PrincipalPage> {
         );
       },
       child: Container(
-        height: 160,
-        padding: const EdgeInsets.all(14),
+        height: 140,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF1a2332).withOpacity(0.9),
-              const Color(0xFF16213e).withOpacity(0.85),
-            ],
-          ),
           border: Border.all(
-            color: const Color(0xFF00f5ff).withOpacity(0.3),
+            color: const Color(0xFF0065F8).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -519,38 +385,30 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withOpacity(0.2),
-                        Colors.white.withOpacity(0.1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: const Color(0xFF0065F8).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.sports_soccer,
-                    color: Colors.white,
-                    size: 20,
+                    color: Color(0xFF0065F8),
+                    size: 18,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
+                const SizedBox(width: 8),
+                const Expanded(
                   child: Text(
-                    'Partido',
+                    'Próximo Partido',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 13,
+                      color: Color(0xFF0065F8),
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
+                      fontSize: 12,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            
-            const SizedBox(height: 10),
-            
+            const SizedBox(height: 12),
             // Información del partido
             Expanded(
               child: Column(
@@ -558,33 +416,43 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    '${_proximoPartido.equipoRival} vs ${_perfilJugador.club}',
+                    _proximoPartido.equipoRival,
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
+                      fontSize: 14,
+                      color: Color(0xFF0065F8),
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${_formatearFecha(_proximoPartido.fecha)} | ${_proximoPartido.hora.format(context)}',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
                   ),
                   Text(
                     _proximoPartido.lugar,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                      fontSize: 11,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 12,
+                        color: Colors.grey[500],
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          '${_formatearFecha(_proximoPartido.fecha)} • ${_proximoPartido.hora.format(context)}',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 10,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -595,7 +463,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Construye la tarjeta del próximo entrenamiento
+  /// Construye la tarjeta del próximo entrenamiento con diseño mejorado
   Widget _buildProximoEntrenamientoCard() {
     return GestureDetector(
       onTap: () {
@@ -605,25 +473,20 @@ class _PrincipalPageState extends State<PrincipalPage> {
         );
       },
       child: Container(
-        height: 160,
-        padding: const EdgeInsets.all(14),
+        height: 140,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF1a2332).withOpacity(0.9),
-              const Color(0xFF16213e).withOpacity(0.85),
-            ],
-          ),
           border: Border.all(
-            color: const Color(0xFF00f5ff).withOpacity(0.3),
+            color: const Color(0xFF0065F8).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -636,38 +499,30 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF00f5ff).withOpacity(0.3),
-                        const Color(0xFF00f5ff).withOpacity(0.2),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: const Color(0xFF0065F8).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.fitness_center,
-                    color: Color(0xFF00f5ff),
-                    size: 20,
+                    color: Color(0xFF0065F8),
+                    size: 18,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
+                const SizedBox(width: 8),
+                const Expanded(
                   child: Text(
-                    'Entrenamiento',
+                    'Próximo Entrenamiento',
                     style: TextStyle(
-                      color: const Color(0xFF00f5ff).withOpacity(0.9),
-                      fontSize: 13,
+                      color: Color(0xFF0065F8),
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
+                      fontSize: 12,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            
-            const SizedBox(height: 10),
-            
+            const SizedBox(height: 12),
             // Información del entrenamiento
             Expanded(
               child: Column(
@@ -677,28 +532,9 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   Text(
                     _proximoEntrenamiento.tipo,
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    _formatearFecha(_proximoEntrenamiento.fecha),
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    _proximoEntrenamiento.objetivos,
-                    style: TextStyle(
-                      color: const Color(0xFF00f5ff).withOpacity(0.8),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xFF0065F8),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -706,12 +542,31 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   Text(
                     _proximoEntrenamiento.ubicacion,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                      fontSize: 11,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 12,
+                        color: Colors.grey[500],
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          '${_formatearFecha(_proximoEntrenamiento.fecha)} • ${_proximoEntrenamiento.objetivos}',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 10,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -746,64 +601,50 @@ class _PrincipalPageState extends State<PrincipalPage> {
 
   // ===== CONSTRUCCIÓN DE ESTADÍSTICAS RÁPIDAS =====
   
-  /// Crea la sección de estadísticas rápidas con cuatro tarjetas premium en un grid 2x2
-  /// Muestra: Partidos, Goles, Asistencias y Entrenamientos
+  /// Crea la sección de estadísticas rápidas con diseño responsive mejorado
   Widget _buildQuickStats() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Estadísticas Clave',
+          'Estadísticas de la Temporada',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFF0065F8),
             letterSpacing: 0.5,
-            shadows: [
-              Shadow(
-                offset: Offset(1, 1),
-                blurRadius: 4,
-                color: Colors.black87,
-              ),
-            ],
           ),
         ),
         const SizedBox(height: 16),
         LayoutBuilder(
           builder: (context, constraints) {
-            double aspectRatio = 1.2;
-            if (constraints.maxWidth < 400) {
-              aspectRatio = 1.0;
-            } else if (constraints.maxWidth > 600) {
-              aspectRatio = 1.5;
-            }
             return GridView.count(
+              crossAxisCount: 2,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
+              childAspectRatio: 1.4,
               mainAxisSpacing: 12,
-              childAspectRatio: aspectRatio,
+              crossAxisSpacing: 12,
               children: [
                 _buildPremiumStatCard(
                   title: 'Partidos',
-                  value: '32',
-                  icon: Icons.emoji_events,
+                  value: '24',
+                  icon: Icons.sports_basketball, // Icono de silbato/arbitro
                 ),
                 _buildPremiumStatCard(
                   title: 'Goles',
-                  value: '24',
-                  icon: Icons.sports_soccer,
+                  value: '15',
+                  icon: Icons.sports_soccer, // Icono de balón
                 ),
                 _buildPremiumStatCard(
                   title: 'Asistencias',
-                  value: '18',
+                  value: '7',
                   icon: Icons.handshake,
                 ),
                 _buildPremiumStatCard(
                   title: 'Entrenamientos',
-                  value: '15',
-                  icon: Icons.track_changes,
+                  value: '30',
+                  icon: Icons.fitness_center,
                 ),
               ],
             );
@@ -813,31 +654,24 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Tarjeta premium para estadísticas rápidas
+  /// Tarjeta premium para estadísticas rápidas con diseño mejorado
   Widget _buildPremiumStatCard({
     required String title,
     required String value,
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF1e3a5f).withOpacity(0.9),
-            const Color(0xFF16213e).withOpacity(0.85),
-          ],
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF00f5ff).withOpacity(0.3),
+          color: const Color(0xFF0065F8).withOpacity(0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: const Color(0xFF0065F8).withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
@@ -849,17 +683,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white.withOpacity(0.15),
-                  Colors.white.withOpacity(0.05),
-                ],
-              ),
               borderRadius: BorderRadius.circular(14),
+              color: const Color(0xFF0065F8).withOpacity(0.08),
             ),
             child: Icon(
               icon,
-              color: Colors.white,
+              color: const Color(0xFF0065F8),
               size: 28,
             ),
           ),
@@ -868,20 +697,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
             child: Text(
               value,
               style: const TextStyle(
-                color: Color(0xFF00f5ff),
-                fontSize: 32,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.5,
-                shadows: [
-                  Shadow(
-                    offset: Offset(1, 1),
-                    blurRadius: 4,
-                    color: Colors.black87,
-                  ),
-                ],
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Color(0xFF0065F8),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
           ),
@@ -889,14 +708,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
           Flexible(
             child: Text(
               title,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.2,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 14,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
           ),
