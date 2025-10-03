@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'editarperfil.dart';
 
 /// Página de perfil del usuario donde puede ver y gestionar su información personal
 /// Incluye datos del jugador, configuraciones y opciones de la cuenta
@@ -502,10 +503,9 @@ class _PerfilPageState extends State<PerfilPage>
   /// En una implementación completa, estas navegarían a pantallas específicas
   
   void _editProfile(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Funcionalidad de editar perfil en desarrollo'),
-        backgroundColor: Color(0xFF3498DB),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditarPerfilPage(),
       ),
     );
   }
