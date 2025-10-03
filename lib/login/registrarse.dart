@@ -583,14 +583,61 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       padding: const EdgeInsets.only(top: 16),
       child: Column(
         children: [
-          _buildDropdown(),
-          const SizedBox(height: 12),
+          // Club Actual
           _buildTextField(
             controller: _clubController,
             focusNode: _clubFocus,
             label: 'Club actual (opcional)',
             hint: 'Nombre de tu club',
             icon: Icons.shield_outlined,
+          ),
+          const SizedBox(height: 12),
+          // Posición
+          _buildDropdown(),
+          const SizedBox(height: 12),
+          // Edad
+          _buildTextField(
+            controller: TextEditingController(),
+            label: 'Edad',
+            hint: 'Ej: 18',
+            icon: Icons.cake_outlined,
+            keyboardType: TextInputType.number,
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) return 'La edad es obligatoria';
+              final edad = int.tryParse(v);
+              if (edad == null || edad < 12 || edad > 100) return 'Edad inválida';
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          // Estatura
+          _buildTextField(
+            controller: TextEditingController(),
+            label: 'Estatura (cm)',
+            hint: 'Ej: 175',
+            icon: Icons.height_outlined,
+            keyboardType: TextInputType.number,
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) return 'La estatura es obligatoria';
+              final est = int.tryParse(v);
+              if (est == null || est < 100 || est > 250) return 'Estatura inválida';
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          // Peso
+          _buildTextField(
+            controller: TextEditingController(),
+            label: 'Peso (kg)',
+            hint: 'Ej: 70',
+            icon: Icons.monitor_weight_outlined,
+            keyboardType: TextInputType.number,
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) return 'El peso es obligatorio';
+              final peso = int.tryParse(v);
+              if (peso == null || peso < 30 || peso > 200) return 'Peso inválido';
+              return null;
+            },
           ),
         ],
       ),
