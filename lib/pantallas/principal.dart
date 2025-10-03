@@ -136,7 +136,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           left: 20.0,
           right: 20.0,
           top: 20.0,
-          bottom: 100.0,
+          bottom: 16.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
