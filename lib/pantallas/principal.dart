@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'partidos/partidosjugados.dart';
 import 'partidos/partidosfuturos.dart';
 import 'entrenamientos/anteriores.dart';
@@ -7,7 +6,6 @@ import 'entrenamientos/proximos.dart';
 import 'perfil.dart';
 import 'estadisticas.dart';
 
-/// Modelo simple para partido próximo
 class PartidoProximo {
   final DateTime fecha;
   final String equipoRival;
@@ -22,7 +20,6 @@ class PartidoProximo {
   });
 }
 
-/// Modelo simple para entrenamiento próximo
 class EntrenamientoProximo {
   final DateTime fecha;
   final String tipo;
@@ -37,7 +34,6 @@ class EntrenamientoProximo {
   });
 }
 
-/// Modelo para perfil del jugador
 class PerfilJugador {
   final String nombre;
   final int edad;
@@ -56,17 +52,6 @@ class PerfilJugador {
   });
 }
 
-/// Pantalla principal de Soccer Life
-/// 
-/// Esta pantalla contiene el dashboard principal de la aplicación donde el usuario
-/// puede ver su resumen de actividades, estadísticas rápidas y acceder a las
-/// principales funcionalidades de la app.
-/// 
-/// Características principales:
-/// - Dashboard con estadísticas del jugador
-/// - Navegación por pestañas (Bottom Navigation)
-/// - Tarjetas de funcionalidades principales
-/// - Actividad reciente del usuario
 class PrincipalPage extends StatefulWidget {
   const PrincipalPage({super.key});
 
@@ -75,15 +60,8 @@ class PrincipalPage extends StatefulWidget {
 }
 
 class _PrincipalPageState extends State<PrincipalPage> {
-  // ===== VARIABLES DE ESTADO =====
-  
-  /// Índice de la pestaña seleccionada en el bottom navigation
-  /// 0: Inicio, 1: Partidos, 2: Entrenamientos, 3: Estadísticas, 4: Perfil
   int _selectedIndex = 0;
 
-  // ===== DATOS DE EJEMPLO =====
-  
-  /// Perfil del jugador
   final PerfilJugador _perfilJugador = PerfilJugador(
     nombre: 'Daniel Jr',
     edad: 22,
@@ -93,7 +71,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     rating: 87,
   );
   
-  /// Próximo partido programado
   final PartidoProximo _proximoPartido = PartidoProximo(
     fecha: DateTime.now().add(const Duration(days: 3)),
     equipoRival: 'Valencia CF',
@@ -101,7 +78,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     hora: const TimeOfDay(hour: 16, minute: 0),
   );
   
-  /// Próximo entrenamiento programado
   final EntrenamientoProximo _proximoEntrenamiento = EntrenamientoProximo(
     fecha: DateTime.now().add(const Duration(days: 2)),
     tipo: 'Técnico',
@@ -109,9 +85,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     ubicacion: 'Campo principal',
   );
 
-  // ===== MÉTODOS PARA CONTENIDO DE TABS =====
-
-  /// Devuelve el contenido de la pestaña seleccionada según el nuevo orden
   Widget _buildTabContent() {
     switch (_selectedIndex) {
       case 0:
@@ -129,8 +102,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     }
   }
 
-  // ===== MÉTODO PRINCIPAL DE CONSTRUCCIÓN =====
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,11 +112,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-
-
-  // ===== CONSTRUCCIÓN DE LA PESTAÑA PRINCIPAL (INICIO) =====
-  
-  /// Construye la pestaña de inicio con scroll personalizado y diseño responsive
   Widget _buildHomeTab() {
     return Container(
       color: Colors.white,
@@ -154,18 +120,15 @@ class _PrincipalPageState extends State<PrincipalPage> {
           left: 20.0,
           right: 20.0,
           top: 20.0,
-          bottom: 100.0, // Espacio extra para la barra inferior
+          bottom: 100.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Carta del jugador estilo FIFA
             _buildCartaJugador(),
             const SizedBox(height: 24),
-            // Próximo partido y entrenamiento
             _buildProximosEventos(),
             const SizedBox(height: 24),
-            // Estadísticas rápidas
             _buildQuickStats(),
           ],
         ),
@@ -173,9 +136,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  // ===== CONSTRUCCIÓN DE LA CARTA DEL JUGADOR =====
-  
-  /// Crea una carta de jugador con fondo azul
   Widget _buildCartaJugador() {
     return Container(
       width: double.infinity,
@@ -185,7 +145,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.3),
+            color: const Color(0xFF0065F8).withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -193,7 +153,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
       ),
       child: Row(
         children: [
-          // Avatar del jugador
           Container(
             width: 80,
             height: 80,
@@ -203,7 +162,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
               border: Border.all(color: Colors.white, width: 3),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -221,12 +180,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
             ),
           ),
           const SizedBox(width: 20),
-          // Información del jugador
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Nombre del jugador
                 Text(
                   _perfilJugador.nombre,
                   style: const TextStyle(
@@ -236,8 +193,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
-                // Información en dos columnas
                 Row(
                   children: [
                     Expanded(
@@ -267,7 +222,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Edad y Dorsal
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -304,9 +258,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  // ===== CONSTRUCCIÓN DE PRÓXIMOS EVENTOS =====
-  
-  /// Crea la sección de próximos eventos (partido y entrenamiento)
   Widget _buildProximosEventos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +283,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Construye la tarjeta del próximo partido con diseño mejorado
   Widget _buildProximoPartidoCard() {
     return GestureDetector(
       onTap: () {
@@ -348,12 +298,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFF0065F8).withOpacity(0.1),
+            color: const Color(0xFF0065F8).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -362,13 +312,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header con ícono
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0065F8).withOpacity(0.1),
+                    color: const Color(0xFF0065F8).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -392,7 +341,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
               ],
             ),
             const SizedBox(height: 12),
-            // Información del partido
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +394,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Construye la tarjeta del próximo entrenamiento con diseño mejorado
   Widget _buildProximoEntrenamientoCard() {
     return GestureDetector(
       onTap: () {
@@ -462,12 +409,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFF0065F8).withOpacity(0.1),
+            color: const Color(0xFF0065F8).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -476,13 +423,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header con ícono
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0065F8).withOpacity(0.1),
+                    color: const Color(0xFF0065F8).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -506,7 +452,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
               ],
             ),
             const SizedBox(height: 12),
-            // Información del entrenamiento
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,7 +505,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Formatea una fecha para mostrar de manera amigable
   String _formatearFecha(DateTime fecha) {
     final ahora = DateTime.now();
     final diferencia = fecha.difference(ahora).inDays;
@@ -580,11 +524,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     }
   }
 
-  // ===== APPBAR ELIMINADO =====
-
-  // ===== CONSTRUCCIÓN DE ESTADÍSTICAS RÁPIDAS =====
-  
-  /// Crea la sección de estadísticas rápidas con diseño responsive mejorado
   Widget _buildQuickStats() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -603,7 +542,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           crossAxisCount: 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.0, // Cambiado para cuadrados perfectos
+          childAspectRatio: 1.0,
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
           children: [
@@ -633,7 +572,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Tarjeta premium para estadísticas rápidas con diseño mejorado
   Widget _buildPremiumStatCard({
     required String title,
     required String value,
@@ -644,12 +582,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF0065F8).withOpacity(0.3),
+          color: const Color(0xFF0065F8).withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.08),
+            color: const Color(0xFF0065F8).withValues(alpha: 0.08),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
@@ -664,7 +602,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: const Color(0xFF0065F8).withOpacity(0.08),
+                color: const Color(0xFF0065F8).withValues(alpha: 0.08),
               ),
               child: Icon(
                 icon,
@@ -700,33 +638,25 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-
-  // ===== ACTIVIDAD RECIENTE ELIMINADA =====
-
-  // ...existing code...
-
-  // ===== CONSTRUCCIÓN DE BARRA DE NAVEGACIÓN INFERIOR =====
-  
-  /// Construye la barra de navegación inferior con diseño moderno y oscuro
   Widget _buildBottomNavigationBar() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF1a1a2e).withOpacity(0.98),
-            const Color(0xFF16213e).withOpacity(0.95),
+            const Color(0xFF1a1a2e).withValues(alpha: 0.98),
+            const Color(0xFF16213e).withValues(alpha: 0.95),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
         ],
         border: Border(
           top: BorderSide(
-            color: const Color(0xFF00f5ff).withOpacity(0.2),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -737,7 +667,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
         selectedItemColor: const Color(0xFF00f5ff),
-        unselectedItemColor: Colors.white.withOpacity(0.5),
+        unselectedItemColor: Colors.white.withValues(alpha: 0.5),
         selectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 12,
