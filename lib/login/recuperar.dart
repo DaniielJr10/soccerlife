@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 
-/// Pantalla de recuperación de contraseña de Soccer Life
-/// Permite a los usuarios recuperar su contraseña mediante email o SMS
-/// con un proceso de verificación de código de 6 dígitos
 class RecuperarPasswordPage extends StatefulWidget {
   const RecuperarPasswordPage({super.key});
 
@@ -15,7 +12,7 @@ class RecuperarPasswordPage extends StatefulWidget {
 class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     with TickerProviderStateMixin {
   
-  // Controladores para las animaciones de entrada
+  // Controladores de animaciones
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late AnimationController _scaleController;
@@ -23,7 +20,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
   
-  // Controladores para los formularios
+  // Controladores de formularios
   final _formKey = GlobalKey<FormState>();
   final _codigoFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -34,14 +31,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   final _telefonoFocus = FocusNode();
   
   // Estados de la interfaz
-  String _metodoSeleccionado = 'email'; // Método seleccionado para recibir el código
-  bool _codigoEnviado = false; // Si ya se envió el código de verificación
-  bool _enviando = false; // Si está en proceso de envío
-  bool _verificando = false; // Si está verificando el código ingresado
-  bool _emailFocused = false; // Si el campo email tiene foco
-  bool _telefonoFocused = false; // Si el campo teléfono tiene foco
-  bool _recuperacionExitosa = false; // Si la recuperación fue exitosa
-  String _codigoGenerado = ''; // Código generado para la verificación
+  String _metodoSeleccionado = 'email';
+  bool _codigoEnviado = false;
+  bool _enviando = false;
+  bool _verificando = false;
+  bool _emailFocused = false;
+  bool _telefonoFocused = false;
+  bool _recuperacionExitosa = false;
+  String _codigoGenerado = '';
 
   @override
   void initState() {
@@ -51,9 +48,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     _iniciarAnimacionesEntrada();
   }
 
-  // Configura todas las animaciones de la pantalla
   void _inicializarAnimaciones() {
-    // Animación de aparición gradual
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -62,7 +57,6 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
     );
 
-    // Animación de deslizamiento desde abajo
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -72,7 +66,6 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack));
 
-    // Animación de escala para efectos especiales
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -82,7 +75,6 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     );
   }
 
-  // Configura los listeners para detectar cuando los campos tienen foco
   void _configurarListenersFocus() {
     _emailFocus.addListener(() {
       setState(() => _emailFocused = _emailFocus.hasFocus);
@@ -92,7 +84,6 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     });
   }
 
-  // Inicia las animaciones de entrada de la pantalla
   void _iniciarAnimacionesEntrada() {
     Future.delayed(const Duration(milliseconds: 100), () {
       _fadeController.forward();

@@ -2,8 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Pantalla de registro de Soccer Life
-/// Permite crear una nueva cuenta en dos pasos: información personal y deportiva
 class RegistrarsePage extends StatefulWidget {
   const RegistrarsePage({super.key});
 
@@ -13,18 +11,18 @@ class RegistrarsePage extends StatefulWidget {
 
 class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderStateMixin {
   
-  // Controladores para las animaciones
+  // Controladores de animaciones
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // Estados del formulario
+  // Formulario y navegación
   final _formKey = GlobalKey<FormState>();
   final _pageController = PageController();
-  int _currentStep = 0; // Paso actual (0: personal, 1: deportivo)
+  int _currentStep = 0;
 
-  // Controladores de los campos de texto
+  // Controladores de campos de texto
   final _emailController = TextEditingController();
   final _nombreController = TextEditingController();
   final _fechaNacimientoController = TextEditingController();
@@ -33,24 +31,23 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   final _telefonoController = TextEditingController();
   final _clubController = TextEditingController();
 
-  // Nodos de foco para los campos
+  // Nodos de foco
   final _emailFocus = FocusNode();
   final _nombreFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
   final _telefonoFocus = FocusNode();
   final _clubFocus = FocusNode();
-  final Map<FocusNode, bool> _focusStates = {}; // Estado de foco de cada campo
+  final Map<FocusNode, bool> _focusStates = {};
 
   // Estados de la interfaz
-  bool _obscurePassword = true; // Ocultar contraseña principal
-  bool _obscureConfirmPassword = true; // Ocultar confirmación de contraseña
-  bool _isLoading = false; // Indicador de carga durante el registro
-  bool _registroExitoso = false; // Si el registro fue exitoso
-  DateTime? _fechaNacimiento; // Fecha de nacimiento seleccionada
-  String? _posicionSeleccionada; // Posición de fútbol seleccionada
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
+  bool _registroExitoso = false;
+  DateTime? _fechaNacimiento;
+  String? _posicionSeleccionada;
 
-  // Posiciones disponibles para elegir
   final List<String> _posiciones = [
     'Arquero', 'Defensa Central', 'Lateral', 'Volante', 'Extremo', 'Delantero',
   ];
@@ -84,9 +81,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     super.dispose();
   }
 
-  // Métodos para configurar las animaciones y eventos
-  
-  // Configura las animaciones de entrada de la pantalla
   void _inicializarAnimaciones() {
     _fadeController = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this);
     _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic);
@@ -95,7 +89,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         .animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack));
   }
 
-  // Configura los eventos de foco para todos los campos
   void _configurarListenersFocus() {
     final allFocusNodes = [
       _nombreFocus, _emailFocus, _telefonoFocus,
@@ -109,7 +102,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     }
   }
 
-  // Inicia las animaciones de entrada
   void _iniciarAnimacionesEntrada() {
     Future.delayed(const Duration(milliseconds: 100), () {
       _fadeController.forward();
@@ -117,20 +109,16 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     });
   }
 
-  // Métodos de validación para los campos del formulario
-
-  // Valida que el correo tenga un formato correcto
+  // Métodos de validación
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) return 'El correo es obligatorio';
     if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
       return 'Ingresa un correo válido';
     }
-    // Verifica si el correo ya está registrado (simulación)
     if (value.toLowerCase() == 'admin@soccerlife.com') return 'El correo ya está registrado';
     return null;
   }
 
-  // Valida que la contraseña sea segura
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'La contraseña es obligatoria';
     if (value.length < 8) return 'Debe tener al menos 8 caracteres';
@@ -140,14 +128,12 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     return null;
   }
 
-  // Valida que ambas contraseñas sean iguales
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) return 'Confirma tu contraseña';
     if (value != _passwordController.text) return 'Las contraseñas no coinciden';
     return null;
   }
 
-  // Valida el formato del teléfono
   String? _validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
     if (!RegExp(r'^[+]?[0-9]{10,15}$').hasMatch(value.replaceAll(' ', ''))) {
@@ -156,13 +142,11 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     return null;
   }
 
-  // Valida que un campo requerido no esté vacío
   String? _validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName es obligatorio';
     return null;
   }
 
-  // Muestra el selector de fecha de nacimiento
   Future<void> _selectDate() async {
     HapticFeedback.selectionClick();
     final DateTime? picked = await showDatePicker(
@@ -171,7 +155,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       firstDate: DateTime(1950),
       lastDate: DateTime.now().subtract(const Duration(days: 4380)), // 12 años
       builder: (context, child) {
-        // Aplica tema oscuro al selector de fecha
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
@@ -195,7 +178,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     }
   }
 
-  // Avanza al siguiente paso si la validación es correcta
   void _nextStep() {
     HapticFeedback.lightImpact();
     if (_formKey.currentState?.validate() ?? false) {
@@ -205,11 +187,10 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         curve: Curves.easeInOutCubic,
       );
     } else {
-      HapticFeedback.heavyImpact(); // Vibración de error
+      HapticFeedback.heavyImpact();
     }
   }
 
-  // Retrocede al paso anterior
   void _previousStep() {
     HapticFeedback.lightImpact();
     setState(() => _currentStep = 0);
@@ -219,7 +200,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  // Procesa el registro del usuario
   Future<void> _registrarUsuario() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
        HapticFeedback.heavyImpact();
@@ -235,22 +215,18 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     if (mounted) {
       setState(() {
         _isLoading = false;
-        _registroExitoso = true; // Muestra pantalla de éxito
+        _registroExitoso = true;
       });
       HapticFeedback.mediumImpact();
     }
   }
 
-  // Construcción de la interfaz de usuario
-
   @override
   Widget build(BuildContext context) {
-    // Si el registro fue exitoso, muestra la pantalla de éxito
     if (_registroExitoso) {
       return _buildSuccessScreen();
     }
 
-    // Pantalla principal de registro
     return Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
@@ -269,7 +245,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             opacity: _fadeAnimation.value,
             child: Stack(
               children: [
-                _buildFootballBackground(), // Fondo con imagen de fútbol
+                _buildFootballBackground(),
                 SafeArea(
                   child: SlideTransition(
                     position: _slideAnimation,
@@ -283,7 +259,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              _buildFloatingForm(), // Formulario principal
+                              _buildFloatingForm(),
                             ],
                           ),
                         ),

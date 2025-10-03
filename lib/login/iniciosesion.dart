@@ -4,8 +4,6 @@ import 'registrarse.dart';
 import 'recuperar.dart';
 import '../pantallas/principal.dart';
 
-/// Pantalla de inicio de sesión de Soccer Life
-/// Permite a los usuarios autenticarse en la aplicación con su email y contraseña
 class InicioSesionPage extends StatefulWidget {
   const InicioSesionPage({super.key});
 
@@ -16,24 +14,24 @@ class InicioSesionPage extends StatefulWidget {
 class _InicioSesionPageState extends State<InicioSesionPage>
     with TickerProviderStateMixin {
   
-  // Controladores para las animaciones de entrada suave
+  // Controladores de animaciones
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   
-  // Controladores para el formulario de login
+  // Controladores del formulario
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   
-  // Estados de la interfaz para controlar la visibilidad y efectos
-  bool _obscurePassword = true; // Ocultar/mostrar contraseña
-  bool _isLoading = false; // Estado de carga durante el login
-  bool _emailFocused = false; // Si el campo email está enfocado
-  bool _passwordFocused = false; // Si el campo contraseña está enfocado
+  // Estados de la interfaz
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+  bool _emailFocused = false;
+  bool _passwordFocused = false;
 
   @override
   void initState() {
@@ -43,9 +41,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     _startEntryAnimation();
   }
 
-  /// Configura las animaciones que se ejecutan cuando se carga la pantalla
   void _initializeAnimations() {
-    // Animación que hace aparecer gradualmente todos los elementos
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -54,7 +50,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
     );
 
-    // Animación que desliza los elementos desde abajo hacia arriba
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -65,7 +60,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack));
   }
 
-  /// Escucha cuando los campos de texto reciben o pierden el foco para cambiar su estilo
   void _setupFocusListeners() {
     _emailFocus.addListener(() {
       setState(() => _emailFocused = _emailFocus.hasFocus);
@@ -75,7 +69,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     });
   }
 
-  /// Ejecuta las animaciones de entrada con un pequeño retraso
   void _startEntryAnimation() {
     Future.delayed(const Duration(milliseconds: 100), () {
       _fadeController.forward();
@@ -83,7 +76,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     });
   }
 
-  /// Libera todos los recursos cuando se destruye la pantalla para evitar fugas de memoria
   @override
   void dispose() {
     _fadeController.dispose();
@@ -95,20 +87,16 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     super.dispose();
   }
 
-  /// Procesa el inicio de sesión del usuario
-  /// Valida los datos, simula la autenticación y navega a la pantalla principal
+  // Valida el formulario y procesa el login
   Future<void> _login() async {
-    // Solo proceder si el formulario es válido
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
       
-      // Simular llamada al servidor (en producción sería una API real)
+      // Simula llamada al servidor
       await Future.delayed(const Duration(milliseconds: 1000));
       
       if (mounted) {
         setState(() => _isLoading = false);
-        
-        // Navegar a la pantalla principal y limpiar el historial de navegación
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const PrincipalPage()),
           (route) => false,
@@ -130,23 +118,17 @@ class _InicioSesionPageState extends State<InicioSesionPage>
             opacity: _fadeAnimation.value,
             child: Stack(
               children: [
-                // Fondo con imagen del estadio de fútbol
                 _buildFootballBackground(),
-                
-                // Contenido principal de la pantalla
                 SafeArea(
                   child: CustomScrollView(
                     physics: const BouncingScrollPhysics(),
                     slivers: [
-                      // Encabezado con logo y título de la app
                       SliverToBoxAdapter(
                         child: SlideTransition(
                           position: _slideAnimation,
                           child: _buildHeader(),
                         ),
                       ),
-                      
-                      // Formulario de login y botón de registro
                       SliverFillRemaining(
                         hasScrollBody: false,
                         child: SlideTransition(
@@ -175,7 +157,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     );
   }
 
-  /// Crea el fondo de la pantalla con la imagen del estadio y un overlay oscuro sutil
   Widget _buildFootballBackground() {
     return Container(
       decoration: const BoxDecoration(
@@ -185,13 +166,14 @@ class _InicioSesionPageState extends State<InicioSesionPage>
         ),
       ),
       child: Container(
-        // Overlay oscuro muy ligero para mejorar la legibilidad del texto
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-            // Un poco más oscuro abajo
+              Colors.black.withOpacity(0.2),
+              Colors.black.withOpacity(0.4),
+              Colors.black.withOpacity(0.6),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -201,104 +183,42 @@ class _InicioSesionPageState extends State<InicioSesionPage>
   }
 
 
-
-  /// Construye el encabezado con el logo de Soccer Life y el título principal
   Widget _buildHeader() {
     return Container(
       height: 280,
-      child: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo de la aplicación con sombra
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(60),
-                    child: Image.asset(
-                      'images/logo.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Nombre de la aplicación
-                Text(
-                  'Soccer Life',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF00f5ff),
-                    letterSpacing: 2,
-                    shadows: [
-                      Shadow(
-                        offset: const Offset(2, 2),
-                        blurRadius: 8,
-                        color: Colors.black.withOpacity(0.8),
-                      ),
-                      Shadow(
-                        offset: const Offset(-1, -1),
-                        blurRadius: 4,
-                        color: Colors.black.withOpacity(0.5),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Eslogan de la aplicación
-                Text(
-                  'Tu Evolución Futbolística',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.8),
-                    fontWeight: FontWeight.w300,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-
-  /// Construye el formulario de login con los campos de email y contraseña
-  Widget _buildLoginForm() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Form(
-        key: _formKey,
+      child: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Título del formulario de login
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(60),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(60),
+                child: Image.asset(
+                  'images/logo.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
             Text(
-              'Iniciar Sesión',
+              'Soccer Life',
               style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
+                fontSize: 36,
+                fontWeight: FontWeight.w900,
                 color: const Color(0xFF00f5ff),
-                letterSpacing: 1,
-                // Sombra para que se vea bien sobre la imagen de fondo
+                letterSpacing: 2,
                 shadows: [
                   Shadow(
                     offset: const Offset(2, 2),
@@ -313,10 +233,53 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                 ],
               ),
             ),
-            
+            const SizedBox(height: 8),
+            Text(
+              'Tu Evolución Futbolística',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w300,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildLoginForm() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Text(
+              'Iniciar Sesión',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF00f5ff),
+                letterSpacing: 1,
+                shadows: [
+                  Shadow(
+                    offset: const Offset(2, 2),
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.8),
+                  ),
+                  Shadow(
+                    offset: const Offset(-1, -1),
+                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 32),
-            
-            // Campo para ingresar el email
             _buildTextField(
               controller: _emailController,
               focusNode: _emailFocus,
@@ -336,10 +299,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                 return null;
               },
             ),
-            
             const SizedBox(height: 24),
-            
-            // Campo para ingresar la contraseña
             _buildTextField(
               controller: _passwordController,
               focusNode: _passwordFocus,
@@ -366,15 +326,9 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                 return null;
               },
             ),
-            
             const SizedBox(height: 32),
-            
-            // Botón principal para iniciar sesión
             _buildLoginButton(),
-            
             const SizedBox(height: 20),
-            
-            // Enlace para recuperar contraseña olvidada
             TextButton(
               onPressed: () {
                 HapticFeedback.selectionClick();
@@ -476,7 +430,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     );
   }
 
-  /// Construye el botón principal de login con gradiente y animación de carga
   Widget _buildLoginButton() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -537,7 +490,6 @@ class _InicioSesionPageState extends State<InicioSesionPage>
     );
   }
 
-  /// Construye el botón que permite navegar a la pantalla de registro
   Widget _buildRegisterButton() {
     return Container(
       decoration: BoxDecoration(
