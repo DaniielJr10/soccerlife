@@ -20,11 +20,11 @@ class _PerfilPageState extends State<PerfilPage>
     'nombre': 'Daniel Rodriguez',
     'username': '@daniel_jr10',
     'posicion': 'Delantero',
-    'edad': 22,
+    'edad': 20,
     'equipo': 'FC Barcelona Academy',
     'nacionalidad': 'Colombia',
-    'altura': '1.78m',
-    'peso': '72kg',
+    'altura': '1.80m',
+    'peso': '75kg',
   };
 
   @override

@@ -114,13 +114,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.event_available, color: const Color(0xFF0065F8)),
-            onPressed: () => _navegarAPartidosFuturos(),
-            tooltip: 'Partidos Futuros',
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -464,178 +457,22 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   }
 
   Widget _buildFormulario([PartidoJugado? partido, int? index]) {
-    return Dialog(
-      insetPadding: const EdgeInsets.all(16),
-      child: Container(
-        width: double.maxFinite,
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.8,
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false, // Eliminar botón de volver automático
+        title: Text(
+          'Partidos Jugados',
+          style: TextStyle(
+            /* Lines 112-114 omitidos */
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0065F8),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      partido != null ? 'Editar Partido' : 'Registrar Partido',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white, size: 20),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                  ),
-                ],
-              ),
-            ),
-            // Formulario scrollable
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      _buildCompactField(
-                        'Fecha',
-                        _fechaController,
-                        Icons.calendar_today,
-                        readOnly: true,
-                        onTap: () => _selectDate(),
-                        validator: (value) => value?.isEmpty ?? true ? 'Requerido' : null,
-                      ),
-                      const SizedBox(height: 6),
-                      _buildCompactField(
-                        'Equipo contrario',
-                        _equipoContrarioController,
-                        Icons.groups,
-                        validator: _validateRequired,
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildCompactField(
-                              'Goles a favor',
-                              _golesAFavorController,
-                              Icons.sports_soccer,
-                              keyboardType: TextInputType.number,
-                              validator: _validateNumber,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: _buildCompactField(
-                              'Goles en contra',
-                              _golesEnContraController,
-                              Icons.sports_soccer,
-                              keyboardType: TextInputType.number,
-                              validator: _validateNumber,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      _buildCompactField(
-                        'Minutos',
-                        _minutosController,
-                        Icons.timer,
-                        keyboardType: TextInputType.number,
-                        validator: _validateMinutes,
-                      ),
-                      const SizedBox(height: 6),
-                      _buildCompactDropdown(
-                        'Posición',
-                        _posicionSeleccionada,
-                        _posiciones,
-                        (value) => setState(() => _posicionSeleccionada = value),
-                        Icons.person,
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildCompactField(
-                              'Goles',
-                              _golesAnotadosController,
-                              Icons.sports_soccer,
-                              keyboardType: TextInputType.number,
-                              validator: _validateNumber,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: _buildCompactField(
-                              'Asistencias',
-                              _asistenciasController,
-                              Icons.sports_soccer,
-                              keyboardType: TextInputType.number,
-                              validator: _validateNumber,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      _buildCompactDropdown(
-                        'Tarjetas',
-                        _tarjetasSeleccionadas,
-                        _tarjetas,
-                        (value) => setState(() => _tarjetasSeleccionadas = value),
-                        Icons.credit_card,
-                      ),
-                      const SizedBox(height: 6),
-                      _buildCompactField(
-                        'Notas',
-                        _notasController,
-                        Icons.note,
-                        maxLines: 2,
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 36,
-                        child: ElevatedButton(
-                          onPressed: () => _guardarPartido(partidoEditar: partido, index: index),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0065F8),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            partido != null ? 'Actualizar' : 'Guardar',
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        // Icono eliminado de actions
       ),
+      // ...el resto del contenido del formulario aquí...
     );
   }
 

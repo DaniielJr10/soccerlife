@@ -108,13 +108,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.fitness_center, color: const Color(0xFF0065F8)),
-            onPressed: _navegarAEntrenamientosProximos,
-            tooltip: 'Entrenamientos Próximos',
-          ),
-        ],
+        // Icono eliminado de actions
       ),
       body: SafeArea(
         child: Column(
