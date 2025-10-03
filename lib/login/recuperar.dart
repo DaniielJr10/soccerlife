@@ -385,9 +385,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.1),
-              Colors.black.withOpacity(0.2),
-              Colors.black.withOpacity(0.3),
+              Colors.black.withValues(alpha: 0.1),
+              Colors.black.withValues(alpha: 0.2),
+              Colors.black.withValues(alpha: 0.3),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -409,7 +409,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             borderRadius: BorderRadius.circular(40),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
@@ -439,12 +439,12 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                 Shadow(
                   offset: const Offset(2, 2),
                   blurRadius: 8,
-                  color: Colors.black.withOpacity(0.8),
+                  color: Colors.black.withValues(alpha: 0.8),
                 ),
                 Shadow(
                   offset: const Offset(-1, -1),
                   blurRadius: 4,
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -459,7 +459,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             'Recuperar Contraseña',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontWeight: FontWeight.w300,
               letterSpacing: 0.8,
             ),
@@ -522,18 +522,18 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               border: Border.all(
                 color: isSelected 
                   ? const Color(0xFF00b4db) 
-                  : Colors.white.withOpacity(0.3),
+                  : Colors.white.withValues(alpha: 0.3),
                 width: isSelected ? 2 : 1,
               ),
               gradient: LinearGradient(
                 colors: isSelected 
                   ? [
-                      const Color(0xFF00b4db).withOpacity(0.2),
-                      const Color(0xFF0083b0).withOpacity(0.1),
+                      const Color(0xFF00b4db).withValues(alpha: 0.2),
+                      const Color(0xFF0083b0).withValues(alpha: 0.1),
                     ]
                   : [
-                      Colors.white.withOpacity(0.1),
-                      Colors.white.withOpacity(0.05),
+                      Colors.white.withValues(alpha: 0.1),
+                      Colors.white.withValues(alpha: 0.05),
                     ],
               ),
             ),
@@ -543,7 +543,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   icon,
                   color: isSelected 
                     ? const Color(0xFF00b4db) 
-                    : Colors.white.withOpacity(0.7),
+                    : Colors.white.withValues(alpha: 0.7),
                   size: 32,
                 ),
                 const SizedBox(height: 12),
@@ -552,7 +552,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   style: TextStyle(
                     color: isSelected 
                       ? const Color(0xFF00b4db) 
-                      : Colors.white.withOpacity(0.7),
+                      : Colors.white.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -583,18 +583,18 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         border: Border.all(
           color: isFocused 
             ? const Color(0xFF00b4db)
-            : Colors.white.withOpacity(0.3),
+            : Colors.white.withValues(alpha: 0.3),
           width: isFocused ? 2 : 1,
         ),
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(isFocused ? 0.15 : 0.1),
-            Colors.black.withOpacity(isFocused ? 0.25 : 0.15),
+            Colors.white.withValues(alpha: isFocused ? 0.15 : 0.1),
+            Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
           ],
         ),
         boxShadow: isFocused ? [
           BoxShadow(
-            color: const Color(0xFF00b4db).withOpacity(0.3),
+            color: const Color(0xFF00b4db).withValues(alpha: 0.3),
             blurRadius: 15,
             spreadRadius: 0,
           ),
@@ -612,13 +612,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
-          prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
           labelStyle: TextStyle(
-            color: isFocused ? const Color(0xFF00b4db) : Colors.white.withOpacity(0.7),
+            color: isFocused ? const Color(0xFF00b4db) : Colors.white.withValues(alpha: 0.7),
             fontWeight: FontWeight.w500,
           ),
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -655,7 +655,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00b4db).withOpacity(0.4),
+            color: const Color(0xFF00b4db).withValues(alpha: 0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -722,13 +722,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.white.withOpacity(0.15),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withValues(alpha: 0.15),
+                    Colors.white.withValues(alpha: 0.05),
                   ],
                 ),
               ),
@@ -814,12 +814,12 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF00b4db).withOpacity(0.2),
-                    const Color(0xFF0083b0).withOpacity(0.1),
+                    const Color(0xFF00b4db).withValues(alpha: 0.2),
+                    const Color(0xFF0083b0).withValues(alpha: 0.1),
                   ],
                 ),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -843,12 +843,12 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   Shadow(
                     offset: const Offset(2, 2),
                     blurRadius: 8,
-                    color: Colors.black.withOpacity(0.8),
+                    color: Colors.black.withValues(alpha: 0.8),
                   ),
                   Shadow(
                     offset: const Offset(-1, -1),
                     blurRadius: 4,
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                   ),
                 ],
               ),
@@ -862,13 +862,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.white.withOpacity(0.15),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withValues(alpha: 0.15),
+                    Colors.white.withValues(alpha: 0.05),
                   ],
                 ),
               ),
@@ -877,7 +877,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   Text(
                     'Código enviado por ${_metodoSeleccionado == 'email' ? 'correo a:' : 'SMS a:'}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,
@@ -922,13 +922,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 1,
                       ),
                       gradient: LinearGradient(
                         colors: [
-                          Colors.white.withOpacity(0.1),
-                          Colors.black.withOpacity(0.15),
+                          Colors.white.withValues(alpha: 0.1),
+                          Colors.black.withValues(alpha: 0.15),
                         ],
                       ),
                     ),
@@ -988,13 +988,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withValues(alpha: 0.1),
+                    Colors.white.withValues(alpha: 0.05),
                   ],
                 ),
               ),
@@ -1019,14 +1019,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                       children: [
                         Icon(
                           Icons.refresh,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           size: 20,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Reenviar código',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1061,13 +1061,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 1,
                   ),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withOpacity(0.15),
-                      Colors.white.withOpacity(0.05),
+                      Colors.white.withValues(alpha: 0.15),
+                      Colors.white.withValues(alpha: 0.05),
                     ],
                   ),
                 ),
@@ -1085,7 +1085,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF2ecc71).withOpacity(0.4),
+                            color: const Color(0xFF2ecc71).withValues(alpha: 0.4),
                             blurRadius: 20,
                             spreadRadius: 0,
                           ),
@@ -1122,7 +1122,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                       'Tu identidad ha sido verificada exitosamente. Ahora puedes crear una nueva contraseña.',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
@@ -1151,7 +1151,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                       child: Text(
                         'Volver al inicio de sesión',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

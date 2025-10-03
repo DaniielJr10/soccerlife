@@ -292,9 +292,9 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.4),
-              Colors.black.withOpacity(0.2),
-              Colors.black.withOpacity(0.5),
+              Colors.black.withValues(alpha: 0.4),
+              Colors.black.withValues(alpha: 0.2),
+              Colors.black.withValues(alpha: 0.5),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -344,7 +344,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 3),
               ),
@@ -374,12 +374,12 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                 Shadow(
                   offset: const Offset(2, 2),
                   blurRadius: 8,
-                  color: Colors.black.withOpacity(0.8),
+                  color: Colors.black.withValues(alpha: 0.8),
                 ),
                 Shadow(
                   offset: const Offset(-1, -1),
                   blurRadius: 4,
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -394,7 +394,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             'Crear Cuenta',
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontWeight: FontWeight.w300,
               letterSpacing: 0.5,
             ),
@@ -441,16 +441,16 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: isActive ? const Color(0xFF00f5ff) : Colors.white.withOpacity(0.3),
+              color: isActive ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.3),
               width: 1.5,
             ),
-            color: isActive ? const Color(0xFF00f5ff).withOpacity(0.2) : Colors.transparent,
+            color: isActive ? const Color(0xFF00f5ff).withValues(alpha: 0.2) : Colors.transparent,
           ),
           child: Center(
             child: Text(
               '${step + 1}',
               style: TextStyle(
-                color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
+                color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.7),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -460,7 +460,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
+            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.5),
             fontSize: 12,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
           ),
@@ -664,18 +664,18 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isFocused ? const Color(0xFF00f5ff).withOpacity(0.8) : Colors.white.withOpacity(0.3),
+          color: isFocused ? const Color(0xFF00f5ff).withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.3),
           width: isFocused ? 1.5 : 1,
         ),
         gradient: LinearGradient(
           colors: [
-            Colors.black.withOpacity(isFocused ? 0.3 : 0.2),
-            Colors.black.withOpacity(isFocused ? 0.25 : 0.15),
+            Colors.black.withValues(alpha: isFocused ? 0.3 : 0.2),
+            Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
           ],
         ),
         boxShadow: isFocused ? [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.25),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.25),
             blurRadius: 15,
           ),
         ] : null,
@@ -694,13 +694,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
-          prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
           suffixIcon: suffixIcon,
           labelStyle: TextStyle(
-            color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withOpacity(0.7),
+            color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.7),
             fontWeight: FontWeight.w500,
           ),
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
@@ -725,25 +725,25 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: 'Posición',
-        prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withOpacity(0.7)),
+        prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.7)),
         labelStyle: TextStyle(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           fontWeight: FontWeight.w500,
         ),
         filled: true,
-        fillColor: Colors.black.withOpacity(0.2),
+        fillColor: Colors.black.withValues(alpha: 0.2),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3), width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3), width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: const Color(0xFF00f5ff).withOpacity(0.8), width: 1.5),
+          borderSide: BorderSide(color: const Color(0xFF00f5ff).withValues(alpha: 0.8), width: 1.5),
         ),
         errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
       ),
@@ -759,7 +759,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       },
       icon: Icon(
         isObscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
       ),
     );
   }
@@ -783,7 +783,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.4),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -828,8 +828,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
-              color: Colors.white.withOpacity(0.1),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+              color: Colors.white.withValues(alpha: 0.1),
             ),
             child: Center(
               child: Text(
@@ -865,12 +865,12 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)],
+                        colors: [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -885,7 +885,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF00f5ff).withOpacity(0.4),
+                                color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
                                 blurRadius: 20,
                               ),
                             ],
@@ -907,7 +907,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                           'Tu cuenta ha sido creada. \n¡Es hora de brillar en el campo!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 16,
                             height: 1.4,
                           ),

@@ -171,9 +171,9 @@ class _InicioSesionPageState extends State<InicioSesionPage>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.2),
-              Colors.black.withOpacity(0.4),
-              Colors.black.withOpacity(0.6),
+              Colors.black.withValues(alpha: 0.2),
+              Colors.black.withValues(alpha: 0.4),
+              Colors.black.withValues(alpha: 0.6),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -197,7 +197,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                 borderRadius: BorderRadius.circular(60),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -223,12 +223,12 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                   Shadow(
                     offset: const Offset(2, 2),
                     blurRadius: 8,
-                    color: Colors.black.withOpacity(0.8),
+                    color: Colors.black.withValues(alpha: 0.8),
                   ),
                   Shadow(
                     offset: const Offset(-1, -1),
                     blurRadius: 4,
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                   ),
                 ],
               ),
@@ -238,7 +238,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
               'Tu Evolución Futbolística',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontWeight: FontWeight.w300,
                 letterSpacing: 1,
               ),
@@ -269,12 +269,12 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                   Shadow(
                     offset: const Offset(2, 2),
                     blurRadius: 8,
-                    color: Colors.black.withOpacity(0.8),
+                    color: Colors.black.withValues(alpha: 0.8),
                   ),
                   Shadow(
                     offset: const Offset(-1, -1),
                     blurRadius: 4,
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                   ),
                 ],
               ),
@@ -316,7 +316,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                 },
                 icon: Icon(
                   _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
               ),
               validator: (value) {
@@ -345,7 +345,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
               child: Text(
                 '¿Olvidaste tu contraseña?',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -377,19 +377,19 @@ class _InicioSesionPageState extends State<InicioSesionPage>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isFocused 
-            ? const Color(0xFF00f5ff).withOpacity(0.8)
-            : Colors.white.withOpacity(0.3),
+            ? const Color(0xFF00f5ff).withValues(alpha: 0.8)
+            : Colors.white.withValues(alpha: 0.3),
           width: isFocused ? 2 : 1,
         ),
         gradient: LinearGradient(
           colors: [
-            Colors.black.withOpacity(isFocused ? 0.3 : 0.2), 
-            Colors.black.withOpacity(isFocused ? 0.25 : 0.15),
+            Colors.black.withValues(alpha: isFocused ? 0.3 : 0.2), 
+            Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
           ],
         ),
         boxShadow: isFocused ? [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.3),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.3),
             blurRadius: 20,
             spreadRadius: 0,
           ),
@@ -409,14 +409,14 @@ class _InicioSesionPageState extends State<InicioSesionPage>
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
-          prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
           suffixIcon: suffixIcon,
           labelStyle: TextStyle(
-            color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withOpacity(0.7),
+            color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.7),
             fontWeight: FontWeight.w500,
           ),
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -448,7 +448,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.4),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -495,13 +495,13 @@ class _InicioSesionPageState extends State<InicioSesionPage>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           width: 1,
         ),
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.1),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.1),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -534,14 +534,14 @@ class _InicioSesionPageState extends State<InicioSesionPage>
               children: [
                 Icon(
                   Icons.person_add_outlined,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   size: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Crear cuenta nueva',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
