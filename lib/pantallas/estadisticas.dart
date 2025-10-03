@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Modelo para estadísticas del jugador
 class EstadisticaJugador {
   final String categoria;
   final int valor;
@@ -17,7 +16,6 @@ class EstadisticaJugador {
   });
 }
 
-/// Modelo para estadísticas de partidos
 class EstadisticaPartido {
   final String nombre;
   final int valor;
@@ -32,7 +30,6 @@ class EstadisticaPartido {
   });
 }
 
-/// Modelo para progreso mensual
 class ProgresoMensual {
   final String mes;
   final double rendimiento;
@@ -43,18 +40,7 @@ class ProgresoMensual {
   });
 }
 
-/// Pantalla de estadísticas de Soccer Life
-/// 
-/// Esta pantalla muestra todas las estadísticas del jugador de manera visual
-/// e interactiva. Incluye métricas de rendimiento, progreso en el tiempo,
-/// comparaciones y análisis detallado del desempeño deportivo.
-/// 
-/// Características principales:
-/// - Dashboard completo de estadísticas
-/// - Gráficos y visualizaciones atractivas
-/// - Métricas de rendimiento en tiempo real
-/// - Progreso histórico del jugador
-/// - Comparaciones con promedio del equipo
+// Pantalla principal de estadísticas con dashboard interactivo
 class EstadisticasPage extends StatefulWidget {
   const EstadisticasPage({super.key});
 
@@ -64,29 +50,15 @@ class EstadisticasPage extends StatefulWidget {
 
 class _EstadisticasPageState extends State<EstadisticasPage>
     with TickerProviderStateMixin {
-  // ===== CONTROLADORES DE ANIMACIÓN =====
   
-  /// Controlador principal para animaciones de entrada
   late AnimationController _mainAnimationController;
-  
-  /// Controlador para animaciones de progreso circular
   late AnimationController _progressAnimationController;
-  
-  /// Animación de fade-in para elementos
   late Animation<double> _fadeAnimation;
-  
-  /// Animación de slide-up para cards
   late Animation<Offset> _slideAnimation;
-  
-  /// Animación para barras de progreso
   late Animation<double> _progressAnimation;
 
-  // ===== DATOS DE ESTADÍSTICAS =====
-  
-  /// Rating general del jugador
   final int _ratingGeneral = 87;
   
-  /// Estadísticas principales del jugador
   final List<EstadisticaJugador> _estadisticasPrincipales = [
     EstadisticaJugador(
       categoria: 'Velocidad',
@@ -118,7 +90,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     ),
   ];
   
-  /// Estadísticas de partidos
   final List<EstadisticaPartido> _estadisticasPartidos = [
     EstadisticaPartido(
       nombre: 'Goles',
@@ -146,7 +117,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     ),
   ];
   
-  /// Progreso mensual del último semestre
   final List<ProgresoMensual> _progresoMensual = [
     ProgresoMensual(mes: 'May', rendimiento: 75),
     ProgresoMensual(mes: 'Jun', rendimiento: 82),
@@ -156,29 +126,23 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     ProgresoMensual(mes: 'Oct', rendimiento: 87),
   ];
 
-  // ===== MÉTODOS DE CICLO DE VIDA =====
-
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
   }
 
-  /// Inicializa todas las animaciones necesarias para la pantalla
   void _initializeAnimations() {
-    // Controlador principal de animaciones
     _mainAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
     
-    // Controlador para animaciones de progreso
     _progressAnimationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
     
-    // Animación de fade-in
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -187,7 +151,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
       curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
     ));
     
-    // Animación de slide-up
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
@@ -196,7 +159,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
       curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
     ));
     
-    // Animación de progreso
     _progressAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -205,10 +167,8 @@ class _EstadisticasPageState extends State<EstadisticasPage>
       curve: Curves.easeInOutCubic,
     ));
     
-    // Iniciar animaciones
     _mainAnimationController.forward();
     
-    // Delay para la animación de progreso
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         _progressAnimationController.forward();
@@ -222,8 +182,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     _progressAnimationController.dispose();
     super.dispose();
   }
-
-  // ===== MÉTODO BUILD PRINCIPAL =====
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +209,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                       _buildProgresoMensual(),
                       const SizedBox(height: 24),
                       _buildComparacionEquipo(),
-                      const SizedBox(height: 100), // Espacio para bottom navigation
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
@@ -263,9 +221,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  // ===== MÉTODOS DE CONSTRUCCIÓN DE WIDGETS =====
-
-  /// Construye el AppBar personalizado con gradiente
   Widget _buildCustomAppBar() {
     return SliverAppBar(
       expandedHeight: 120,
@@ -306,7 +261,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye el widget del rating general del jugador
+  // Widget principal del rating con círculo de progreso animado
   Widget _buildRatingGeneral() {
     return Container(
       width: double.infinity,
@@ -346,7 +301,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
               return Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Círculo de progreso de fondo
                   SizedBox(
                     width: 120,
                     height: 120,
@@ -359,7 +313,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                       ),
                     ),
                   ),
-                  // Círculo de progreso principal
                   SizedBox(
                     width: 120,
                     height: 120,
@@ -370,7 +323,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                       valueColor: const AlwaysStoppedAnimation(Colors.white),
                     ),
                   ),
-                  // Número del rating
                   Column(
                     children: [
                       Text(
@@ -414,7 +366,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye las estadísticas principales con barras de progreso animadas
   Widget _buildEstadisticasPrincipales() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,19 +383,17 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           _estadisticasPrincipales.length,
           (index) => _buildHabilidadCard(
             _estadisticasPrincipales[index],
-            index * 100.0, // Delay para cada card
+            index * 100.0,
           ),
         ),
       ],
     );
   }
 
-  /// Construye una card individual de habilidad con animación
   Widget _buildHabilidadCard(EstadisticaJugador estadistica, double delay) {
     return AnimatedBuilder(
       animation: _progressAnimation,
       builder: (context, child) {
-        // Calcular delay individual para cada card
         double cardProgress = (_progressAnimation.value * 1000 - delay).clamp(0.0, 1.0);
         
         return Container(
@@ -463,7 +412,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           ),
           child: Row(
             children: [
-              // Icono con fondo colorido
               Container(
                 width: 50,
                 height: 50,
@@ -478,7 +426,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                 ),
               ),
               const SizedBox(width: 16),
-              // Información y barra de progreso
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,7 +452,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                       ],
                     ),
                     const SizedBox(height: 8),
-                    // Barra de progreso personalizada
                     Container(
                       height: 8,
                       decoration: BoxDecoration(
@@ -538,7 +484,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye las estadísticas de partidos en un grid
   Widget _buildEstadisticasPartidos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -567,7 +512,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye una card individual de estadística de partido
   Widget _buildEstadisticaCard(EstadisticaPartido estadistica) {
     return AnimatedBuilder(
       animation: _progressAnimation,
@@ -592,7 +536,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icono
               Container(
                 width: 48,
                 height: 48,
@@ -607,7 +550,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                 ),
               ),
               const SizedBox(height: 12),
-              // Valor animado
               Text(
                 '${(estadistica.valor * _progressAnimation.value).round()}',
                 style: TextStyle(
@@ -617,7 +559,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                 ),
               ),
               const SizedBox(height: 4),
-              // Nombre de la estadística
               Text(
                 estadistica.nombre,
                 style: const TextStyle(
@@ -634,7 +575,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye el gráfico de progreso mensual
+  // Gráfico de barras para mostrar evolución mensual
   Widget _buildProgresoMensual() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -681,12 +622,10 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye una barra individual del gráfico de progreso
   Widget _buildBarraProgreso(ProgresoMensual progreso) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // Valor encima de la barra
         Text(
           '${(progreso.rendimiento * _progressAnimation.value).round()}%',
           style: const TextStyle(
@@ -696,7 +635,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           ),
         ),
         const SizedBox(height: 4),
-        // Barra de progreso
         Container(
           width: 24,
           height: (progreso.rendimiento / 100) * 150 * _progressAnimation.value,
@@ -713,7 +651,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           ),
         ),
         const SizedBox(height: 8),
-        // Mes
         Text(
           progreso.mes,
           style: const TextStyle(
@@ -726,7 +663,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye la sección de comparación con el equipo
+  // Sección de comparación de rendimiento con el equipo
   Widget _buildComparacionEquipo() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -784,7 +721,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     );
   }
 
-  /// Construye un item individual de comparación
   Widget _buildComparacionItem(String titulo, double tuValor, double promedioEquipo, String descripcion) {
     return AnimatedBuilder(
       animation: _progressAnimation,
@@ -814,10 +750,8 @@ class _EstadisticasPageState extends State<EstadisticasPage>
               ],
             ),
             const SizedBox(height: 8),
-            // Barras de comparación
             Row(
               children: [
-                // Tu rendimiento
                 Expanded(
                   flex: (tuValor * 100).round(),
                   child: Container(
@@ -851,7 +785,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
             const SizedBox(height: 4),
             Row(
               children: [
-                // Promedio del equipo
                 Expanded(
                   flex: (promedioEquipo * 100).round(),
                   child: Container(

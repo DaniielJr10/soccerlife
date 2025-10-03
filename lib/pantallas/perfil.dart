@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Página de perfil del usuario donde puede ver y gestionar su información personal
+/// Incluye datos del jugador, configuraciones y opciones de la cuenta
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
 
@@ -9,9 +11,11 @@ class PerfilPage extends StatefulWidget {
 
 class _PerfilPageState extends State<PerfilPage>
     with SingleTickerProviderStateMixin {
+  // Controlador para manejar las animaciones de entrada de la página
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   
+  // Información del usuario (en producción vendría de una base de datos o API)
   final Map<String, dynamic> _userInfo = {
     'nombre': 'Daniel Rodriguez',
     'username': '@daniel_jr10',
@@ -26,6 +30,7 @@ class _PerfilPageState extends State<PerfilPage>
   @override
   void initState() {
     super.initState();
+    // Configuramos la animación de fade-in para una entrada suave de la página
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -33,11 +38,13 @@ class _PerfilPageState extends State<PerfilPage>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+    // Iniciamos la animación automáticamente al cargar la página
     _animationController.forward();
   }
 
   @override
   void dispose() {
+    // Liberamos los recursos de la animación para evitar memory leaks
     _animationController.dispose();
     super.dispose();
   }
@@ -46,8 +53,10 @@ class _PerfilPageState extends State<PerfilPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      // Envolvemos todo en FadeTransition para el efecto de aparición suave
       body: FadeTransition(
         opacity: _fadeAnimation,
+        // Usamos CustomScrollView para un AppBar colapsable más fluido
         child: CustomScrollView(
           slivers: [
             _buildCustomAppBar(),
@@ -71,6 +80,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Crea el AppBar personalizado con gradiente y efectos visuales
+  /// Se colapsa al hacer scroll y mantiene el título visible
   Widget _buildCustomAppBar() {
     return SliverAppBar(
       expandedHeight: 120,
@@ -111,6 +122,7 @@ class _PerfilPageState extends State<PerfilPage>
       actions: [
         IconButton(
           icon: const Icon(Icons.settings, color: Colors.white),
+          // Abre el menú de configuración rápida desde la parte superior
           onPressed: () => _showSettingsMenu(context),
           tooltip: 'Configuración',
         ),
@@ -118,6 +130,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Construye la sección principal del perfil con avatar y datos del jugador
+  /// Incluye foto de perfil, información básica y chips informativos
   Widget _buildProfileHeader() {
     return Container(
       width: double.infinity,
@@ -135,6 +149,7 @@ class _PerfilPageState extends State<PerfilPage>
       ),
       child: Column(
         children: [
+          // Avatar del usuario con indicador de estado online
           Stack(
             children: [
               Container(
@@ -162,6 +177,7 @@ class _PerfilPageState extends State<PerfilPage>
                   ),
                 ),
               ),
+              // Indicador verde que muestra que el usuario está activo/online
               Positioned(
                 bottom: 5,
                 right: 5,
@@ -179,6 +195,7 @@ class _PerfilPageState extends State<PerfilPage>
           ),
           const SizedBox(height: 16),
           
+          // Nombre completo del jugador
           Text(
             _userInfo['nombre'],
             style: const TextStyle(
@@ -188,6 +205,7 @@ class _PerfilPageState extends State<PerfilPage>
             ),
           ),
           const SizedBox(height: 4),
+          // Username/alias del jugador
           Text(
             _userInfo['username'],
             style: TextStyle(
@@ -198,6 +216,7 @@ class _PerfilPageState extends State<PerfilPage>
           ),
           const SizedBox(height: 12),
           
+          // Badge de posición con gradiente llamativo
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
@@ -217,6 +236,7 @@ class _PerfilPageState extends State<PerfilPage>
           ),
           const SizedBox(height: 16),
           
+          // Chips informativos con los datos más relevantes del jugador
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -232,6 +252,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Crea chips pequeños con información específica del jugador
+  /// Cada chip tiene un ícono y texto descriptivo con diseño uniforme
   Widget _buildInfoChip(IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -258,6 +280,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Sección de configuraciones y opciones de la cuenta
+  /// Lista todas las funcionalidades disponibles organizadas en categorías
   Widget _buildSettingsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,6 +365,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Construye cada elemento individual de configuración
+  /// Incluye ícono, título, descripción y acción específica
   Widget _buildSettingsItem({
     required IconData icon,
     required String title,
@@ -356,6 +382,7 @@ class _PerfilPageState extends State<PerfilPage>
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
+            // Ícono con fondo de color temático para cada opción
             Container(
               width: 45,
               height: 45,
@@ -371,6 +398,7 @@ class _PerfilPageState extends State<PerfilPage>
             ),
             const SizedBox(width: 16),
             
+            // Contenido de texto del elemento de configuración
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,6 +423,7 @@ class _PerfilPageState extends State<PerfilPage>
               ),
             ),
             
+            // Flecha indicadora de que el elemento es clickeable
             Icon(
               Icons.arrow_forward_ios,
               color: Colors.grey[400],
@@ -406,6 +435,7 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Crea un divisor sutil entre elementos de configuración
   Widget _buildDivider() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -416,6 +446,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Muestra un menú emergente con configuraciones rápidas
+  /// Incluye opciones como modo oscuro e idioma
   void _showSettingsMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -447,6 +479,7 @@ class _PerfilPageState extends State<PerfilPage>
             ),
             const SizedBox(height: 20),
             
+            // Opciones de configuración rápida accesibles
             ListTile(
               leading: const Icon(Icons.dark_mode),
               title: const Text('Modo Oscuro'),
@@ -465,6 +498,9 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Funciones de manejo de acciones - Actualmente muestran placeholders
+  /// En una implementación completa, estas navegarían a pantallas específicas
+  
   void _editProfile(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -501,6 +537,7 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Muestra el diálogo "Acerca de" con información de la aplicación
   void _showAboutDialog(BuildContext context) {
     showAboutDialog(
       context: context,
@@ -520,6 +557,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Muestra diálogo de confirmación antes de cerrar sesión
+  /// Importante para evitar cierres accidentales de sesión
   void _confirmLogout(BuildContext context) {
     showDialog(
       context: context,
@@ -540,6 +579,7 @@ class _PerfilPageState extends State<PerfilPage>
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
+              // Ejecuta el logout después de confirmar
               _performLogout(context);
             },
             style: ElevatedButton.styleFrom(
@@ -553,6 +593,8 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
+  /// Ejecuta el logout y navega de vuelta al login
+  /// Elimina todo el historial de navegación para seguridad
   void _performLogout(BuildContext context) {
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/login',

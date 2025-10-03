@@ -6,6 +6,8 @@ import 'entrenamientos/proximos.dart';
 import 'perfil.dart';
 import 'estadisticas.dart';
 
+/// Clase que representa un partido próximo a jugar
+/// Contiene toda la información necesaria para mostrar el siguiente encuentro
 class PartidoProximo {
   final DateTime fecha;
   final String equipoRival;
@@ -20,6 +22,8 @@ class PartidoProximo {
   });
 }
 
+/// Clase que representa un entrenamiento próximo
+/// Incluye el tipo de entrenamiento, objetivos específicos y ubicación
 class EntrenamientoProximo {
   final DateTime fecha;
   final String tipo;
@@ -34,6 +38,8 @@ class EntrenamientoProximo {
   });
 }
 
+/// Clase que contiene la información completa del perfil del jugador
+/// Incluye datos personales, club actual y estadísticas básicas
 class PerfilJugador {
   final String nombre;
   final int edad;
@@ -52,6 +58,8 @@ class PerfilJugador {
   });
 }
 
+/// Pantalla principal de la aplicación SoccerLife
+/// Muestra el dashboard con información del jugador, próximos eventos y estadísticas
 class PrincipalPage extends StatefulWidget {
   const PrincipalPage({super.key});
 
@@ -60,8 +68,10 @@ class PrincipalPage extends StatefulWidget {
 }
 
 class _PrincipalPageState extends State<PrincipalPage> {
+  // Índice del tab seleccionado en el bottom navigation bar
   int _selectedIndex = 0;
 
+  // Datos del perfil del jugador (en una app real vendrían de una base de datos)
   final PerfilJugador _perfilJugador = PerfilJugador(
     nombre: 'Daniel Jr',
     edad: 22,
@@ -71,6 +81,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     rating: 87,
   );
   
+  // Información del próximo partido programado
   final PartidoProximo _proximoPartido = PartidoProximo(
     fecha: DateTime.now().add(const Duration(days: 3)),
     equipoRival: 'Valencia CF',
@@ -78,6 +89,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     hora: const TimeOfDay(hour: 16, minute: 0),
   );
   
+  // Información del próximo entrenamiento programado
   final EntrenamientoProximo _proximoEntrenamiento = EntrenamientoProximo(
     fecha: DateTime.now().add(const Duration(days: 2)),
     tipo: 'Técnico',
@@ -85,6 +97,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     ubicacion: 'Campo principal',
   );
 
+  /// Determina qué contenido mostrar según el tab seleccionado
+  /// Cada caso corresponde a una sección diferente de la app
   Widget _buildTabContent() {
     switch (_selectedIndex) {
       case 0:
@@ -112,6 +126,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Construye la pestaña principal (Home) con el dashboard completo
+  /// Incluye la carta del jugador, próximos eventos y estadísticas rápidas
   Widget _buildHomeTab() {
     return Container(
       color: Colors.white,
@@ -136,6 +152,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Crea la carta principal del jugador con su información personal
+  /// Diseño estilo tarjeta deportiva con gradiente azul y avatar circular
   Widget _buildCartaJugador() {
     return Container(
       width: double.infinity,
@@ -168,6 +186,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 ),
               ],
             ),
+            // Avatar circular con las iniciales del jugador
             child: Center(
               child: Text(
                 _perfilJugador.nombre.substring(0, 2).toUpperCase(),
@@ -258,6 +277,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Sección que muestra los próximos eventos del jugador
+  /// Incluye tanto partidos como entrenamientos en tarjetas interactivas
   Widget _buildProximosEventos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,8 +304,11 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Tarjeta del próximo partido con navegación a la página de partidos futuros
+  /// Muestra rival, lugar, fecha y hora del encuentro
   Widget _buildProximoPartidoCard() {
     return GestureDetector(
+      // Al tocar la tarjeta, navega a la página de partidos futuros
       onTap: () {
         Navigator.push(
           context,
@@ -394,8 +418,11 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Tarjeta del próximo entrenamiento con navegación a entrenamientos próximos
+  /// Muestra tipo, ubicación, fecha y objetivos de la sesión
   Widget _buildProximoEntrenamientoCard() {
     return GestureDetector(
+      // Al tocar la tarjeta, navega a la página de entrenamientos próximos
       onTap: () {
         Navigator.push(
           context,
@@ -505,10 +532,13 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Función que formatea las fechas de manera intuitiva para el usuario
+  /// Convierte las fechas en texto amigable (Hoy, Mañana, etc.)
   String _formatearFecha(DateTime fecha) {
     final ahora = DateTime.now();
     final diferencia = fecha.difference(ahora).inDays;
     
+    // Casos especiales para fechas muy próximas
     if (diferencia == 0) {
       return 'Hoy';
     } else if (diferencia == 1) {
@@ -516,6 +546,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
     } else if (diferencia == 2) {
       return 'Pasado mañana';
     } else {
+      // Para fechas más lejanas, mostrar día y mes abreviado
       final meses = [
         'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
         'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
@@ -524,6 +555,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     }
   }
 
+  /// Sección de estadísticas rápidas de la temporada actual
+  /// Muestra los números más importantes en un grid de 2x2
   Widget _buildQuickStats() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -538,6 +571,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           ),
         ),
         const SizedBox(height: 16),
+        // Grid de estadísticas con diseño 2x2
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
@@ -572,6 +606,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Construye cada tarjeta individual de estadística
+  /// Recibe el título, valor e ícono para crear una tarjeta uniforme
   Widget _buildPremiumStatCard({
     required String title,
     required String value,
@@ -638,6 +674,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
+  /// Crea el bottom navigation bar con gradiente y efectos visuales
+  /// Maneja la navegación entre las diferentes secciones de la app
   Widget _buildBottomNavigationBar() {
     return Container(
       decoration: BoxDecoration(
@@ -663,6 +701,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
       ),
       child: BottomNavigationBar(
         currentIndex: _selectedIndex,
+        // Actualiza el estado cuando se selecciona un tab diferente
         onTap: (index) => setState(() => _selectedIndex = index),
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
