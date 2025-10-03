@@ -114,13 +114,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.event_available, color: const Color(0xFF0065F8)),
-            onPressed: () => _navegarAPartidosFuturos(),
-            tooltip: 'Partidos Futuros',
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
