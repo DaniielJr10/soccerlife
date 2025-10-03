@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Pantalla de partidos futuros de Soccer Life
-/// Permite programar y gestionar partidos próximos
+/// Pantalla de partidos futuros - permite programar y gestionar partidos próximos
 class PartidosFuturosPage extends StatefulWidget {
   const PartidosFuturosPage({super.key});
 
@@ -10,40 +9,38 @@ class PartidosFuturosPage extends StatefulWidget {
 }
 
 class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
-  
-  // Lista para almacenar los partidos futuros
+  // Variables principales
   final List<PartidoFuturo> _partidosFuturos = [];
   
-  // Controladores para el formulario de partido futuro
-  final _formFuturoKey = GlobalKey<FormState>();
-  final _fechaFuturoController = TextEditingController();
+  // Controladores del formulario
+  final _formKey = GlobalKey<FormState>();
+  final _fechaController = TextEditingController();
   final _lugarController = TextEditingController();
   final _horaController = TextEditingController();
   final _equipoRivalController = TextEditingController();
-  final _notasFuturoController = TextEditingController();
+  final _notasController = TextEditingController();
   
-  // Variables de estado
-  DateTime? _fechaPartidoFuturo;
-  TimeOfDay? _horaPartidoFuturo;
+  // Estado temporal del formulario
+  DateTime? _fechaSeleccionada;
+  TimeOfDay? _horaSeleccionada;
 
   @override
   void initState() {
     super.initState();
-    _cargarPartidosEjemplo(); // Cargar algunos datos de ejemplo
+    _cargarDatosEjemplo();
   }
 
   @override
   void dispose() {
-    _fechaFuturoController.dispose();
+    _fechaController.dispose();
     _lugarController.dispose();
     _horaController.dispose();
     _equipoRivalController.dispose();
-    _notasFuturoController.dispose();
+    _notasController.dispose();
     super.dispose();
   }
 
-  // Carga algunos partidos de ejemplo para demostrar la funcionalidad
-  void _cargarPartidosEjemplo() {
+  void _cargarDatosEjemplo() {
     _partidosFuturos.addAll([
       PartidoFuturo(
         fecha: DateTime.now().add(const Duration(days: 3)),
@@ -85,20 +82,17 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             _buildHeader(),
             const SizedBox(height: 20),
-            // Botón para agregar nuevo partido futuro
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildAddButton(
                 'Programar Partido',
                 Icons.event_available,
-                () => _mostrarFormularioPartidoFuturo(),
+                () => _mostrarFormulario(),
               ),
             ),
             const SizedBox(height: 20),
-            // Lista de partidos futuros
             Expanded(
               child: _partidosFuturos.isEmpty
                   ? _buildEmptyState('No hay partidos programados', Icons.event)
@@ -106,7 +100,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _partidosFuturos.length,
                       itemBuilder: (context, index) {
-                        return _buildPartidoFuturoCard(_partidosFuturos[index], index);
+                        return _buildPartidoCard(_partidosFuturos[index], index);
                       },
                     ),
             ),
@@ -116,17 +110,14 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Construye el header dividido en dos secciones
+  // Widgets de construcción de la UI
   Widget _buildHeader() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: Colors.white,
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[300]!, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -137,24 +128,18 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       ),
       child: Row(
         children: [
-          // Sección Partidos Jugados (inactiva/navegable)
           Expanded(
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(15)),
-                  color: Colors.transparent,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.horizontal(left: Radius.circular(15)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.sports_soccer,
-                      color: Colors.grey[600],
-                      size: 20,
-                    ),
+                    Icon(Icons.sports_soccer, color: Colors.grey[600], size: 20),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
@@ -172,30 +157,20 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
               ),
             ),
           ),
-          // Divisor
-          Container(
-            width: 1,
-            height: 48,
-            color: Colors.grey[300],
-          ),
-          // Sección Partidos Futuros (activa)
+          Container(width: 1, height: 48, color: Colors.grey[300]),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.horizontal(right: Radius.circular(15)),
-                color: const Color(0xFF0065F8),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
+                color: Color(0xFF0065F8),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.event_available,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  const Icon(Icons.event_available, color: Colors.white, size: 20),
                   const SizedBox(width: 8),
-                  Flexible(
+                  const Flexible(
                     child: Text(
                       'Partidos Futuros',
                       style: TextStyle(
@@ -231,7 +206,6 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Construye el botón de agregar
   Widget _buildAddButton(String text, IconData icon, VoidCallback onPressed) {
     return Container(
       width: double.infinity,
@@ -275,26 +249,18 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Estado vacío
   Widget _buildEmptyState(String message, IconData icon) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 80,
-            color: Colors.grey[400],
-          ),
+          Icon(icon, size: 80, color: Colors.grey[400]),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               message,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -305,8 +271,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Card de partido futuro
-  Widget _buildPartidoFuturoCard(PartidoFuturo partido, int index) {
+  Widget _buildPartidoCard(PartidoFuturo partido, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(16),
@@ -328,7 +293,6 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header del partido
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -344,31 +308,25 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
                   maxLines: 1,
                 ),
               ),
-              Icon(
-                Icons.schedule,
-                color: const Color(0xFF0065F8),
-                size: 24,
-              ),
+              const Icon(Icons.schedule, color: Color(0xFF0065F8), size: 24),
             ],
           ),
           const SizedBox(height: 12),
-          // Información del partido
           _buildInfoRow('Fecha', _formatDate(partido.fecha)),
           _buildInfoRow('Hora', _formatTime(partido.hora)),
           _buildInfoRow('Lugar', partido.lugar),
           if (partido.notas.isNotEmpty)
             _buildInfoRow('Notas', partido.notas),
           const SizedBox(height: 10),
-          // Botones de acción
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                onPressed: () => _editarPartidoFuturo(partido, index),
+                onPressed: () => _editarPartido(partido, index),
                 icon: const Icon(Icons.edit, color: Color(0xFF0065F8)),
               ),
               IconButton(
-                onPressed: () => _eliminarPartidoFuturo(index),
+                onPressed: () => _eliminarPartido(index),
                 icon: const Icon(Icons.delete, color: Colors.red),
               ),
             ],
@@ -378,7 +336,6 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Fila de información
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -399,10 +356,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[800],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[800]),
               overflow: TextOverflow.ellipsis,
               maxLines: value.length > 50 ? 2 : 1,
             ),
@@ -412,21 +366,20 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Muestra el formulario para programar partido futuro
-  void _mostrarFormularioPartidoFuturo([PartidoFuturo? partido, int? index]) {
+  // Formulario de partido
+  void _mostrarFormulario([PartidoFuturo? partido, int? index]) {
     if (partido != null) {
-      _cargarDatosPartidoFuturo(partido);
+      _cargarDatosFormulario(partido);
     } else {
-      _limpiarFormularioFuturo();
+      _limpiarFormulario();
     }
     showDialog(
       context: context,
-      builder: (context) => _buildFormularioPartidoFuturo(partido, index),
+      builder: (context) => _buildFormulario(partido, index),
     );
   }
 
-  // Formulario de partido futuro
-  Widget _buildFormularioPartidoFuturo([PartidoFuturo? partido, int? index]) {
+  Widget _buildFormulario([PartidoFuturo? partido, int? index]) {
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       child: Container(
@@ -441,102 +394,54 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0065F8),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      partido != null ? 'Editar Partido' : 'Programar Partido',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white, size: 20),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                  ),
-                ],
-              ),
-            ),
-            // Formulario scrollable
+            _buildFormularioHeader(partido),
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(12),
                 child: Form(
-                  key: _formFuturoKey,
+                  key: _formKey,
                   child: Column(
                     children: [
-                      _buildCompactField(
+                      _buildCampo(
                         'Fecha',
-                        _fechaFuturoController,
+                        _fechaController,
                         Icons.calendar_today,
                         readOnly: true,
-                        onTap: () => _selectDateFuturo(),
+                        onTap: _seleccionarFecha,
                         validator: (value) => value?.isEmpty ?? true ? 'Requerido' : null,
                       ),
                       const SizedBox(height: 6),
-                      _buildCompactField(
+                      _buildCampo(
                         'Hora',
                         _horaController,
                         Icons.access_time,
                         readOnly: true,
-                        onTap: () => _selectTimeFuturo(),
+                        onTap: _seleccionarHora,
                         validator: (value) => value?.isEmpty ?? true ? 'Requerido' : null,
                       ),
                       const SizedBox(height: 6),
-                      _buildCompactField(
+                      _buildCampo(
                         'Lugar',
                         _lugarController,
                         Icons.location_on,
-                        validator: _validateRequired,
+                        validator: _validarRequerido,
                       ),
                       const SizedBox(height: 6),
-                      _buildCompactField(
+                      _buildCampo(
                         'Equipo rival',
                         _equipoRivalController,
                         Icons.groups,
-                        validator: _validateRequired,
+                        validator: _validarRequerido,
                       ),
                       const SizedBox(height: 6),
-                      _buildCompactField(
+                      _buildCampo(
                         'Notas',
-                        _notasFuturoController,
+                        _notasController,
                         Icons.note,
                         maxLines: 2,
                       ),
                       const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 36,
-                        child: ElevatedButton(
-                          onPressed: () => partido != null 
-                              ? _actualizarPartidoFuturo(index!) 
-                              : _guardarPartidoFuturo(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0065F8),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            partido != null ? 'Actualizar' : 'Programar',
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      ),
+                      _buildBotonFormulario(partido, index),
                     ],
                   ),
                 ),
@@ -548,12 +453,63 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Campo compacto para el Dialog
-  Widget _buildCompactField(
+  Widget _buildFormularioHeader(PartidoFuturo? partido) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0065F8),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              partido != null ? 'Editar Partido' : 'Programar Partido',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close, color: Colors.white, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBotonFormulario(PartidoFuturo? partido, int? index) {
+    return SizedBox(
+      width: double.infinity,
+      height: 36,
+      child: ElevatedButton(
+        onPressed: () => partido != null 
+            ? _actualizarPartido(index!) 
+            : _guardarPartido(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF0065F8),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: Text(
+          partido != null ? 'Actualizar' : 'Programar',
+          style: const TextStyle(fontSize: 14),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCampo(
     String label,
     TextEditingController controller,
     IconData icon, {
-    TextInputType? keyboardType,
     String? Function(String?)? validator,
     int maxLines = 1,
     bool readOnly = false,
@@ -561,7 +517,6 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
   }) {
     return TextFormField(
       controller: controller,
-      keyboardType: keyboardType,
       validator: validator,
       maxLines: maxLines,
       readOnly: readOnly,
@@ -588,16 +543,15 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
   }
 
-  // Validador
-  String? _validateRequired(String? value) {
+  // Funciones de validación y selección
+  String? _validarRequerido(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Este campo es obligatorio';
     }
     return null;
   }
 
-  // Selectors de fecha y hora
-  Future<void> _selectDateFuturo() async {
+  Future<void> _seleccionarFecha() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
@@ -619,13 +573,13 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
     if (picked != null) {
       setState(() {
-        _fechaPartidoFuturo = picked;
-        _fechaFuturoController.text = _formatDate(picked);
+        _fechaSeleccionada = picked;
+        _fechaController.text = _formatDate(picked);
       });
     }
   }
 
-  Future<void> _selectTimeFuturo() async {
+  Future<void> _seleccionarHora() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 16, minute: 0),
@@ -645,21 +599,21 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     );
     if (picked != null) {
       setState(() {
-        _horaPartidoFuturo = picked;
+        _horaSeleccionada = picked;
         _horaController.text = _formatTime(picked);
       });
     }
   }
 
-  // Método de guardado
-  void _guardarPartidoFuturo() {
-    if (_formFuturoKey.currentState?.validate() ?? false) {
+  // Funciones de gestión de datos
+  void _guardarPartido() {
+    if (_formKey.currentState?.validate() ?? false) {
       final partido = PartidoFuturo(
-        fecha: _fechaPartidoFuturo!,
+        fecha: _fechaSeleccionada!,
         lugar: _lugarController.text,
-        hora: _horaPartidoFuturo!,
+        hora: _horaSeleccionada!,
         equipoRival: _equipoRivalController.text,
-        notas: _notasFuturoController.text,
+        notas: _notasController.text,
       );
 
       setState(() {
@@ -668,19 +622,18 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       });
 
       Navigator.pop(context);
-      _mostrarMensajeExito('Partido programado correctamente');
+      _mostrarMensaje('Partido programado correctamente');
     }
   }
 
-  // Método de actualización
-  void _actualizarPartidoFuturo(int index) {
-    if (_formFuturoKey.currentState?.validate() ?? false) {
+  void _actualizarPartido(int index) {
+    if (_formKey.currentState?.validate() ?? false) {
       final partido = PartidoFuturo(
-        fecha: _fechaPartidoFuturo!,
+        fecha: _fechaSeleccionada!,
         lugar: _lugarController.text,
-        hora: _horaPartidoFuturo!,
+        hora: _horaSeleccionada!,
         equipoRival: _equipoRivalController.text,
-        notas: _notasFuturoController.text,
+        notas: _notasController.text,
       );
 
       setState(() {
@@ -689,16 +642,15 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       });
 
       Navigator.pop(context);
-      _mostrarMensajeExito('Partido actualizado correctamente');
+      _mostrarMensaje('Partido actualizado correctamente');
     }
   }
 
-  // Métodos de edición y eliminación
-  void _editarPartidoFuturo(PartidoFuturo partido, int index) {
-    _mostrarFormularioPartidoFuturo(partido, index);
+  void _editarPartido(PartidoFuturo partido, int index) {
+    _mostrarFormulario(partido, index);
   }
 
-  void _eliminarPartidoFuturo(int index) {
+  void _eliminarPartido(int index) {
     _mostrarDialogoConfirmacion(
       'Eliminar partido',
       '¿Estás seguro de que deseas eliminar este partido programado?',
@@ -706,30 +658,30 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
         setState(() {
           _partidosFuturos.removeAt(index);
         });
-        _mostrarMensajeExito('Partido eliminado');
+        _mostrarMensaje('Partido eliminado');
       },
     );
   }
 
-  // Métodos auxiliares
-  void _limpiarFormularioFuturo() {
-    _fechaFuturoController.clear();
+  // Funciones auxiliares
+  void _limpiarFormulario() {
+    _fechaController.clear();
     _lugarController.clear();
     _horaController.clear();
     _equipoRivalController.clear();
-    _notasFuturoController.clear();
-    _fechaPartidoFuturo = null;
-    _horaPartidoFuturo = null;
+    _notasController.clear();
+    _fechaSeleccionada = null;
+    _horaSeleccionada = null;
   }
 
-  void _cargarDatosPartidoFuturo(PartidoFuturo partido) {
-    _fechaPartidoFuturo = partido.fecha;
-    _fechaFuturoController.text = _formatDate(partido.fecha);
+  void _cargarDatosFormulario(PartidoFuturo partido) {
+    _fechaSeleccionada = partido.fecha;
+    _fechaController.text = _formatDate(partido.fecha);
     _lugarController.text = partido.lugar;
-    _horaPartidoFuturo = partido.hora;
+    _horaSeleccionada = partido.hora;
     _horaController.text = _formatTime(partido.hora);
     _equipoRivalController.text = partido.equipoRival;
-    _notasFuturoController.text = partido.notas;
+    _notasController.text = partido.notas;
   }
 
   String _formatDate(DateTime date) {
@@ -740,7 +692,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
-  void _mostrarMensajeExito(String mensaje) {
+  void _mostrarMensaje(String mensaje) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(mensaje),
@@ -755,17 +707,8 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: Text(
-          titulo, 
-          style: TextStyle(color: Colors.grey[800]),
-          overflow: TextOverflow.ellipsis,
-        ),
-        content: Text(
-          mensaje, 
-          style: TextStyle(color: Colors.grey[600]),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 3,
-        ),
+        title: Text(titulo, style: TextStyle(color: Colors.grey[800])),
+        content: Text(mensaje, style: TextStyle(color: Colors.grey[600])),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -784,7 +727,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
   }
 }
 
-// Modelo de datos para Partido Futuro
+// Modelo de datos
 class PartidoFuturo {
   final DateTime fecha;
   final String lugar;

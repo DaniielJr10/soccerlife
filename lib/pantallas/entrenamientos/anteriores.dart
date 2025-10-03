@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'proximos.dart';
 
-/// Modelo para entrenamientos anteriores
 class EntrenamientoAnterior {
   final DateTime fecha;
   final String tipo;
@@ -22,8 +21,6 @@ class EntrenamientoAnterior {
   });
 }
 
-/// Pantalla de entrenamientos anteriores de Soccer Life
-/// Permite registrar y gestionar entrenamientos ya realizados
 class EntrenamientosAnterioresPage extends StatefulWidget {
   const EntrenamientosAnterioresPage({super.key});
 
@@ -32,11 +29,8 @@ class EntrenamientosAnterioresPage extends StatefulWidget {
 }
 
 class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresPage> {
-  
-  // Lista para almacenar los entrenamientos anteriores
   final List<EntrenamientoAnterior> _entrenamientosAnteriores = [];
   
-  // Controladores para el formulario de entrenamiento anterior
   final _formAnteriorKey = GlobalKey<FormState>();
   final _fechaAnteriorController = TextEditingController();
   final _duracionController = TextEditingController();
@@ -44,11 +38,8 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
   final _ubicacionController = TextEditingController();
   final _observacionesController = TextEditingController();
   
-  // Variables para los dropdowns
   String? _tipoSeleccionado;
   String? _intensidadSeleccionada;
-  
-  // Variable de estado
   DateTime? _fechaEntrenamientoAnterior;
 
   final List<String> _tiposEntrenamiento = [
@@ -75,6 +66,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     super.dispose();
   }
 
+  // Carga algunos entrenamientos de ejemplo para mostrar al usuario
   void _cargarEntrenamientosEjemplo() {
     setState(() {
       _entrenamientosAnteriores.addAll([
@@ -107,7 +99,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, // Eliminar botón de volver automático
+        automaticallyImplyLeading: false,
         title: Text(
           'Entrenamientos Anteriores',
           style: TextStyle(
@@ -119,7 +111,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
         actions: [
           IconButton(
             icon: Icon(Icons.fitness_center, color: const Color(0xFF0065F8)),
-            onPressed: () => _navegarAEntrenamientosProximos(),
+            onPressed: _navegarAEntrenamientosProximos,
             tooltip: 'Entrenamientos Próximos',
           ),
         ],
@@ -127,20 +119,17 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       body: SafeArea(
         child: Column(
           children: [
-            // Header con navegación a entrenamientos próximos
             _buildHeader(),
             const SizedBox(height: 20),
-            // Botón para agregar nuevo entrenamiento anterior
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildAddButton(
                 'Registrar Entrenamiento Anterior',
                 Icons.add_box,
-                () => _mostrarFormularioEntrenamientoAnterior(),
+                _mostrarFormularioEntrenamientoAnterior,
               ),
             ),
             const SizedBox(height: 20),
-            // Lista de entrenamientos anteriores
             Expanded(
               child: _entrenamientosAnteriores.isEmpty
                   ? _buildEmptyState('No hay entrenamientos registrados', Icons.fitness_center)
@@ -158,17 +147,14 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     );
   }
 
-  // Construye el header dividido en dos secciones
+  // Header que permite navegar entre entrenamientos anteriores y próximos
   Widget _buildHeader() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: Colors.white,
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[300]!, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -179,7 +165,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       ),
       child: Row(
         children: [
-          // Sección Entrenamientos Anteriores (activa)
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
@@ -190,11 +175,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.fitness_center,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  const Icon(Icons.fitness_center, color: Colors.white, size: 20),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -211,13 +192,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               ),
             ),
           ),
-          // Divisor
-          Container(
-            width: 1,
-            height: 48,
-            color: Colors.grey[300],
-          ),
-          // Sección Entrenamientos Próximos (inactiva/navegable)
+          Container(width: 1, height: 48, color: Colors.grey[300]),
           Expanded(
             child: GestureDetector(
               onTap: _navegarAEntrenamientosProximos,
@@ -230,11 +205,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.event_available,
-                      color: Colors.grey[600],
-                      size: 20,
-                    ),
+                    Icon(Icons.event_available, color: Colors.grey[600], size: 20),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
@@ -257,17 +228,13 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     );
   }
 
-  // Navegar a entrenamientos próximos
   void _navegarAEntrenamientosProximos() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const EntrenamientosProximosPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const EntrenamientosProximosPage()),
     );
   }
 
-  // Construye el botón de agregar
   Widget _buildAddButton(String text, IconData icon, VoidCallback onPressed) {
     return Container(
       width: double.infinity,
@@ -311,26 +278,18 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     );
   }
 
-  // Estado vacío
   Widget _buildEmptyState(String message, IconData icon) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 80,
-            color: Colors.grey[400],
-          ),
+          Icon(icon, size: 80, color: Colors.grey[400]),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               message,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -348,10 +307,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: Colors.white,
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[300]!, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -363,7 +319,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header del entrenamiento
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -393,7 +348,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
             ],
           ),
           const SizedBox(height: 12),
-          // Información del entrenamiento
           _buildInfoRow('Fecha', _formatDate(entrenamiento.fecha)),
           _buildInfoRow('Duración', entrenamiento.duracion),
           _buildInfoRow('Ubicación', entrenamiento.ubicacion),
@@ -401,7 +355,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
           if (entrenamiento.observaciones.isNotEmpty)
             _buildInfoRow('Observaciones', entrenamiento.observaciones),
           const SizedBox(height: 10),
-          // Botones de acción
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -420,11 +373,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     );
   }
 
-  void _mostrarFormularioEntrenamientoAnterior() {
-    _limpiarFormulario();
-    _mostrarModal('Registrar Entrenamiento', false, -1);
-  }
-
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -438,14 +386,13 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );
   }
 
+  // Devuelve el color asociado a cada tipo de entrenamiento
   Color _getColorTipo(String tipo) {
     switch (tipo) {
       case 'Técnico':
@@ -469,12 +416,18 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     return '${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}';
   }
 
+  void _mostrarFormularioEntrenamientoAnterior() {
+    _limpiarFormulario();
+    _mostrarModal('Registrar Entrenamiento', false, -1);
+  }
+
   void _editarEntrenamiento(int index) {
     final entrenamiento = _entrenamientosAnteriores[index];
     _cargarDatosEnFormulario(entrenamiento);
     _mostrarModal('Editar Entrenamiento', true, index);
   }
 
+  // Carga los datos del entrenamiento en el formulario para edición
   void _cargarDatosEnFormulario(EntrenamientoAnterior entrenamiento) {
     _fechaEntrenamientoAnterior = entrenamiento.fecha;
     _fechaAnteriorController.text = _formatDate(entrenamiento.fecha);
@@ -486,6 +439,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     _observacionesController.text = entrenamiento.observaciones;
   }
 
+  // Muestra un modal con el formulario para crear o editar entrenamientos
   void _mostrarModal(String titulo, bool esEdicion, int index) {
     showModalBottomSheet(
       context: context,
@@ -506,7 +460,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
           ),
           child: Column(
             children: [
-              // Título del modal
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -521,8 +474,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
                 ],
               ),
               const Divider(),
-              
-              // Formulario
               Expanded(
                 child: _buildFormularioEntrenamiento(esEdicion, index),
               ),
@@ -539,7 +490,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Campo de fecha
             TextFormField(
               controller: _fechaAnteriorController,
               decoration: const InputDecoration(
@@ -558,8 +508,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               },
             ),
             const SizedBox(height: 16),
-            
-            // Dropdown de tipo
             DropdownButtonFormField<String>(
               value: _tipoSeleccionado,
               decoration: const InputDecoration(
@@ -579,8 +527,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               },
             ),
             const SizedBox(height: 16),
-            
-            // Campo de duración
             TextFormField(
               controller: _duracionController,
               decoration: const InputDecoration(
@@ -597,8 +543,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               },
             ),
             const SizedBox(height: 16),
-            
-            // Dropdown de intensidad
             DropdownButtonFormField<String>(
               value: _intensidadSeleccionada,
               decoration: const InputDecoration(
@@ -618,8 +562,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               },
             ),
             const SizedBox(height: 16),
-            
-            // Campo de ubicación
             TextFormField(
               controller: _ubicacionController,
               decoration: const InputDecoration(
@@ -636,8 +578,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               },
             ),
             const SizedBox(height: 16),
-            
-            // Campo de objetivos
             TextFormField(
               controller: _objetivosController,
               decoration: const InputDecoration(
@@ -655,8 +595,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               },
             ),
             const SizedBox(height: 16),
-            
-            // Campo de observaciones
             TextFormField(
               controller: _observacionesController,
               decoration: const InputDecoration(
@@ -668,8 +606,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
               maxLines: 3,
             ),
             const SizedBox(height: 24),
-            
-            // Botones
             Row(
               children: [
                 Expanded(
@@ -683,7 +619,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
                   child: ElevatedButton(
                     onPressed: () => _guardarEntrenamiento(esEdicion, index),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: esEdicion ? const Color(0xFF0065F8) : const Color(0xFF0065F8),
+                      backgroundColor: const Color(0xFF0065F8),
                     ),
                     child: Text(
                       esEdicion ? 'Actualizar' : 'Guardar',
@@ -715,6 +651,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     }
   }
 
+  // Guarda un nuevo entrenamiento o actualiza uno existente
   void _guardarEntrenamiento(bool esEdicion, int index) {
     if (_formAnteriorKey.currentState!.validate()) {
       final entrenamiento = EntrenamientoAnterior(

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'partidosfuturos.dart';
 
-/// Pantalla de partidos jugados de Soccer Life
-/// Permite registrar y gestionar partidos ya jugados
+/// Pantalla principal para gestionar partidos jugados
 class PartidosJugadosPage extends StatefulWidget {
   const PartidosJugadosPage({super.key});
 
@@ -11,27 +10,22 @@ class PartidosJugadosPage extends StatefulWidget {
 }
 
 class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
-  
-  // Lista para almacenar los partidos jugados
   final List<PartidoJugado> _partidosJugados = [];
   
-  // Controladores para el formulario de partido jugado
-  final _formJugadoKey = GlobalKey<FormState>();
-  final _fechaJugadoController = TextEditingController();
-  final _equipoContrarioJugadoController = TextEditingController();
+  // Controladores del formulario
+  final _formKey = GlobalKey<FormState>();
+  final _fechaController = TextEditingController();
+  final _equipoContrarioController = TextEditingController();
   final _golesAFavorController = TextEditingController();
   final _golesEnContraController = TextEditingController();
-  final _minutosJugadosController = TextEditingController();
+  final _minutosController = TextEditingController();
   final _golesAnotadosController = TextEditingController();
   final _asistenciasController = TextEditingController();
-  final _notasJugadoController = TextEditingController();
+  final _notasController = TextEditingController();
   
-  // Variables para los dropdowns
   String? _posicionSeleccionada;
   String? _tarjetasSeleccionadas;
-  
-  // Variable de estado
-  DateTime? _fechaPartidoJugado;
+  DateTime? _fechaSeleccionada;
 
   final List<String> _posiciones = [
     'Arquero', 'Defensa Central', 'Lateral Derecho', 'Lateral Izquierdo',
@@ -46,23 +40,23 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   @override
   void initState() {
     super.initState();
-    _cargarPartidosEjemplo(); // Cargar algunos datos de ejemplo
+    _cargarPartidosEjemplo();
   }
 
   @override
   void dispose() {
-    _fechaJugadoController.dispose();
-    _equipoContrarioJugadoController.dispose();
+    _fechaController.dispose();
+    _equipoContrarioController.dispose();
     _golesAFavorController.dispose();
     _golesEnContraController.dispose();
-    _minutosJugadosController.dispose();
+    _minutosController.dispose();
     _golesAnotadosController.dispose();
     _asistenciasController.dispose();
-    _notasJugadoController.dispose();
+    _notasController.dispose();
     super.dispose();
   }
 
-  // Carga algunos partidos de ejemplo para demostrar la funcionalidad
+  // Carga datos de ejemplo
   void _cargarPartidosEjemplo() {
     _partidosJugados.addAll([
       PartidoJugado(
@@ -131,20 +125,17 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header con navegación a partidos futuros
             _buildHeader(),
             const SizedBox(height: 20),
-            // Botón para agregar nuevo partido jugado
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildAddButton(
                 'Registrar Partido Jugado',
                 Icons.add_box,
-                () => _mostrarFormularioPartidoJugado(),
+                () => _mostrarFormulario(),
               ),
             ),
             const SizedBox(height: 20),
-            // Lista de partidos jugados
             Expanded(
               child: _partidosJugados.isEmpty
                   ? _buildEmptyState('No hay partidos registrados', Icons.sports_soccer)
@@ -152,7 +143,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _partidosJugados.length,
                       itemBuilder: (context, index) {
-                        return _buildPartidoJugadoCard(_partidosJugados[index], index);
+                        return _buildPartidoCard(_partidosJugados[index], index);
                       },
                     ),
             ),
@@ -162,7 +153,8 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Construye el header dividido en dos secciones
+  // =============== Widgets de UI ===============
+  
   Widget _buildHeader() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -261,7 +253,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Navegar a partidos futuros
   void _navegarAPartidosFuturos() {
     Navigator.push(
       context,
@@ -271,7 +262,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Construye el botón de agregar
   Widget _buildAddButton(String text, IconData icon, VoidCallback onPressed) {
     return Container(
       width: double.infinity,
@@ -315,7 +305,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Estado vacío
   Widget _buildEmptyState(String message, IconData icon) {
     return Center(
       child: Column(
@@ -345,8 +334,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Card de partido jugado
-  Widget _buildPartidoJugadoCard(PartidoJugado partido, int index) {
+  Widget _buildPartidoCard(PartidoJugado partido, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(16),
@@ -414,11 +402,11 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                onPressed: () => _editarPartidoJugado(partido, index),
+                onPressed: () => _editarPartido(partido, index),
                 icon: const Icon(Icons.edit, color: Color(0xFF0065F8)),
               ),
               IconButton(
-                onPressed: () => _eliminarPartidoJugado(index),
+                onPressed: () => _eliminarPartido(index),
                 icon: const Icon(Icons.delete, color: Colors.red),
               ),
             ],
@@ -428,7 +416,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Fila de información
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -462,21 +449,21 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Muestra el formulario para registrar partido jugado
-  void _mostrarFormularioPartidoJugado([PartidoJugado? partido, int? index]) {
+  // =============== Formularios ===============
+  
+  void _mostrarFormulario([PartidoJugado? partido, int? index]) {
     if (partido != null) {
-      _cargarDatosPartidoJugado(partido);
+      _cargarDatos(partido);
     } else {
-      _limpiarFormularioJugado();
+      _limpiarFormulario();
     }
     showDialog(
       context: context,
-      builder: (context) => _buildFormularioPartidoJugado(partido, index),
+      builder: (context) => _buildFormulario(partido, index),
     );
   }
 
-  // Formulario de partido jugado
-  Widget _buildFormularioPartidoJugado([PartidoJugado? partido, int? index]) {
+  Widget _buildFormulario([PartidoJugado? partido, int? index]) {
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       child: Container(
@@ -525,21 +512,21 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(12),
                 child: Form(
-                  key: _formJugadoKey,
+                  key: _formKey,
                   child: Column(
                     children: [
                       _buildCompactField(
                         'Fecha',
-                        _fechaJugadoController,
+                        _fechaController,
                         Icons.calendar_today,
                         readOnly: true,
-                        onTap: () => _selectDateJugado(),
+                        onTap: () => _selectDate(),
                         validator: (value) => value?.isEmpty ?? true ? 'Requerido' : null,
                       ),
                       const SizedBox(height: 6),
                       _buildCompactField(
                         'Equipo contrario',
-                        _equipoContrarioJugadoController,
+                        _equipoContrarioController,
                         Icons.groups,
                         validator: _validateRequired,
                       ),
@@ -570,7 +557,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                       const SizedBox(height: 6),
                       _buildCompactField(
                         'Minutos',
-                        _minutosJugadosController,
+                        _minutosController,
                         Icons.timer,
                         keyboardType: TextInputType.number,
                         validator: _validateMinutes,
@@ -618,7 +605,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                       const SizedBox(height: 6),
                       _buildCompactField(
                         'Notas',
-                        _notasJugadoController,
+                        _notasController,
                         Icons.note,
                         maxLines: 2,
                       ),
@@ -627,7 +614,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                         width: double.infinity,
                         height: 36,
                         child: ElevatedButton(
-                          onPressed: () => _guardarPartidoJugado(partidoEditar: partido, index: index),
+                          onPressed: () => _guardarPartido(partidoEditar: partido, index: index),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF0065F8),
                             foregroundColor: Colors.white,
@@ -652,7 +639,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Campo compacto para el Dialog
   Widget _buildCompactField(
     String label,
     TextEditingController controller,
@@ -692,7 +678,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Dropdown compacto para el Dialog
   Widget _buildCompactDropdown(
     String label,
     String? value,
@@ -732,7 +717,8 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Validadores
+  // =============== Validaciones ===============
+  
   String? _validateRequired(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Este campo es obligatorio';
@@ -767,8 +753,9 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     return null;
   }
 
-  // Selector de fecha
-  Future<void> _selectDateJugado() async {
+  // =============== Lógica de datos ===============
+  
+  Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -790,26 +777,25 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
     if (picked != null) {
       setState(() {
-        _fechaPartidoJugado = picked;
-        _fechaJugadoController.text = _formatDate(picked);
+        _fechaSeleccionada = picked;
+        _fechaController.text = _formatDate(picked);
       });
     }
   }
 
-  // Método de guardado
-  void _guardarPartidoJugado({PartidoJugado? partidoEditar, int? index}) {
-    if (_formJugadoKey.currentState?.validate() ?? false) {
+  void _guardarPartido({PartidoJugado? partidoEditar, int? index}) {
+    if (_formKey.currentState?.validate() ?? false) {
       final partido = PartidoJugado(
-        fecha: _fechaPartidoJugado!,
-        equipoContrario: _equipoContrarioJugadoController.text,
+        fecha: _fechaSeleccionada!,
+        equipoContrario: _equipoContrarioController.text,
         golesAFavor: int.parse(_golesAFavorController.text),
         golesEnContra: int.parse(_golesEnContraController.text),
-        minutosJugados: int.parse(_minutosJugadosController.text),
+        minutosJugados: int.parse(_minutosController.text),
         posicion: _posicionSeleccionada!,
         golesAnotados: int.parse(_golesAnotadosController.text),
         asistencias: int.parse(_asistenciasController.text),
         tarjetas: _tarjetasSeleccionadas!,
-        notas: _notasJugadoController.text,
+        notas: _notasController.text,
       );
 
       setState(() {
@@ -831,7 +817,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   }
 
   // Método de eliminación
-  void _eliminarPartidoJugado(int index) {
+  void _eliminarPartido(int index) {
     _mostrarDialogoConfirmacion(
       'Eliminar partido',
       '¿Estás seguro de que deseas eliminar este partido?',
@@ -844,40 +830,40 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     );
   }
 
-  // Métodos de edición
-  void _editarPartidoJugado(PartidoJugado partido, int index) {
-    _mostrarFormularioPartidoJugado(partido, index);
+  void _editarPartido(PartidoJugado partido, int index) {
+    _mostrarFormulario(partido, index);
   }
 
-  void _cargarDatosPartidoJugado(PartidoJugado partido) {
-    _fechaPartidoJugado = partido.fecha;
-    _fechaJugadoController.text = _formatDate(partido.fecha);
-    _equipoContrarioJugadoController.text = partido.equipoContrario;
+  void _cargarDatos(PartidoJugado partido) {
+    _fechaSeleccionada = partido.fecha;
+    _fechaController.text = _formatDate(partido.fecha);
+    _equipoContrarioController.text = partido.equipoContrario;
     _golesAFavorController.text = partido.golesAFavor.toString();
     _golesEnContraController.text = partido.golesEnContra.toString();
-    _minutosJugadosController.text = partido.minutosJugados.toString();
+    _minutosController.text = partido.minutosJugados.toString();
     _posicionSeleccionada = partido.posicion;
     _golesAnotadosController.text = partido.golesAnotados.toString();
     _asistenciasController.text = partido.asistencias.toString();
     _tarjetasSeleccionadas = partido.tarjetas;
-    _notasJugadoController.text = partido.notas;
+    _notasController.text = partido.notas;
   }
 
-  // Métodos auxiliares
-  void _limpiarFormularioJugado() {
-    _fechaJugadoController.clear();
-    _equipoContrarioJugadoController.clear();
+  void _limpiarFormulario() {
+    _fechaController.clear();
+    _equipoContrarioController.clear();
     _golesAFavorController.text = '0';
     _golesEnContraController.text = '0';
-    _minutosJugadosController.text = '90';
+    _minutosController.text = '90';
     _golesAnotadosController.text = '0';
     _asistenciasController.text = '0';
-    _notasJugadoController.clear();
+    _notasController.clear();
     _posicionSeleccionada = null;
     _tarjetasSeleccionadas = 'Ninguna';
-    _fechaPartidoJugado = null;
+    _fechaSeleccionada = null;
   }
 
+  // =============== Métodos auxiliares ===============
+  
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
@@ -926,7 +912,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   }
 }
 
-// Modelo de datos para Partido Jugado
 class PartidoJugado {
   final DateTime fecha;
   final String equipoContrario;

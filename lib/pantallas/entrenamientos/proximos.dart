@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Modelo para entrenamientos próximos
 class EntrenamientoProximo {
   final DateTime fecha;
   final String tipo;
@@ -19,8 +18,7 @@ class EntrenamientoProximo {
   });
 }
 
-/// Pantalla de entrenamientos próximos de Soccer Life
-/// Permite planificar y gestionar entrenamientos futuros
+// Pantalla para planificar y gestionar entrenamientos futuros
 class EntrenamientosProximosPage extends StatefulWidget {
   const EntrenamientosProximosPage({super.key});
 
@@ -29,23 +27,18 @@ class EntrenamientosProximosPage extends StatefulWidget {
 }
 
 class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage> {
-  
-  // Lista para almacenar los entrenamientos próximos
   final List<EntrenamientoProximo> _entrenamientosProximos = [];
+  final _formKey = GlobalKey<FormState>();
   
-  // Controladores para el formulario de entrenamiento próximo
-  final _formProximoKey = GlobalKey<FormState>();
-  final _fechaProximoController = TextEditingController();
+  // Controladores del formulario
+  final _fechaController = TextEditingController();
   final _duracionController = TextEditingController();
   final _objetivosController = TextEditingController();
   final _ubicacionController = TextEditingController();
   final _notasController = TextEditingController();
   
-  // Variables para los dropdowns
   String? _tipoSeleccionado;
-  
-  // Variable de estado
-  DateTime? _fechaEntrenamientoProximo;
+  DateTime? _fechaSeleccionada;
 
   final List<String> _tiposEntrenamiento = [
     'Técnico', 'Físico', 'Táctico', 'Mixto', 'Recuperación', 'Pre-partido'
@@ -59,7 +52,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
 
   @override
   void dispose() {
-    _fechaProximoController.dispose();
+    _fechaController.dispose();
     _duracionController.dispose();
     _objetivosController.dispose();
     _ubicacionController.dispose();
@@ -67,6 +60,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     super.dispose();
   }
 
+  // Cargar algunos entrenamientos de ejemplo al iniciar
   void _cargarEntrenamientosEjemplo() {
     setState(() {
       _entrenamientosProximos.addAll([
@@ -112,20 +106,17 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             _buildHeader(),
             const SizedBox(height: 20),
-            // Botón para agregar nuevo entrenamiento próximo
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildAddButton(
                 'Programar Entrenamiento',
                 Icons.event_available,
-                () => _mostrarFormularioEntrenamientoProximo(),
+                () => _mostrarFormulario(),
               ),
             ),
             const SizedBox(height: 20),
-            // Lista de entrenamientos próximos
             Expanded(
               child: _entrenamientosProximos.isEmpty
                   ? _buildEmptyState('No hay entrenamientos programados', Icons.fitness_center)
@@ -133,7 +124,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _entrenamientosProximos.length,
                       itemBuilder: (context, index) {
-                        return _buildEntrenamientoProximoCard(_entrenamientosProximos[index], index);
+                        return _buildEntrenamientoCard(_entrenamientosProximos[index], index);
                       },
                     ),
             ),
@@ -143,7 +134,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     );
   }
 
-  // Construye el header dividido en dos secciones
+  // Construye el header con navegación entre secciones
   Widget _buildHeader() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -164,15 +155,14 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
       ),
       child: Row(
         children: [
-          // Sección Entrenamientos Anteriores (inactiva/navegable)
+          // Sección Entrenamientos Anteriores
           Expanded(
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(15)),
-                  color: Colors.transparent,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.horizontal(left: Radius.circular(15)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +189,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
               ),
             ),
           ),
-          // Divisor
           Container(
             width: 1,
             height: 48,
@@ -209,9 +198,9 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.horizontal(right: Radius.circular(15)),
-                color: const Color(0xFF0065F8),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
+                color: Color(0xFF0065F8),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -222,7 +211,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  Flexible(
+                  const Flexible(
                     child: Text(
                       'Próximos',
                       style: TextStyle(
@@ -242,7 +231,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     );
   }
 
-  // Construye el botón de agregar
+  // Construye el botón principal de acción
   Widget _buildAddButton(String text, IconData icon, VoidCallback onPressed) {
     return Container(
       width: double.infinity,
@@ -286,7 +275,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     );
   }
 
-  // Estado vacío
+  // Muestra un mensaje cuando no hay entrenamientos
   Widget _buildEmptyState(String message, IconData icon) {
     return Center(
       child: Column(
@@ -316,7 +305,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     );
   }
 
-  Widget _buildEntrenamientoProximoCard(EntrenamientoProximo entrenamiento, int index) {
+  Widget _buildEntrenamientoCard(EntrenamientoProximo entrenamiento, int index) {
     final diasHasta = entrenamiento.fecha.difference(DateTime.now()).inDays;
     final esUrgente = diasHasta <= 1;
     
@@ -341,7 +330,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header del entrenamiento
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -372,7 +360,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ],
           ),
           const SizedBox(height: 12),
-          // Información del entrenamiento
           _buildInfoRow('Fecha', _formatDate(entrenamiento.fecha)),
           _buildInfoRow('Duración', entrenamiento.duracion),
           _buildInfoRow('Ubicación', entrenamiento.ubicacion),
@@ -380,7 +367,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
           if (entrenamiento.notas != null && entrenamiento.notas!.isNotEmpty)
             _buildInfoRow('Notas', entrenamiento.notas!),
           const SizedBox(height: 10),
-          // Botones de acción
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -399,7 +385,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     );
   }
 
-  void _mostrarFormularioEntrenamientoProximo() {
+  void _mostrarFormulario() {
     _limpiarFormulario();
     _mostrarModal('Programar Entrenamiento', false, -1);
   }
@@ -436,8 +422,8 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
   }
 
   void _cargarDatosEnFormulario(EntrenamientoProximo entrenamiento) {
-    _fechaEntrenamientoProximo = entrenamiento.fecha;
-    _fechaProximoController.text = _formatDate(entrenamiento.fecha);
+    _fechaSeleccionada = entrenamiento.fecha;
+    _fechaController.text = _formatDate(entrenamiento.fecha);
     _tipoSeleccionado = entrenamiento.tipo;
     _duracionController.text = entrenamiento.duracion;
     _objetivosController.text = entrenamiento.objetivos;
@@ -494,13 +480,12 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
 
   Widget _buildFormularioEntrenamiento(bool esEdicion, int index) {
     return Form(
-      key: _formProximoKey,
+      key: _formKey,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Campo de fecha
             TextFormField(
-              controller: _fechaProximoController,
+              controller: _fechaController,
               decoration: const InputDecoration(
                 labelText: 'Fecha del Entrenamiento',
                 hintText: 'Selecciona la fecha',
@@ -508,7 +493,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                 border: OutlineInputBorder(),
               ),
               readOnly: true,
-              onTap: _seleccionarFechaProximo,
+              onTap: _seleccionarFecha,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Por favor selecciona una fecha';
@@ -518,7 +503,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 16),
             
-            // Dropdown de tipo
             DropdownButtonFormField<String>(
               value: _tipoSeleccionado,
               decoration: const InputDecoration(
@@ -539,7 +523,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 16),
             
-            // Campo de duración
             TextFormField(
               controller: _duracionController,
               decoration: const InputDecoration(
@@ -557,7 +540,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 16),
             
-            // Campo de ubicación
             TextFormField(
               controller: _ubicacionController,
               decoration: const InputDecoration(
@@ -575,7 +557,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 16),
             
-            // Campo de objetivos
             TextFormField(
               controller: _objetivosController,
               decoration: const InputDecoration(
@@ -594,7 +575,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 16),
             
-            // Campo de notas
             TextFormField(
               controller: _notasController,
               decoration: const InputDecoration(
@@ -607,7 +587,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 24),
             
-            // Botones
             Row(
               children: [
                 Expanded(
@@ -637,26 +616,28 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     );
   }
 
-  void _seleccionarFechaProximo() async {
+  // Abre el selector de fecha
+  void _seleccionarFecha() async {
     final DateTime? fecha = await showDatePicker(
       context: context,
-      initialDate: _fechaEntrenamientoProximo ?? DateTime.now().add(const Duration(days: 1)),
+      initialDate: _fechaSeleccionada ?? DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     
     if (fecha != null) {
       setState(() {
-        _fechaEntrenamientoProximo = fecha;
-        _fechaProximoController.text = _formatDate(fecha);
+        _fechaSeleccionada = fecha;
+        _fechaController.text = _formatDate(fecha);
       });
     }
   }
 
+  // Guarda o actualiza el entrenamiento
   void _guardarEntrenamiento(bool esEdicion, int index) {
-    if (_formProximoKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final entrenamiento = EntrenamientoProximo(
-        fecha: _fechaEntrenamientoProximo!,
+        fecha: _fechaSeleccionada!,
         tipo: _tipoSeleccionado!,
         duracion: _duracionController.text,
         objetivos: _objetivosController.text,
@@ -670,6 +651,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
         } else {
           _entrenamientosProximos.add(entrenamiento);
         }
+        // Ordenar por fecha para mantener cronología
         _entrenamientosProximos.sort((a, b) => a.fecha.compareTo(b.fecha));
       });
 
@@ -717,12 +699,12 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
   }
 
   void _limpiarFormulario() {
-    _fechaProximoController.clear();
+    _fechaController.clear();
     _duracionController.clear();
     _objetivosController.clear();
     _ubicacionController.clear();
     _notasController.clear();
     _tipoSeleccionado = null;
-    _fechaEntrenamientoProximo = null;
+    _fechaSeleccionada = null;
   }
 }
