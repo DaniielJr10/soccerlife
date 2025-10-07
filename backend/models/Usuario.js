@@ -20,16 +20,36 @@ const usuarioSchema = new mongoose.Schema({
   },
   posicion: {
     type: String,
-    enum: ['Portero', 'Defensor', 'Mediocampista', 'Delantero'],
-    default: 'Mediocampista'
+    enum: ['Arquero', 'Defensa Central', 'Lateral', 'Volante', 'Extremo', 'Delantero'],
+    default: 'Volante'
   },
   numeroJugador: {
     type: Number,
     min: 1,
     max: 99
   },
-  fechaNacimiento: {
-    type: Date
+  telefono: {
+    type: String,
+    trim: true
+  },
+  club: {
+    type: String,
+    trim: true
+  },
+  edad: {
+    type: Number,
+    min: 12,
+    max: 100
+  },
+  estatura: {
+    type: Number,
+    min: 100,
+    max: 250
+  },
+  peso: {
+    type: Number,
+    min: 30,
+    max: 200
   },
   activo: {
     type: Boolean,

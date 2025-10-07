@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../services/user_registration.dart';
 
 class RegistrarsePage extends StatefulWidget {
   const RegistrarsePage({super.key});
@@ -25,11 +26,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   // Controladores de campos de texto
   final _emailController = TextEditingController();
   final _nombreController = TextEditingController();
-  final _fechaNacimientoController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _telefonoController = TextEditingController();
   final _clubController = TextEditingController();
+  final _edadController = TextEditingController();
+  final _estaturaController = TextEditingController();
+  final _pesoController = TextEditingController();
 
   // Nodos de foco
   final _emailFocus = FocusNode();
@@ -45,7 +48,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   bool _registroExitoso = false;
-  DateTime? _fechaNacimiento;
   String? _posicionSeleccionada;
 
   final List<String> _posiciones = [
@@ -67,7 +69,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     _pageController.dispose();
     _emailController.dispose();
     _nombreController.dispose();
-    _fechaNacimientoController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _telefonoController.dispose();
@@ -147,37 +148,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     return null;
   }
 
-  Future<void> _selectDate() async {
-    HapticFeedback.selectionClick();
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 6570)), // 18 años
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now().subtract(const Duration(days: 4380)), // 12 años
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF00f5ff),
-              onPrimary: Colors.black,
-              surface: Color(0xFF1a1a1a),
-              onSurface: Colors.white,
-            ),
-            dialogBackgroundColor: const Color(0xFF101010),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _fechaNacimiento = picked;
-        _fechaNacimientoController.text =
-            '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
-      });
-    }
-  }
-
   void _nextStep() {
     HapticFeedback.lightImpact();
     if (_formKey.currentState?.validate() ?? false) {
@@ -209,16 +179,50 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     setState(() => _isLoading = true);
     HapticFeedback.lightImpact();
     
-    // Simula el proceso de registro en el servidor
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-        _registroExitoso = true;
-      });
-      HapticFeedback.mediumImpact();
+    try {
+      // Llamar a la API para registrar el usuario
+      final resultado = await UserRegistrationService.registrarUsuario(
+        nombre: _nombreController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        posicion: _posicionSeleccionada ?? 'Volante',
+        telefono: _telefonoController.text.trim(),
+        club: _clubController.text.trim(),
+        edad: int.tryParse(_edadController.text.trim()) ?? 0,
+        estatura: int.tryParse(_estaturaController.text.trim()) ?? 0,
+        peso: int.tryParse(_pesoController.text.trim()) ?? 0,
+      );
+      
+      if (mounted) {
+        setState(() => _isLoading = false);
+        
+        if (resultado['success']) {
+          // Registro exitoso
+          setState(() => _registroExitoso = true);
+          HapticFeedback.mediumImpact();
+        } else {
+          // Error en el registro
+          HapticFeedback.heavyImpact();
+          _mostrarError(resultado['message'] ?? 'Error al registrar usuario');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        HapticFeedback.heavyImpact();
+        _mostrarError('Error de conexión: $e');
+      }
     }
+  }
+  
+  void _mostrarError(String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -483,17 +487,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               hint: 'Tu nombre',
               icon: Icons.person_outline,
               validator: (v) => _validateRequired(v, 'El nombre'),
-              onFieldSubmitted: (_) => _selectDate(),
-            ),
-            const SizedBox(height: 12),
-            _buildTextField(
-              controller: _fechaNacimientoController,
-              label: 'Fecha de nacimiento',
-              hint: 'DD/MM/YYYY',
-              icon: Icons.calendar_today_outlined,
-              readOnly: true,
-              onTap: _selectDate,
-              validator: (v) => _fechaNacimiento == null ? 'Selecciona tu fecha' : null,
+              onFieldSubmitted: (_) => _emailFocus.requestFocus(),
             ),
             const SizedBox(height: 12),
             _buildTextField(
@@ -573,7 +567,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           const SizedBox(height: 12),
           // Edad
           _buildTextField(
-            controller: TextEditingController(),
+            controller: _edadController,
             label: 'Edad',
             hint: 'Ej: 18',
             icon: Icons.cake_outlined,
@@ -588,7 +582,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           const SizedBox(height: 12),
           // Estatura
           _buildTextField(
-            controller: TextEditingController(),
+            controller: _estaturaController,
             label: 'Estatura (cm)',
             hint: 'Ej: 175',
             icon: Icons.height_outlined,
@@ -603,7 +597,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           const SizedBox(height: 12),
           // Peso
           _buildTextField(
-            controller: TextEditingController(),
+            controller: _pesoController,
             label: 'Peso (kg)',
             hint: 'Ej: 70',
             icon: Icons.monitor_weight_outlined,
