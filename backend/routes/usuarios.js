@@ -7,6 +7,7 @@ const {
   actualizarUsuario,
   eliminarUsuario
 } = require('../controllers/usuarioController');
+const { loginUsuario } = require('../controllers/loginController');
 
 // GET /api/usuarios - Obtener todos los usuarios
 router.get('/', obtenerUsuarios);
@@ -16,6 +17,9 @@ router.get('/:id', obtenerUsuarioPorId);
 
 // POST /api/usuarios - Crear un nuevo usuario
 router.post('/', crearUsuario);
+
+// POST /api/usuarios/login - Login de usuario
+router.post('/login', loginUsuario);
 
 // PUT /api/usuarios/:id - Actualizar un usuario
 router.put('/:id', actualizarUsuario);

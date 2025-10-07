@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'registrarse.dart';
 import 'recuperar.dart';
 import '../pantallas/principal.dart';
+import '../services/user_login.dart';
 
 class InicioSesionPage extends StatefulWidget {
   const InicioSesionPage({super.key});
@@ -91,18 +92,50 @@ class _InicioSesionPageState extends State<InicioSesionPage>
   Future<void> _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
+      HapticFeedback.lightImpact();
       
-      // Simula llamada al servidor
-      await Future.delayed(const Duration(milliseconds: 1000));
-      
-      if (mounted) {
-        setState(() => _isLoading = false);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const PrincipalPage()),
-          (route) => false,
+      try {
+        // Llamar a la API para login
+        final resultado = await UserLoginService.loginUsuario(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
         );
+        
+        if (mounted) {
+          setState(() => _isLoading = false);
+          
+          if (resultado['success']) {
+            // Login exitoso
+            HapticFeedback.mediumImpact();
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const PrincipalPage()),
+              (route) => false,
+            );
+          } else {
+            // Error en el login
+            HapticFeedback.heavyImpact();
+            _mostrarError(resultado['message'] ?? 'Usuario o contraseña incorrectos');
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          HapticFeedback.heavyImpact();
+          _mostrarError('Error de conexión: $e');
+        }
       }
     }
+  }
+
+  // Muestra un mensaje de error
+  void _mostrarError(String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   /// Construye la interfaz principal de la pantalla de login
