@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math';
+import '../services/user_recuperar.dart';
 
 class RecuperarPasswordPage extends StatefulWidget {
   const RecuperarPasswordPage({super.key});
@@ -25,8 +25,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   final _codigoFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _telefonoController = TextEditingController();
-  final List<TextEditingController> _codigoControllers = List.generate(6, (index) => TextEditingController());
-  final List<FocusNode> _codigoFocusNodes = List.generate(6, (index) => FocusNode());
+  final List<TextEditingController> _codigoControllers = List.generate(4, (index) => TextEditingController());
+  final List<FocusNode> _codigoFocusNodes = List.generate(4, (index) => FocusNode());
   final _emailFocus = FocusNode();
   final _telefonoFocus = FocusNode();
   
@@ -38,7 +38,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   bool _emailFocused = false;
   bool _telefonoFocused = false;
   bool _recuperacionExitosa = false;
-  String _codigoGenerado = '';
+  String? _tokenRecuperacion;
+  String? _emailEnviado;
+  String? _telefonoEnviado;
 
   @override
   void initState() {
@@ -120,70 +122,43 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       // Proporciona retroalimentación táctil al usuario
       HapticFeedback.lightImpact();
       
-      // Simula el tiempo que toma enviar el código
-      await Future.delayed(const Duration(milliseconds: 2000));
-      
-      // Genera un código aleatorio de 6 dígitos
-      _codigoGenerado = (Random().nextInt(900000) + 100000).toString();
-      
-      if (mounted) {
-        setState(() {
-          _enviando = false;
+      final destino = _metodoSeleccionado == 'email' ? _emailController.text.trim() : _telefonoController.text.trim();
+      Map<String, dynamic> resp;
+      if (_metodoSeleccionado == 'email') {
+        resp = await UserRecuperarService.solicitarRecuperacionPorEmail(email: destino);
+      } else {
+        // limpiar teléfono a solo dígitos
+        final telLimpio = destino.replaceAll(RegExp(r'[^0-9]'), '');
+        resp = await UserRecuperarService.solicitarRecuperacionPorTelefono(telefono: telLimpio);
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _enviando = false;
+        if (resp['success'] == true) {
           _codigoEnviado = true;
-        });
-        
-        // Confirma el éxito con vibración
+          if (_metodoSeleccionado == 'email') {
+            _emailEnviado = destino;
+          } else {
+            _telefonoEnviado = destino.replaceAll(RegExp(r'[^0-9]'), '');
+          }
+        }
+      });
+
+      if (resp['success'] == true) {
         HapticFeedback.mediumImpact();
-        
-        // Muestra mensaje de confirmación con estilo
-        final destino = _metodoSeleccionado == 'email' ? _emailController.text : _telefonoController.text;
-        final metodo = _metodoSeleccionado == 'email' ? 'correo' : 'SMS';
-        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Código enviado. Revisa tu bandeja o SMS.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        HapticFeedback.heavyImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF00b4db), Color(0xFF0083b0)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.check_circle, color: Colors.white, size: 24),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          '¡Código enviado exitosamente!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'Código $_codigoGenerado enviado por $metodo a $destino',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            margin: const EdgeInsets.all(16),
+            content: Text(resp['message'] ?? 'Error al enviar código'),
             duration: const Duration(seconds: 4),
           ),
         );
@@ -196,88 +171,36 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   // Verifica si el código ingresado es correcto
   Future<void> _verificarCodigo() async {
     final codigoIngresado = _codigoControllers.map((c) => c.text).join();
-    
-    if (codigoIngresado.length == 6) {
-      setState(() => _verificando = true);
-      
-      // Retroalimentación táctil durante la verificación
-      HapticFeedback.lightImpact();
-      
-      // Simula el proceso de verificación
-      await Future.delayed(const Duration(milliseconds: 1500));
-      
-      setState(() => _verificando = false);
+    if (codigoIngresado.length != 4) return; // esperar a 4 dígitos
+    setState(() => _verificando = true);
+    HapticFeedback.lightImpact();
 
-      if (mounted) {
-        if (codigoIngresado == _codigoGenerado) {
-          // El código es correcto, mostrar pantalla de éxito
-          HapticFeedback.mediumImpact();
-          
-          setState(() => _recuperacionExitosa = true);
-          
-          // Inicia la animación de la pantalla de éxito
-          _scaleController.reset();
-          _scaleController.forward();
-        } else {
-          // El código es incorrecto, mostrar mensaje de error
-          HapticFeedback.heavyImpact();
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFe74c3c), Color(0xFFc0392b)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.error, color: Colors.white, size: 24),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Código incorrecto',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'Inténtalo de nuevo o reenvía el código',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              margin: const EdgeInsets.all(16),
-              duration: const Duration(seconds: 3),
-            ),
-          );
-          
-          // Limpia los campos del código y enfoca el primero
-          for (var controller in _codigoControllers) {
-            controller.clear();
-          }
-          _codigoFocusNodes[0].requestFocus();
-        }
+    final resp = await UserRecuperarService.verificarCodigoRecuperacion(
+      email: _emailEnviado,
+      telefono: _telefonoEnviado,
+      codigo: codigoIngresado,
+    );
+
+    if (!mounted) return;
+    setState(() => _verificando = false);
+
+    if (resp['success'] == true) {
+      HapticFeedback.mediumImpact();
+      setState(() {
+        _tokenRecuperacion = resp['token'];
+        _recuperacionExitosa = true; // pasar a siguiente pantalla (nueva contraseña)
+      });
+      _scaleController.reset();
+      _scaleController.forward();
+    } else {
+      HapticFeedback.heavyImpact();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(resp['message'] ?? 'Código incorrecto')),
+      );
+      for (var controller in _codigoControllers) {
+        controller.clear();
       }
+      _codigoFocusNodes.first.requestFocus();
     }
   }
 
@@ -300,9 +223,11 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
   /// Valida el formato del número de teléfono
   String? _validatePhone(String? value) {
-  if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
-  if (!RegExp(r'^\d{10} $').hasMatch(value)) return 'El número debe tener 10 dígitos numéricos';
-  return null;
+    if (value == null) return 'El teléfono es obligatorio';
+    final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleaned.isEmpty) return 'El teléfono es obligatorio';
+    if (cleaned.length != 10) return 'El número debe tener 10 dígitos numéricos';
+    return null;
   }
 
   // Construcción de la interfaz de usuario
@@ -900,7 +825,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
             // Título para los campos del código
             const Text(
-              'Ingresa el código de 6 dígitos',
+              'Ingresa el código de 4 dígitos',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 15,
@@ -911,10 +836,10 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             
             const SizedBox(height: 16),
 
-            // Campos para ingresar el código de 6 dígitos
+            // Campos para ingresar el código de 4 dígitos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) {
+              children: List.generate(4, (index) {
                 return SizedBox(
                   width: 40,
                   height: 50,
@@ -951,11 +876,11 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                       ),
                       onChanged: (value) {
                         // Pasa automáticamente al siguiente campo
-                        if (value.isNotEmpty && index < 5) {
+                        if (value.isNotEmpty && index < 3) {
                           _codigoFocusNodes[index + 1].requestFocus();
                         }
-                        // Verifica automáticamente cuando se completen todos los campos
-                        if (index == 5 && value.isNotEmpty) {
+                        // Verifica automáticamente cuando se completen 4 campos
+                        if (index == 3 && value.isNotEmpty) {
                           _verificarCodigo();
                         }
                       },
@@ -1006,9 +931,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     setState(() {
                       _codigoEnviado = false;
                       // Limpia todos los campos del código
-                      for (var controller in _codigoControllers) {
-                        controller.clear();
-                      }
+                      for (var controller in _codigoControllers) { controller.clear(); }
                     });
                   },
                   borderRadius: BorderRadius.circular(16),
@@ -1134,8 +1057,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     _buildButton(
                       onTap: () {
                         HapticFeedback.mediumImpact();
+                        // TODO: Navegar a pantalla NuevaPasswordPage y pasar _tokenRecuperacion
+                        if (_tokenRecuperacion == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Token no disponible')), 
+                          );
+                          return;
+                        }
                         Navigator.of(context).pop();
-                        // Aquí navegarías a la pantalla de nueva contraseña
                       },
                       text: 'Crear Nueva Contraseña',
                     ),
