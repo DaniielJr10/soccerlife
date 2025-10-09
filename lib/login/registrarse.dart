@@ -228,7 +228,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (_currentStep == 1) {
+              _previousStep();
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
         ),
       ),
       body: AnimatedBuilder(
@@ -302,15 +308,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       key: _formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Header pegado arriba
-          Padding(
-            padding: const EdgeInsets.only(top: 0),
-            child: _buildHeader(),
-          ),
+          _buildHeader(),
           const SizedBox(height: 0),
           _buildProgressIndicator(),
-          const SizedBox(height: 4),
+          const SizedBox(height: 0),
           SizedBox(
             height: 340,
             child: PageView(
@@ -322,7 +326,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               ],
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 16),
           _buildNavigationButtons(),
         ],
       ),
@@ -606,13 +610,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           text: _currentStep == 0 ? 'Siguiente' : 'Crear mi cuenta',
           isLoading: _isLoading,
         ),
-        const SizedBox(height: 6),
-        // Botón "Anterior" solo en el segundo paso
-        if (_currentStep == 1)
-          _buildSecondaryButton(
-            onTap: _previousStep,
-            text: 'Anterior',
-          ),
       ],
     );
   }
