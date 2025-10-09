@@ -545,7 +545,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Selecciona cómo quieres recibir tu código de verificación',
+                    'Ingresa tu correo electrónico registrado y te enviaremos un código de verificación',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -577,7 +577,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             // Botón de enviar código
             _buildButton(
               onTap: _enviando ? null : _enviarCodigoVerificacion,
-              text: 'Enviar código por correo',
+              text: 'Enviar código',
               isLoading: _enviando,
             ),
           ],
