@@ -636,51 +636,54 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     void Function()? onTap,
   }) {
     final isFocused = focusNode != null && (_focusStates[focusNode] ?? false);
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isFocused ? const Color(0xFF00f5ff).withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.3),
-          width: isFocused ? 1.5 : 1,
-        ),
-        gradient: LinearGradient(
-          colors: [
-            Colors.black.withValues(alpha: isFocused ? 0.3 : 0.2),
-            Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
-          ],
-        ),
-        boxShadow: isFocused ? [
-          BoxShadow(
-            color: const Color(0xFF00f5ff).withValues(alpha: 0.25),
-            blurRadius: 15,
+    return SizedBox(
+      height: 48,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isFocused ? const Color(0xFF00f5ff).withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.3),
+            width: isFocused ? 1.5 : 1,
           ),
-        ] : null,
-      ),
-      child: TextFormField(
-        controller: controller,
-        focusNode: focusNode,
-        validator: validator,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        onFieldSubmitted: onFieldSubmitted,
-        readOnly: readOnly,
-        onTap: onTap,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
-          suffixIcon: suffixIcon,
-          labelStyle: TextStyle(
-            color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.7),
-            fontWeight: FontWeight.w500,
+          gradient: LinearGradient(
+            colors: [
+              Colors.black.withValues(alpha: isFocused ? 0.3 : 0.2),
+              Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
+            ],
           ),
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
+          boxShadow: isFocused ? [
+            BoxShadow(
+              color: const Color(0xFF00f5ff).withValues(alpha: 0.25),
+              blurRadius: 15,
+            ),
+          ] : null,
+        ),
+        child: TextFormField(
+          controller: controller,
+          focusNode: focusNode,
+          validator: validator,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          onFieldSubmitted: onFieldSubmitted,
+          readOnly: readOnly,
+          onTap: onTap,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: hint,
+            prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
+            suffixIcon: suffixIcon,
+            labelStyle: TextStyle(
+              color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.7),
+              fontWeight: FontWeight.w500,
+            ),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
+          ),
         ),
       ),
     );
