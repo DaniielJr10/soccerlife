@@ -18,13 +18,13 @@ const enviarEmailRecuperacion = async (email, codigo) => {
     const transporter = await createTransporter();
     
     const mailOptions = {
-      from: `"Soccer Life" <${process.env.EMAIL_USER}>`,
+      from: 'Soccer Life <' + process.env.EMAIL_USER + '>',
       to: email,
       subject: 'Soccer Life - Código de Recuperación de Contraseña',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
           <div style="background: #00b4db; padding: 30px; border-radius: 10px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">⚽ Soccer Life</h1>
+            <h1 style="color: white; margin: 0; font-size: 28px;">⚽Soccer Life🏆</h1>
             <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Recuperación de Contraseña</p>
           </div>
           
