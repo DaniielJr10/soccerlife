@@ -131,13 +131,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     return null;
   }
 
-  String? _validatePhone(String? value) {
-    if (value == null || value.trim().isEmpty) return 'El teléfono es obligatorio';
-    if (!RegExp(r'^[+]?[0-9]{10,15}$').hasMatch(value.replaceAll(' ', ''))) {
-      return 'El número de teléfono es inválido';
-    }
-    return null;
-  }
+ 
 
   String? _validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName es obligatorio';
