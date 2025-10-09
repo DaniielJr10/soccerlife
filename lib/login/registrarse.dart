@@ -28,7 +28,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   final _nombreController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _telefonoController = TextEditingController();
   final _clubController = TextEditingController();
   final _edadController = TextEditingController();
   final _estaturaController = TextEditingController();
@@ -39,7 +38,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   final _nombreFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
-  final _telefonoFocus = FocusNode();
   final _clubFocus = FocusNode();
   final Map<FocusNode, bool> _focusStates = {};
 
@@ -71,13 +69,11 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     _nombreController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _telefonoController.dispose();
     _clubController.dispose();
     _emailFocus.dispose();
     _nombreFocus.dispose();
     _passwordFocus.dispose();
     _confirmPasswordFocus.dispose();
-    _telefonoFocus.dispose();
     _clubFocus.dispose();
     super.dispose();
   }
@@ -92,7 +88,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
 
   void _configurarListenersFocus() {
     final allFocusNodes = [
-      _nombreFocus, _emailFocus, _telefonoFocus,
+      _nombreFocus, _emailFocus,
       _passwordFocus, _confirmPasswordFocus, _clubFocus
     ];
     for (var node in allFocusNodes) {
@@ -186,7 +182,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         email: _emailController.text.trim(),
         password: _passwordController.text,
         posicion: _posicionSeleccionada ?? 'Volante',
-        telefono: _telefonoController.text.trim(),
         club: _clubController.text.trim(),
         edad: int.tryParse(_edadController.text.trim()) ?? 0,
         estatura: int.tryParse(_estaturaController.text.trim()) ?? 0,
@@ -498,20 +493,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
               validator: _validateEmail,
-              onFieldSubmitted: (_) => _telefonoFocus.requestFocus(),
             ),
-            const SizedBox(height: 12),
-             _buildTextField(
-              controller: _telefonoController,
-              focusNode: _telefonoFocus,
-              label: 'Teléfono',
-              hint: '300 123 4567',
-              icon: Icons.phone_outlined,
-              keyboardType: TextInputType.phone,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              validator: _validatePhone,
-              onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
-            ),
+
             const SizedBox(height: 12),
             _buildTextField(
               controller: _passwordController,
