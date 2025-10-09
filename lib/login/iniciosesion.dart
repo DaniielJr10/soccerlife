@@ -470,18 +470,10 @@ class _InicioSesionPageState extends State<InicioSesionPage>
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF00f5ff),
-            Color(0xFF00d4aa),
-            Color(0xFF00a8cc),
-          ],
-        ),
+        color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
+            color: const Color(0xFF00f5ff).withOpacity(0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -503,7 +495,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: Colors.black,
                       strokeWidth: 2,
                     ),
                   )
@@ -511,9 +503,9 @@ class _InicioSesionPageState extends State<InicioSesionPage>
                     'Ingresar',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
                     ),
                   ),
             ),
