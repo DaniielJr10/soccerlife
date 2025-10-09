@@ -312,19 +312,19 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           _buildHeader(),
           const SizedBox(height: 4),
           _buildProgressIndicator(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8), // Reducido de 16 a 8
           SizedBox(
-            height: 450, // Altura fija para el contenido
+            height: 380, // Reducido de 450 a 380
             child: PageView(
               controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(), // Sin scroll manual
+              physics: const NeverScrollableScrollPhysics(),
               children: [
-                _buildInformacionPersonal(), // Paso 1: Datos personales
-                _buildInformacionDeportiva(), // Paso 2: Datos deportivos
+                _buildInformacionPersonal(),
+                _buildInformacionDeportiva(),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8), // Reducido de 16 a 8
           _buildNavigationButtons(),
         ],
       ),
