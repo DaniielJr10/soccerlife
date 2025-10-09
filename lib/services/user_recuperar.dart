@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class UserRecuperarService {
   // URL base de tu API
-  static const String baseUrl = 'http://localhost:3000/api';
+  static const String baseUrl = 'http://192.168.1.40:3000/api';
   
   // Generar código de recuperación de 4 dígitos (solo uso local/testing)
   static String _generarCodigoRecuperacion() {
