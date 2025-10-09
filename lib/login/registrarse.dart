@@ -303,12 +303,16 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildHeader(),
-          const SizedBox(height: 4),
+          // Header pegado arriba
+          Padding(
+            padding: const EdgeInsets.only(top: 0),
+            child: _buildHeader(),
+          ),
+          const SizedBox(height: 0),
           _buildProgressIndicator(),
-          const SizedBox(height: 8), // Reducido de 16 a 8
+          const SizedBox(height: 4),
           SizedBox(
-            height: 380, // Reducido de 450 a 380
+            height: 340,
             child: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
@@ -318,7 +322,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               ],
             ),
           ),
-          const SizedBox(height: 8), // Reducido de 16 a 8
+          const SizedBox(height: 28),
           _buildNavigationButtons(),
         ],
       ),
@@ -328,68 +332,68 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   // Construye el header con logo y título
   Widget _buildHeader() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Logo de la aplicación
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
+        // Logo de la aplicación (centrado y pegado arriba)
+        Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: 0),
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(45),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(45),
+              child: Image.asset(
+                'images/logo.png',
+                fit: BoxFit.cover,
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
-              'images/logo.png',
-              fit: BoxFit.cover,
             ),
           ),
         ),
-        
-        const SizedBox(height: 6),
-        
-        // Título principal de la aplicación
+        const SizedBox(height: 8),
+        // Título principal de la aplicación (más grande)
         Center(
           child: Text(
             'Soccer Life',
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 32,
               fontWeight: FontWeight.w900,
               color: const Color(0xFF00f5ff),
-              letterSpacing: 1.0,
+              letterSpacing: 1.2,
               shadows: [
                 Shadow(
                   offset: const Offset(2, 2),
-                  blurRadius: 8,
+                  blurRadius: 10,
                   color: Colors.black.withValues(alpha: 0.8),
                 ),
                 Shadow(
                   offset: const Offset(-1, -1),
-                  blurRadius: 4,
+                  blurRadius: 5,
                   color: Colors.black.withValues(alpha: 0.5),
                 ),
               ],
             ),
           ),
         ),
-        
-        const SizedBox(height: 1),
-        
-        // Subtítulo indicando la función
+        const SizedBox(height: 4),
+        // Subtítulo indicando la función (más grande)
         Center(
           child: Text(
             'Crear Cuenta',
             style: TextStyle(
-              fontSize: 11,
-              color: Colors.white.withValues(alpha: 0.8),
-              fontWeight: FontWeight.w300,
-              letterSpacing: 0.5,
+              fontSize: 16,
+              color: Colors.white.withValues(alpha: 0.85),
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.7,
             ),
           ),
         ),
