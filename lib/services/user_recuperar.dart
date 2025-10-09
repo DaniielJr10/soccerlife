@@ -64,58 +64,11 @@ class UserRecuperarService {
     }
   }
 
-  // Solicitar recuperación de contraseña por teléfono
-  static Future<Map<String, dynamic>> solicitarRecuperacionPorTelefono({
-    required String telefono,
-  }) async {
-    try {
-      print('🔗 Solicitando recuperación por teléfono: $telefono');
-      final url = Uri.parse('$baseUrl/usuarios/recuperar-password/telefono');
-      
-      final body = {
-        'telefono': telefono,
-      };
 
-      print('📤 Enviando solicitud de recuperación: $body');
-
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(body),
-      );
-
-      print('📥 Respuesta del servidor - Status: ${response.statusCode}');
-      print('📥 Respuesta del servidor - Body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        return {
-          'success': true,
-          'message': 'Código de recuperación enviado a tu teléfono',
-          'codigo': responseData['codigo'], // Para testing - en producción no se devuelve
-        };
-      } else {
-        final errorData = json.decode(response.body);
-        return {
-          'success': false,
-          'message': errorData['message'] ?? 'Error al enviar código de recuperación',
-        };
-      }
-    } catch (e) {
-      print('❌ Error en solicitarRecuperacionPorTelefono: $e');
-      return {
-        'success': false,
-        'message': 'Error de conexión. Verifica tu internet.',
-      };
-    }
-  }
 
   // Verificar código de recuperación
   static Future<Map<String, dynamic>> verificarCodigoRecuperacion({
-    String? email,
-    String? telefono,
+    required String email,
     required String codigo,
   }) async {
     try {
@@ -123,10 +76,9 @@ class UserRecuperarService {
       final url = Uri.parse('$baseUrl/usuarios/verificar-codigo-recuperacion');
       
       final Map<String, dynamic> body = {
+        'email': email,
         'codigo': codigo,
       };
-      if (email != null && email.isNotEmpty) body['email'] = email;
-      if (telefono != null && telefono.isNotEmpty) body['telefono'] = telefono;
 
       print('📤 Enviando verificación de código: $body');
 

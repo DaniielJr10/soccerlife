@@ -1,5 +1,6 @@
 const Usuario = require('../models/Usuario');
 const crypto = require('crypto');
+const { enviarEmailRecuperacion } = require('../services/emailService');
 
 // Almacén temporal para códigos de recuperación (en producción usar Redis o base de datos)
 const codigosRecuperacion = new Map();
@@ -43,8 +44,15 @@ const solicitarRecuperacionEmail = async (req, res) => {
 
     console.log(`📧 Código de recuperación para ${email}: ${codigo}`);
     
-    // En producción aquí enviarías el email real
-    // await enviarEmailRecuperacion(email, codigo);
+    // Enviar email de recuperación
+    const emailResult = await enviarEmailRecuperacion(email, codigo);
+    
+    if (!emailResult.success) {
+      console.error('Error enviando email:', emailResult.error);
+      return res.status(500).json({ 
+        message: 'Error enviando email de recuperación. Intenta nuevamente.' 
+      });
+    }
 
     res.json({
       message: 'Código de recuperación enviado a tu email',
@@ -57,67 +65,27 @@ const solicitarRecuperacionEmail = async (req, res) => {
   }
 };
 
-// Solicitar recuperación de contraseña por teléfono
-const solicitarRecuperacionTelefono = async (req, res) => {
-  try {
-    const { telefono } = req.body;
-    
-    if (!telefono) {
-      return res.status(400).json({ message: 'Teléfono es requerido' });
-    }
 
-    // Verificar si el usuario existe
-    const usuario = await Usuario.findOne({ telefono, activo: true });
-    if (!usuario) {
-      return res.status(404).json({ message: 'No existe un usuario con este teléfono' });
-    }
-
-    // Generar código de recuperación
-    const codigo = generarCodigoRecuperacion();
-    const expiracion = Date.now() + 15 * 60 * 1000; // 15 minutos
-
-    // Guardar código en almacén temporal
-    codigosRecuperacion.set(telefono, {
-      codigo,
-      expiracion,
-      intentos: 0,
-      maxIntentos: 3
-    });
-
-    console.log(`📱 Código de recuperación para ${telefono}: ${codigo}`);
-    
-    // En producción aquí enviarías el SMS real
-    // await enviarSMSRecuperacion(telefono, codigo);
-
-    res.json({
-      message: 'Código de recuperación enviado a tu teléfono',
-      codigo: codigo // Solo para desarrollo - quitar en producción
-    });
-
-  } catch (error) {
-    console.error('Error en solicitarRecuperacionTelefono:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-};
 
 // Verificar código de recuperación
 const verificarCodigoRecuperacion = async (req, res) => {
   try {
-    const { email, telefono, codigo } = req.body;
+    const { email, codigo } = req.body;
     
     if (!codigo) {
       return res.status(400).json({ message: 'Código es requerido' });
     }
 
-    const identificador = email ? email.toLowerCase() : telefono;
-    if (!identificador) {
-      return res.status(400).json({ message: 'Email o teléfono es requerido' });
+    if (!email) {
+      return res.status(400).json({ message: 'Email es requerido' });
     }
 
-    // Verificar si existe código para este identificador
+    const identificador = email.toLowerCase();
+
+    // Verificar si existe código para este email
     const datosRecuperacion = codigosRecuperacion.get(identificador);
     if (!datosRecuperacion) {
-      return res.status(400).json({ message: 'No se ha solicitado recuperación para este usuario' });
+      return res.status(400).json({ message: 'No se ha solicitado recuperación para este email' });
     }
 
     // Verificar si el código ha expirado
@@ -147,7 +115,7 @@ const verificarCodigoRecuperacion = async (req, res) => {
     // Guardar token y eliminar código
     codigosRecuperacion.delete(identificador);
     codigosRecuperacion.set(`token_${token}`, {
-      identificador,
+      email: identificador,
       expiracion: expiracionToken
     });
 
@@ -187,15 +155,9 @@ const cambiarPasswordRecuperacion = async (req, res) => {
       return res.status(400).json({ message: 'Token expirado' });
     }
 
-    // Buscar usuario por email o teléfono
-    const identificador = datosToken.identificador;
-    let usuario;
-    
-    if (identificador.includes('@')) {
-      usuario = await Usuario.findOne({ email: identificador, activo: true });
-    } else {
-      usuario = await Usuario.findOne({ telefono: identificador, activo: true });
-    }
+    // Buscar usuario por email
+    const email = datosToken.email;
+    const usuario = await Usuario.findOne({ email, activo: true });
 
     if (!usuario) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -220,7 +182,6 @@ const cambiarPasswordRecuperacion = async (req, res) => {
 
 module.exports = {
   solicitarRecuperacionEmail,
-  solicitarRecuperacionTelefono,
   verificarCodigoRecuperacion,
   cambiarPasswordRecuperacion
 };

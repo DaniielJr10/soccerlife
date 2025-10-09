@@ -24,23 +24,18 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   final _formKey = GlobalKey<FormState>();
   final _codigoFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _telefonoController = TextEditingController();
   final List<TextEditingController> _codigoControllers = List.generate(4, (index) => TextEditingController());
   final List<FocusNode> _codigoFocusNodes = List.generate(4, (index) => FocusNode());
   final _emailFocus = FocusNode();
-  final _telefonoFocus = FocusNode();
   
   // Estados de la interfaz
-  String _metodoSeleccionado = 'email';
   bool _codigoEnviado = false;
   bool _enviando = false;
   bool _verificando = false;
   bool _emailFocused = false;
-  bool _telefonoFocused = false;
   bool _recuperacionExitosa = false;
   String? _tokenRecuperacion;
   String? _emailEnviado;
-  String? _telefonoEnviado;
 
   @override
   void initState() {
@@ -81,9 +76,6 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     _emailFocus.addListener(() {
       setState(() => _emailFocused = _emailFocus.hasFocus);
     });
-    _telefonoFocus.addListener(() {
-      setState(() => _telefonoFocused = _telefonoFocus.hasFocus);
-    });
   }
 
   void _iniciarAnimacionesEntrada() {
@@ -100,9 +92,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     _slideController.dispose();
     _scaleController.dispose();
     _emailController.dispose();
-    _telefonoController.dispose();
     _emailFocus.dispose();
-    _telefonoFocus.dispose();
     for (var controller in _codigoControllers) {
       controller.dispose();
     }
@@ -114,7 +104,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
   // Lógica principal de recuperación de contraseña
   
-  // Envía el código de verificación al email o teléfono seleccionado
+  // Envía el código de verificación al email
   Future<void> _enviarCodigoVerificacion() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _enviando = true);
@@ -122,15 +112,8 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       // Proporciona retroalimentación táctil al usuario
       HapticFeedback.lightImpact();
       
-      final destino = _metodoSeleccionado == 'email' ? _emailController.text.trim() : _telefonoController.text.trim();
-      Map<String, dynamic> resp;
-      if (_metodoSeleccionado == 'email') {
-        resp = await UserRecuperarService.solicitarRecuperacionPorEmail(email: destino);
-      } else {
-        // limpiar teléfono a solo dígitos
-        final telLimpio = destino.replaceAll(RegExp(r'[^0-9]'), '');
-        resp = await UserRecuperarService.solicitarRecuperacionPorTelefono(telefono: telLimpio);
-      }
+      final email = _emailController.text.trim();
+      final resp = await UserRecuperarService.solicitarRecuperacionPorEmail(email: email);
 
       if (!mounted) return;
 
@@ -138,11 +121,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         _enviando = false;
         if (resp['success'] == true) {
           _codigoEnviado = true;
-          if (_metodoSeleccionado == 'email') {
-            _emailEnviado = destino;
-          } else {
-            _telefonoEnviado = destino.replaceAll(RegExp(r'[^0-9]'), '');
-          }
+          _emailEnviado = email;
         }
       });
 
@@ -150,7 +129,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Código enviado. Revisa tu bandeja o SMS.'),
+            content: Text('Código enviado. Revisa tu bandeja de correo.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -176,8 +155,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     HapticFeedback.lightImpact();
 
     final resp = await UserRecuperarService.verificarCodigoRecuperacion(
-      email: _emailEnviado,
-      telefono: _telefonoEnviado,
+      email: _emailEnviado!,
       codigo: codigoIngresado,
     );
 
@@ -218,15 +196,6 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
       return 'Ingresa un correo válido';
     }
-    return null;
-  }
-
-  /// Valida el formato del número de teléfono
-  String? _validatePhone(String? value) {
-    if (value == null) return 'El teléfono es obligatorio';
-    final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleaned.isEmpty) return 'El teléfono es obligatorio';
-    if (cleaned.length != 10) return 'El número debe tener 10 dígitos numéricos';
     return null;
   }
 
@@ -396,99 +365,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
 
   // Widgets auxiliares para la construcción de la interfaz
   
-  // Selector para elegir el método de recuperación (Email o SMS)
-  Widget _buildMethodSelector() {
-    return Row(
-      children: [
-        // Opción para recibir código por Email
-        Expanded(
-          child: _buildMethodOption(
-            icon: Icons.email_outlined,
-            label: 'Email',
-            isSelected: _metodoSeleccionado == 'email',
-            onTap: () => setState(() => _metodoSeleccionado = 'email'),
-          ),
-        ),
-        const SizedBox(width: 16),
-        // Opción para recibir código por SMS
-        Expanded(
-          child: _buildMethodOption(
-            icon: Icons.sms_outlined,
-            label: 'SMS',
-            isSelected: _metodoSeleccionado == 'sms',
-            onTap: () => setState(() => _metodoSeleccionado = 'sms'),
-          ),
-        ),
-      ],
-    );
-  }
 
-  // Opción individual para el selector de método
-  Widget _buildMethodOption({
-    required IconData icon,
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onTap();
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isSelected 
-                  ? const Color(0xFF00b4db) 
-                  : Colors.white.withValues(alpha: 0.3),
-                width: isSelected ? 2 : 1,
-              ),
-              gradient: LinearGradient(
-                colors: isSelected 
-                  ? [
-                      const Color(0xFF00b4db).withValues(alpha: 0.2),
-                      const Color(0xFF0083b0).withValues(alpha: 0.1),
-                    ]
-                  : [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.white.withValues(alpha: 0.05),
-                    ],
-              ),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  icon,
-                  color: isSelected 
-                    ? const Color(0xFF00b4db) 
-                    : Colors.white.withValues(alpha: 0.7),
-                  size: 32,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected 
-                      ? const Color(0xFF00b4db) 
-                      : Colors.white.withValues(alpha: 0.7),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+
+
 
   // Campo de texto estilizado para el formulario
   Widget _buildTextField({
@@ -681,40 +560,24 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             
             const SizedBox(height: 20),
             
-            // Selector del método de recuperación
-            _buildMethodSelector(),
-            
-            const SizedBox(height: 16),
-            
-            // Campo que cambia según el método seleccionado
-            _metodoSeleccionado == 'email'
-              ? _buildTextField(
-                  controller: _emailController,
-                  focusNode: _emailFocus,
-                  label: 'Correo Electrónico',
-                  hint: 'tu@email.com',
-                  icon: Icons.email_outlined,
-                  isFocused: _emailFocused,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: _validateEmail,
-                )
-              : _buildTextField(
-                  controller: _telefonoController,
-                  focusNode: _telefonoFocus,
-                  label: 'Número de Celular',
-                  hint: '3001234567',
-                  icon: Icons.phone_outlined,
-                  isFocused: _telefonoFocused,
-                  keyboardType: TextInputType.phone,
-                  validator: _validatePhone,
-                ),
+            // Campo de correo electrónico
+            _buildTextField(
+              controller: _emailController,
+              focusNode: _emailFocus,
+              label: 'Correo Electrónico',
+              hint: 'tu@email.com',
+              icon: Icons.email_outlined,
+              isFocused: _emailFocused,
+              keyboardType: TextInputType.emailAddress,
+              validator: _validateEmail,
+            ),
             
             const SizedBox(height: 20),
             
             // Botón de enviar código
             _buildButton(
               onTap: _enviando ? null : _enviarCodigoVerificacion,
-              text: 'Enviar código por ${_metodoSeleccionado == 'email' ? 'correo' : 'SMS'}',
+              text: 'Enviar código por correo',
               isLoading: _enviando,
             ),
           ],
@@ -800,7 +663,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               child: Column(
                 children: [
                   Text(
-                    'Código enviado por ${_metodoSeleccionado == 'email' ? 'correo a:' : 'SMS a:'}',
+                    'Código enviado por correo a:',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
@@ -809,7 +672,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _metodoSeleccionado == 'email' ? _emailController.text : _telefonoController.text,
+                    _emailController.text,
                     style: const TextStyle(
                       color: Color(0xFF00b4db),
                       fontWeight: FontWeight.w600,

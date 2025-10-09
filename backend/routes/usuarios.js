@@ -10,7 +10,6 @@ const {
 const { loginUsuario } = require('../controllers/loginController');
 const {
   solicitarRecuperacionEmail,
-  solicitarRecuperacionTelefono,
   verificarCodigoRecuperacion,
   cambiarPasswordRecuperacion
 } = require('../controllers/recuperarController');
@@ -29,9 +28,6 @@ router.post('/login', loginUsuario);
 
 // POST /api/usuarios/recuperar-password/email - Solicitar recuperación por email
 router.post('/recuperar-password/email', solicitarRecuperacionEmail);
-
-// POST /api/usuarios/recuperar-password/telefono - Solicitar recuperación por teléfono
-router.post('/recuperar-password/telefono', solicitarRecuperacionTelefono);
 
 // POST /api/usuarios/verificar-codigo-recuperacion - Verificar código de recuperación
 router.post('/verificar-codigo-recuperacion', verificarCodigoRecuperacion);
