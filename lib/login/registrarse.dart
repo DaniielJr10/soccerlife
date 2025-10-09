@@ -178,7 +178,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         posicion: _posicionSeleccionada ?? 'Volante',
         club: _clubController.text.trim(),
         edad: int.tryParse(_edadController.text.trim()) ?? 0,
-        estatura: int.tryParse(_estaturaController.text.trim()) ?? 0,
+        estatura: double.tryParse(_estaturaController.text.trim().replaceAll(',', '.')) ?? 0.0,
         peso: int.tryParse(_pesoController.text.trim()) ?? 0,
       );
       
@@ -569,14 +569,17 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             // Estatura
             _buildTextField(
               controller: _estaturaController,
-              label: 'Estatura (cm)',
-              hint: 'Ej: 175',
+              label: 'Estatura (m)',
+              hint: 'Ej: 1.70',
               icon: Icons.height_outlined,
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d{0,1}(\.\d{0,2})?')),
+              ],
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'La estatura es obligatoria';
-                final est = int.tryParse(v);
-                if (est == null || est < 100 || est > 250) return 'Estatura inválida';
+                final est = double.tryParse(v.replaceAll(',', '.'));
+                if (est == null || est < 1.00 || est > 2.50) return 'Estatura inválida';
                 return null;
               },
             ),
@@ -786,37 +789,6 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     );
   }
 
-  // Botón secundario con efecto transparente
-  Widget _buildSecondaryButton({required VoidCallback onTap, required String text}) {
-    return SizedBox(
-      height: 48,
-      width: double.infinity,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-              color: Colors.white.withValues(alpha: 0.1),
-            ),
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   // Pantalla de éxito mostrada tras el registro
   Widget _buildSuccessScreen() {

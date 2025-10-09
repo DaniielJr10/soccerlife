@@ -15,8 +15,8 @@ class UserRegistrationService {
     String? telefono,
     String? club,
     int? edad,
-    int? estatura,
-    int? peso,
+  double? estatura,
+  int? peso,
   }) async {
     try {
       print('🔗 Intentando conectar a: $baseUrl/usuarios');
