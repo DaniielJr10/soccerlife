@@ -749,14 +749,10 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF00f5ff), Color(0xFF00d4aa)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
+            color: const Color(0xFF00f5ff).withOpacity(0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -777,9 +773,10 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                 : Text(
                     text,
                     style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
                     ),
                   ),
           ),
