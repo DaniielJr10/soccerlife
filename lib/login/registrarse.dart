@@ -712,20 +712,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _posicionSeleccionada != null ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.3),
-            width: _posicionSeleccionada != null ? 2 : 1,
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF00f5ff).withOpacity(0.10),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
           gradient: LinearGradient(
             colors: [
-              Colors.black.withValues(alpha: 0.35),
-              Colors.black.withValues(alpha: 0.18),
+              Colors.black.withValues(alpha: 0.2),
+              Colors.black.withValues(alpha: 0.15),
             ],
           ),
         ),
@@ -757,19 +750,18 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               ),
             );
           }).toList(),
-          dropdownColor: const Color(0xFF23272b),
+          dropdownColor: const Color(0xFF1a1a1a),
           icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Colors.white.withValues(alpha: 0.9),
-            size: 28,
+            Icons.keyboard_arrow_down,
+            color: Colors.white.withValues(alpha: 0.7),
           ),
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
             labelText: 'Posición',
             prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.7)),
             labelStyle: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontWeight: FontWeight.w600,
+              color: Colors.white.withValues(alpha: 0.7),
+              fontWeight: FontWeight.w500,
             ),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
