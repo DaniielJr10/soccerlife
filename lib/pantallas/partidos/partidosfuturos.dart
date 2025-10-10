@@ -142,14 +142,14 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.sports_soccer, color: Colors.grey[600], size: 20),
+                    Icon(Icons.sports_soccer, color: const Color(0xFF1a1a2e), size: 20),
                     const SizedBox(width: 8),
                     Text(
                       'Jugados',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[600],
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1a1a2e),
                       ),
                     ),
                   ],
