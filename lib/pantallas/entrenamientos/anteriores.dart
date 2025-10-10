@@ -100,12 +100,14 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Text(
-          'Entrenamientos Anteriores',
+        centerTitle: true,
+        title: const Text(
+          'Entrenamientos',
           style: TextStyle(
-            color: Colors.grey[800],
-            fontSize: 20,
+            color: Colors.black,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
           ),
         ),
       ),
@@ -158,58 +160,61 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       ),
       child: Row(
         children: [
+          // Botón Anteriores (activo)
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.horizontal(left: Radius.circular(15)),
-                color: const Color(0xFF0065F8),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.horizontal(left: Radius.circular(15)),
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF1a1a2e),
+                    Color(0xFF16213e),
+                  ],
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.fitness_center, color: Colors.white, size: 20),
+                  Icon(Icons.fitness_center, color: Color(0xFF00f5ff), size: 20),
                   const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      'Anteriores',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    'Anteriores',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00f5ff),
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
           ),
           Container(width: 1, height: 48, color: Colors.grey[300]),
+          // Botón Próximos (inactivo)
           Expanded(
             child: GestureDetector(
               onTap: _navegarAEntrenamientosProximos,
               child: Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.horizontal(right: Radius.circular(15)),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
                   color: Colors.transparent,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.event_available, color: Colors.grey[600], size: 20),
+                    Icon(Icons.event_available, color: Color(0xFF00f5ff), size: 20),
                     const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Próximos',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      'Próximos',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF00f5ff),
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -234,10 +239,15 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: const Color(0xFF0065F8),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF1a1a2e),
+            Color(0xFF16213e),
+          ],
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.3),
+            color: const Color(0xFF1a1a2e).withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -251,17 +261,14 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 24),
+              Icon(icon, color: const Color(0xFF00f5ff), size: 24),
               const SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                text,
+                style: const TextStyle(
+                  color: Color(0xFF00f5ff),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -609,14 +616,45 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _guardarEntrenamiento(esEdicion, index),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0065F8),
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF1a1a2e),
+                          Color(0xFF16213e),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF1a1a2e).withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      esEdicion ? 'Actualizar' : 'Guardar',
-                      style: const TextStyle(color: Colors.white),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(15),
+                        onTap: () => _guardarEntrenamiento(esEdicion, index),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.save, color: const Color(0xFF00f5ff), size: 24),
+                            const SizedBox(width: 10),
+                            Text(
+                              esEdicion ? 'Actualizar' : 'Guardar',
+                              style: const TextStyle(
+                                color: Color(0xFF00f5ff),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

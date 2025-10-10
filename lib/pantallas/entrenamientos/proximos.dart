@@ -94,12 +94,14 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
           icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Entrenamientos Próximos',
+        centerTitle: true,
+        title: const Text(
+          'Entrenamientos',
           style: TextStyle(
-            color: Colors.grey[800],
-            fontSize: 20,
+            color: Colors.black,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
           ),
         ),
       ),
@@ -141,10 +143,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: Colors.white,
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[300]!, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -155,7 +154,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
       ),
       child: Row(
         children: [
-          // Sección Entrenamientos Anteriores
+          // Botón Anteriores (inactivo)
           Expanded(
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
@@ -163,26 +162,25 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                 padding: const EdgeInsets.all(16),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.horizontal(left: Radius.circular(15)),
+                  color: Colors.transparent,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.fitness_center,
-                      color: Colors.grey[600],
+                      color: Color(0xFF00f5ff),
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Anteriores',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      'Anteriores',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF00f5ff),
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -194,33 +192,36 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             height: 48,
             color: Colors.grey[300],
           ),
-          // Sección Entrenamientos Próximos (activa)
+          // Botón Próximos (activo)
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
-                color: Color(0xFF0065F8),
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF1a1a2e),
+                    Color(0xFF16213e),
+                  ],
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.event_available,
-                    color: Colors.white,
+                    color: Color(0xFF00f5ff),
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  const Flexible(
-                    child: Text(
-                      'Próximos',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    'Próximos',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00f5ff),
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -238,10 +239,15 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: const Color(0xFF0065F8),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF1a1a2e),
+            Color(0xFF16213e),
+          ],
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.3),
+            color: const Color(0xFF1a1a2e).withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -255,17 +261,14 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 24),
+              Icon(icon, color: const Color(0xFF00f5ff), size: 24),
               const SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                text,
+                style: const TextStyle(
+                  color: Color(0xFF00f5ff),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -597,14 +600,45 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _guardarEntrenamiento(esEdicion, index),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0065F8),
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF1a1a2e),
+                          Color(0xFF16213e),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF1a1a2e).withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      esEdicion ? 'Actualizar' : 'Guardar',
-                      style: const TextStyle(color: Colors.white),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(15),
+                        onTap: () => _guardarEntrenamiento(esEdicion, index),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.save, color: const Color(0xFF00f5ff), size: 24),
+                            const SizedBox(width: 10),
+                            Text(
+                              esEdicion ? 'Actualizar' : 'Guardar',
+                              style: const TextStyle(
+                                color: Color(0xFF00f5ff),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
