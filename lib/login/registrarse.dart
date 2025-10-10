@@ -48,8 +48,13 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   bool _registroExitoso = false;
   String? _posicionSeleccionada;
 
-  final List<String> _posiciones = [
-    'Arquero', 'Defensa Central', 'Lateral', 'Volante', 'Extremo', 'Delantero',
+  final List<Map<String, dynamic>> _posicionesConIcono = [
+    {'nombre': 'Arquero', 'icono': Icons.sports_handball},
+    {'nombre': 'Defensa Central', 'icono': Icons.shield},
+    {'nombre': 'Lateral', 'icono': Icons.compare_arrows},
+    {'nombre': 'Volante', 'icono': Icons.sync_alt},
+    {'nombre': 'Extremo', 'icono': Icons.double_arrow},
+    {'nombre': 'Delantero', 'icono': Icons.sports_soccer},
   ];
 
   @override
@@ -707,13 +712,20 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
-            width: 1,
+            color: _posicionSeleccionada != null ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.3),
+            width: _posicionSeleccionada != null ? 2 : 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00f5ff).withOpacity(0.10),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
           gradient: LinearGradient(
             colors: [
-              Colors.black.withValues(alpha: 0.2),
-              Colors.black.withValues(alpha: 0.15),
+              Colors.black.withValues(alpha: 0.35),
+              Colors.black.withValues(alpha: 0.18),
             ],
           ),
         ),
@@ -721,30 +733,43 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           value: _posicionSeleccionada,
           onChanged: (value) => setState(() => _posicionSeleccionada = value),
           validator: (v) => v == null ? 'Selecciona tu posición' : null,
-          items: _posiciones.map((posicion) {
-            return DropdownMenuItem(
-              value: posicion,
-              child: Text(
-                posicion,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
+          items: _posicionesConIcono.map<DropdownMenuItem<String>>((posicion) {
+            return DropdownMenuItem<String>(
+              value: posicion['nombre'] as String,
+              child: Row(
+                children: [
+                  Icon(
+                    posicion['icono'] as IconData,
+                    color: const Color(0xFF00f5ff),
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    posicion['nombre'] as String,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
               ),
             );
           }).toList(),
-          dropdownColor: const Color(0xFF1a1a1a),
+          dropdownColor: const Color(0xFF23272b),
           icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: Colors.white.withValues(alpha: 0.7),
+            Icons.keyboard_arrow_down_rounded,
+            color: Colors.white.withValues(alpha: 0.9),
+            size: 28,
           ),
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
             labelText: 'Posición',
             prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.7)),
             labelStyle: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w500,
+              color: Colors.white.withValues(alpha: 0.8),
+              fontWeight: FontWeight.w600,
             ),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
