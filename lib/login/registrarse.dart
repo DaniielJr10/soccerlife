@@ -316,7 +316,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
           _buildProgressIndicator(),
           const SizedBox(height: 0),
           SizedBox(
-            height: 340,
+            height: 380,
             child: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
@@ -485,6 +485,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               icon: Icons.person_outline,
               validator: (v) => _validateRequired(v, 'El nombre'),
               onFieldSubmitted: (_) => _emailFocus.requestFocus(),
+              height: 68,
             ),
             const SizedBox(height: 12),
             _buildTextField(
@@ -495,6 +496,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
               validator: _validateEmail,
+              height: 68,
             ),
 
             const SizedBox(height: 12),
@@ -507,6 +509,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               obscureText: _obscurePassword,
               validator: _validatePassword,
               onFieldSubmitted: (_) => _confirmPasswordFocus.requestFocus(),
+              height: 68,
               suffixIcon: _buildObscureToggle(
                 () => setState(() => _obscurePassword = !_obscurePassword),
                 _obscurePassword,
@@ -521,6 +524,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               icon: Icons.lock_outline,
               obscureText: _obscureConfirmPassword,
               validator: _validateConfirmPassword,
+              height: 68,
               suffixIcon: _buildObscureToggle(
                 () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                 _obscureConfirmPassword,
@@ -546,6 +550,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               label: 'Club actual (opcional)',
               hint: 'Nombre de tu club',
               icon: Icons.shield_outlined,
+              height: 60,
             ),
             const SizedBox(height: 12),
             // Posición
@@ -558,6 +563,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               hint: 'Ej: 18',
               icon: Icons.cake_outlined,
               keyboardType: TextInputType.number,
+              height: 60,
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'La edad es obligatoria';
                 final edad = int.tryParse(v);
@@ -573,6 +579,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               hint: 'Ej: 1.70',
               icon: Icons.height_outlined,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              height: 60,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d{0,1}(\.\d{0,2})?')),
               ],
@@ -591,6 +598,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               hint: 'Ej: 70',
               icon: Icons.monitor_weight_outlined,
               keyboardType: TextInputType.number,
+              height: 60,
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'El peso es obligatorio';
                 final peso = int.tryParse(v);
@@ -634,10 +642,11 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     void Function(String)? onFieldSubmitted,
     bool readOnly = false,
     void Function()? onTap,
+    double? height,
   }) {
     final isFocused = focusNode != null && (_focusStates[focusNode] ?? false);
     return SizedBox(
-      height: 48,
+      height: height ?? 48,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -691,41 +700,57 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
   
   // Menú desplegable para seleccionar posición
   Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _posicionSeleccionada,
-      onChanged: (value) => setState(() => _posicionSeleccionada = value),
-      validator: (v) => v == null ? 'Selecciona tu posición' : null,
-      items: _posiciones.map((posicion) {
-        return DropdownMenuItem(
-          value: posicion,
-          child: Text(posicion),
-        );
-      }).toList(),
-      dropdownColor: const Color(0xFF1a1a1a),
-      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-      decoration: InputDecoration(
-        labelText: 'Posición',
-        prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.7)),
-        labelStyle: TextStyle(
-          color: Colors.white.withValues(alpha: 0.7),
-          fontWeight: FontWeight.w500,
-        ),
-        filled: true,
-        fillColor: Colors.black.withValues(alpha: 0.2),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
+    return SizedBox(
+      height: 60,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3), width: 1),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 1,
+          ),
+          gradient: LinearGradient(
+            colors: [
+              Colors.black.withValues(alpha: 0.2),
+              Colors.black.withValues(alpha: 0.15),
+            ],
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3), width: 1),
+        child: DropdownButtonFormField<String>(
+          value: _posicionSeleccionada,
+          onChanged: (value) => setState(() => _posicionSeleccionada = value),
+          validator: (v) => v == null ? 'Selecciona tu posición' : null,
+          items: _posiciones.map((posicion) {
+            return DropdownMenuItem(
+              value: posicion,
+              child: Text(
+                posicion,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
+          }).toList(),
+          dropdownColor: const Color(0xFF1a1a1a),
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            color: Colors.white.withValues(alpha: 0.7),
+          ),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          decoration: InputDecoration(
+            labelText: 'Posición',
+            prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.7)),
+            labelStyle: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontWeight: FontWeight.w500,
+            ),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: const Color(0xFF00f5ff).withValues(alpha: 0.8), width: 1.5),
-        ),
-        errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
       ),
     );
   }
