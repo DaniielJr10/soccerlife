@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'editarperfil.dart';
 
 /// Página de perfil del usuario donde puede ver y gestionar su información personal
@@ -16,16 +18,19 @@ class _PerfilPageState extends State<PerfilPage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   
+  // Para manejar la imagen del perfil
+  File? _profileImage;
+  final ImagePicker _picker = ImagePicker();
+  
   // Información del usuario (en producción vendría de una base de datos o API)
   final Map<String, dynamic> _userInfo = {
     'nombre': 'Daniel Rodriguez',
-    'username': '@daniel_jr10',
+    'email': 'daniel@email.com',
     'posicion': 'Delantero',
     'edad': 20,
-    'equipo': 'FC Barcelona Academy',
-    'nacionalidad': 'Colombia',
-    'altura': '1.80m',
-    'peso': '75kg',
+    'club': 'FC Barcelona Academy',
+    'altura': 1.80,
+    'peso': 75,
   };
 
   @override
@@ -48,6 +53,118 @@ class _PerfilPageState extends State<PerfilPage>
     // Liberamos los recursos de la animación para evitar memory leaks
     _animationController.dispose();
     super.dispose();
+  }
+
+  /// Función para seleccionar imagen del perfil
+  Future<void> _selectProfileImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _profileImage = File(image.path);
+        });
+        
+        // Mostrar mensaje de confirmación
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Foto de perfil actualizada'),
+            backgroundColor: Color(0xFF00f5ff),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      // Manejar errores
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error al seleccionar imagen'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Mostrar opciones para cambiar foto de perfil
+  void _showImageOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Cambiar foto de perfil',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00f5ff).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.photo_library, color: Color(0xFF00f5ff)),
+              ),
+              title: const Text('Seleccionar de galería'),
+              onTap: () {
+                Navigator.pop(context);
+                _selectProfileImage();
+              },
+            ),
+            if (_profileImage != null)
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.delete, color: Colors.red),
+                ),
+                title: const Text('Eliminar foto'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _profileImage = null;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Foto de perfil eliminada'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+              ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -85,44 +202,15 @@ class _PerfilPageState extends State<PerfilPage>
   /// Se colapsa al hacer scroll y mantiene el título visible
   Widget _buildCustomAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 0,
       floating: false,
       pinned: true,
       elevation: 0,
-      backgroundColor: Colors.transparent,
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1565C0),
-              Color(0xFF42A5F5),
-            ],
-          ),
-        ),
-        child: FlexibleSpaceBar(
-          title: Text(
-            'Mi Perfil',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              shadows: [
-                Shadow(
-                  offset: const Offset(0, 1),
-                  blurRadius: 3,
-                  color: Colors.black.withValues(alpha: 0.3),
-                ),
-              ],
-            ),
-          ),
-          centerTitle: true,
-        ),
-      ),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.settings, color: Colors.white),
+          icon: const Icon(Icons.settings, color: Color(0xFF2C3E50)),
           // Abre el menú de configuración rápida desde la parte superior
           onPressed: () => _showSettingsMenu(context),
           tooltip: 'Configuración',
@@ -132,147 +220,291 @@ class _PerfilPageState extends State<PerfilPage>
   }
 
   /// Construye la sección principal del perfil con avatar y datos del jugador
-  /// Incluye foto de perfil, información básica y chips informativos
+  /// Incluye foto de perfil, información básica y estadísticas profesionales
   Widget _buildProfileHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF00f5ff),
+            Color(0xFF00d4aa),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withValues(alpha: 0.95),
+              Colors.white.withValues(alpha: 0.85),
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            // Avatar y nombre principal
+            Row(
+              children: [
+                // Avatar del usuario con gradiente y sombra
+                GestureDetector(
+                  onTap: _showImageOptions,
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF00f5ff), Color(0xFF00d4aa)],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(3),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          padding: const EdgeInsets.all(3),
+                          child: CircleAvatar(
+                            radius: 35,
+                            backgroundColor: const Color(0xFF00f5ff),
+                            backgroundImage: _profileImage != null ? FileImage(_profileImage!) : null,
+                            child: _profileImage == null
+                                ? Text(
+                                    _userInfo['nombre'].split(' ').map((n) => n[0]).take(2).join().toUpperCase(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                      // Indicador de cámara para editar
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00f5ff),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 20),
+                
+                // Información principal del jugador
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _userInfo['nombre'],
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2C3E50),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _userInfo['email'],
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Badge de posición actualizado
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF667eea).withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.sports_soccer, color: Colors.white, size: 16),
+                            const SizedBox(width: 6),
+                            Text(
+                              _userInfo['posicion'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Estadísticas del jugador en tarjetas
+            Row(
+              children: [
+                Expanded(child: _buildStatCard('Edad', '${_userInfo['edad']} años', Icons.cake_outlined, const Color(0xFFf093fb))),
+                const SizedBox(width: 12),
+                Expanded(child: _buildStatCard('Altura', '${_userInfo['altura']}m', Icons.height_outlined, const Color(0xFF4facfe))),
+                const SizedBox(width: 12),
+                Expanded(child: _buildStatCard('Peso', '${_userInfo['peso']}kg', Icons.monitor_weight_outlined, const Color(0xFF43e97b))),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Club actual
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey[200]!),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFffecd2), Color(0xFFfcb69f)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.shield_outlined, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Club Actual',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          _userInfo['club'],
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2C3E50),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Construye una tarjeta de estadística individual
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         children: [
-          // Avatar del usuario con indicador de estado online
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFF1565C0),
-                    width: 3,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF1565C0).withValues(alpha: 0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: const CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Color(0xFF1565C0),
-                  child: Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              // Indicador verde que muestra que el usuario está activo/online
-              Positioned(
-                bottom: 5,
-                right: 5,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                ),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 16),
-          
-          // Nombre completo del jugador
+          const SizedBox(height: 8),
           Text(
-            _userInfo['nombre'],
+            value,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
               color: Color(0xFF2C3E50),
             ),
           ),
-          const SizedBox(height: 4),
-          // Username/alias del jugador
           Text(
-            _userInfo['username'],
+            label,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 11,
               color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          // Badge de posición con gradiente llamativo
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF43E97B), Color(0xFF38F9D7)],
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              _userInfo['posicion'],
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Chips informativos con los datos más relevantes del jugador
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
-            children: [
-              _buildInfoChip(Icons.cake, '${_userInfo['edad']} años'),
-              _buildInfoChip(Icons.sports_soccer, _userInfo['equipo']),
-              _buildInfoChip(Icons.flag, _userInfo['nacionalidad']),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Crea chips pequeños con información específica del jugador
-  /// Cada chip tiene un ícono y texto descriptivo con diseño uniforme
-  Widget _buildInfoChip(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: Colors.grey[600]),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
               fontWeight: FontWeight.w500,
             ),
           ),
