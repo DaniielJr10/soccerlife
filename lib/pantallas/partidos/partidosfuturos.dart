@@ -70,12 +70,14 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
           icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Partidos Futuros',
+        centerTitle: true,
+        title: const Text(
+          'Partidos',
           style: TextStyle(
-            color: Colors.grey[800],
-            fontSize: 20,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
+            fontSize: 22,
+            letterSpacing: 1.1,
           ),
         ),
       ),
@@ -133,23 +135,21 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
               onTap: () => Navigator.pop(context),
               child: Container(
                 padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.horizontal(left: Radius.circular(15)),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(15)),
+                  color: Colors.transparent,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.sports_soccer, color: Colors.grey[600], size: 20),
                     const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Partidos Jugados',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      'Jugados',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600],
                       ),
                     ),
                   ],
@@ -161,24 +161,26 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
-                color: Color(0xFF0065F8),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.horizontal(right: Radius.circular(15)),
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF1a1a2e),
+                    Color(0xFF16213e),
+                  ],
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.event_available, color: Colors.white, size: 20),
+                  const Icon(Icons.event_available, color: Color(0xFF00f5ff), size: 20),
                   const SizedBox(width: 8),
-                  const Flexible(
-                    child: Text(
-                      'Partidos Futuros',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    'Próximos',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00f5ff),
                     ),
                   ),
                 ],
@@ -196,10 +198,15 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: const Color(0xFF0065F8),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF1a1a2e),
+            Color(0xFF16213e),
+          ],
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.3),
+            color: const Color(0xFF1a1a2e).withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -213,17 +220,14 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 24),
+              Icon(icon, color: const Color(0xFF00f5ff), size: 24),
               const SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                text,
+                style: const TextStyle(
+                  color: Color(0xFF00f5ff),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],

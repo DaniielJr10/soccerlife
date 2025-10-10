@@ -679,12 +679,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
   Widget _buildBottomNavigationBar() {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF1a1a2e).withValues(alpha: 0.98),
-            const Color(0xFF16213e).withValues(alpha: 0.95),
-          ],
-        ),
+        color: const Color(0xFF1a1a2e),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.5),
