@@ -169,7 +169,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                   children: [
                     Icon(
                       Icons.fitness_center,
-                      color: Color(0xFF00f5ff),
+                      color: Color(0xFF1a1a2e),
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -178,7 +178,7 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF00f5ff),
+                        color: Color(0xFF1a1a2e),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

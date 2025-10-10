@@ -205,14 +205,14 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.event_available, color: Color(0xFF00f5ff), size: 20),
+                    Icon(Icons.event_available, color: Color(0xFF1a1a2e), size: 20),
                     const SizedBox(width: 8),
                     Text(
                       'Próximos',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF00f5ff),
+                        color: Color(0xFF1a1a2e),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
