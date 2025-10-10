@@ -171,13 +171,11 @@ class _PerfilPageState extends State<PerfilPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      // Envolvemos todo en FadeTransition para el efecto de aparición suave
       body: FadeTransition(
         opacity: _fadeAnimation,
-        // Usamos CustomScrollView para un AppBar colapsable más fluido
         child: CustomScrollView(
           slivers: [
-            _buildCustomAppBar(),
+            // SliverAppBar eliminado para quitar el fondo blanco vacío superior
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -200,24 +198,7 @@ class _PerfilPageState extends State<PerfilPage>
 
   /// Crea el AppBar personalizado con gradiente y efectos visuales
   /// Se colapsa al hacer scroll y mantiene el título visible
-  Widget _buildCustomAppBar() {
-    return SliverAppBar(
-      expandedHeight: 0,
-      floating: false,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: Colors.white,
-      automaticallyImplyLeading: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.settings, color: Color(0xFF2C3E50)),
-          // Abre el menú de configuración rápida desde la parte superior
-          onPressed: () => _showSettingsMenu(context),
-          tooltip: 'Configuración',
-        ),
-      ],
-    );
-  }
+  // _buildCustomAppBar eliminado porque ya no se usa
 
   /// Construye la sección principal del perfil con avatar y datos del jugador
   /// Incluye foto de perfil, información básica y estadísticas profesionales
@@ -320,7 +301,6 @@ class _PerfilPageState extends State<PerfilPage>
                   ),
                 ),
                 const SizedBox(width: 20),
-                
                 // Información principal del jugador
                 Expanded(
                   child: Column(
@@ -329,74 +309,76 @@ class _PerfilPageState extends State<PerfilPage>
                       Text(
                         _userInfo['nombre'],
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1a1a2e),
+                          letterSpacing: 0.5,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
                         _userInfo['email'],
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Color(0xFF1a1a2e),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Posición con mismo diseño que Club Actual
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(top: 8),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1a1a2e),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey[800]!),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFF00f5ff), Color(0xFF00d4aa)],
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.sports_soccer, color: Colors.white, size: 20),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Posición',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFF00f5ff),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    _userInfo['posicion'],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF00f5ff),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
                   ),
                 ),
               ],
+            ),
+            // Campo de posición bajado
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1a1a2e),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey[800]!),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF00f5ff), Color(0xFF00d4aa)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.sports_soccer, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Posición',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF00f5ff),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          _userInfo['posicion'],
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF00f5ff),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             
             const SizedBox(height: 24),
@@ -682,57 +664,7 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
-  /// Muestra un menú emergente con configuraciones rápidas
-  /// Incluye opciones como modo oscuro e idioma
-  void _showSettingsMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Configuración Rápida',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            
-            // Opciones de configuración rápida accesibles
-            ListTile(
-              leading: const Icon(Icons.dark_mode),
-              title: const Text('Modo Oscuro'),
-              trailing: Switch(value: false, onChanged: (value) {}),
-            ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: const Text('Idioma'),
-              subtitle: const Text('Español'),
-              onTap: () {},
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
+  
 
   /// Funciones de manejo de acciones - Actualmente muestran placeholders
   /// En una implementación completa, estas navegarían a pantallas específicas
