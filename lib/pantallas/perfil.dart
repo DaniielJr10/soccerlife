@@ -226,18 +226,11 @@ class _PerfilPageState extends State<PerfilPage>
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF00f5ff),
-            Color(0xFF00d4aa),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withValues(alpha: 0.3),
+            color: const Color(0xFF00f5ff).withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -247,14 +240,7 @@ class _PerfilPageState extends State<PerfilPage>
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withValues(alpha: 0.95),
-              Colors.white.withValues(alpha: 0.85),
-            ],
-          ),
+          color: Colors.white,
         ),
         child: Column(
           children: [
@@ -345,46 +331,63 @@ class _PerfilPageState extends State<PerfilPage>
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF2C3E50),
+                          color: Color(0xFF1a1a2e),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         _userInfo['email'],
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF1a1a2e),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Badge de posición actualizado
+                      // Posición con mismo diseño que Club Actual
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF667eea).withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          color: const Color(0xFF1a1a2e),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey[800]!),
                         ),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.sports_soccer, color: Colors.white, size: 16),
-                            const SizedBox(width: 6),
-                            Text(
-                              _userInfo['posicion'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF00f5ff), Color(0xFF00d4aa)],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.sports_soccer, color: Colors.white, size: 20),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Posición',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF00f5ff),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    _userInfo['posicion'],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF00f5ff),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -401,11 +404,11 @@ class _PerfilPageState extends State<PerfilPage>
             // Estadísticas del jugador en tarjetas
             Row(
               children: [
-                Expanded(child: _buildStatCard('Edad', '${_userInfo['edad']} años', Icons.cake_outlined, const Color(0xFFf093fb))),
+                Expanded(child: _buildStatCard('Edad', '${_userInfo['edad']} años', Icons.cake_outlined, const Color(0xFFf093fb), cardColor: Color(0xFF1a1a2e))),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatCard('Altura', '${_userInfo['altura']}m', Icons.height_outlined, const Color(0xFF4facfe))),
+                Expanded(child: _buildStatCard('Altura', '${_userInfo['altura']}m', Icons.height_outlined, const Color(0xFF4facfe), cardColor: Color(0xFF1a1a2e))),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatCard('Peso', '${_userInfo['peso']}kg', Icons.monitor_weight_outlined, const Color(0xFF43e97b))),
+                Expanded(child: _buildStatCard('Peso', '${_userInfo['peso']}kg', Icons.monitor_weight_outlined, const Color(0xFF43e97b), cardColor: Color(0xFF1a1a2e))),
               ],
             ),
             
@@ -416,9 +419,9 @@ class _PerfilPageState extends State<PerfilPage>
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: const Color(0xFF1a1a2e),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: Colors.grey[800]!),
               ),
               child: Row(
                 children: [
@@ -437,12 +440,12 @@ class _PerfilPageState extends State<PerfilPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Club Actual',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF00f5ff),
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
@@ -450,7 +453,7 @@ class _PerfilPageState extends State<PerfilPage>
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF2C3E50),
+                            color: Color(0xFF00f5ff),
                           ),
                         ),
                       ],
@@ -466,16 +469,16 @@ class _PerfilPageState extends State<PerfilPage>
   }
 
   /// Construye una tarjeta de estadística individual
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(String label, String value, IconData icon, Color color, {Color cardColor = Colors.white}) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: cardColor == const Color(0xFF1a1a2e) ? Colors.grey[800]! : Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -486,7 +489,7 @@ class _PerfilPageState extends State<PerfilPage>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -497,15 +500,15 @@ class _PerfilPageState extends State<PerfilPage>
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2C3E50),
+              color: Color(0xFF00f5ff),
             ),
           ),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 11,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+              color: Color(0xFF00f5ff),
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
