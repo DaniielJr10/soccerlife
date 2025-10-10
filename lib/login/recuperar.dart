@@ -295,12 +295,13 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Logo de la aplicación
+        const SizedBox(height: 10),
+        // Logo de la aplicación (más grande)
         Container(
-          width: 80,
-          height: 80,
+          width: 100,
+          height: 100,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.3),
@@ -310,22 +311,22 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(50),
             child: Image.asset(
               'images/logo.png',
               fit: BoxFit.cover,
             ),
           ),
         ),
-        
-        const SizedBox(height: 12),
-        
-        // Título principal de la aplicación
+
+        const SizedBox(height: 28),
+
+        // Título principal de la aplicación (más grande)
         Center(
           child: Text(
             'Soccer Life',
             style: TextStyle(
-              fontSize: 26,
+              fontSize: 32,
               fontWeight: FontWeight.w900,
               color: const Color(0xFF00f5ff),
               letterSpacing: 1.5,
@@ -344,21 +345,22 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             ),
           ),
         ),
-        
-        const SizedBox(height: 6),
-        
-        // Subtítulo indicando la función de la pantalla
+
+        const SizedBox(height: 16),
+
+        // Subtítulo indicando la función de la pantalla (más grande)
         Center(
           child: Text(
             'Recuperar Contraseña',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 18,
               color: Colors.white.withValues(alpha: 0.8),
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.w400,
               letterSpacing: 0.8,
             ),
           ),
         ),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -444,22 +446,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      height: 48,
+      height: 56,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF00b4db),
-            Color(0xFF0083b0),
-            Color(0xFF00a8cc),
-          ],
-        ),
+        color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00b4db).withValues(alpha: 0.4),
+            color: const Color(0xFF00f5ff).withOpacity(0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -472,39 +466,28 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Center(
               child: isLoading
-                ? const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        strokeWidth: 2,
                       ),
-                      SizedBox(width: 12),
-                      Text(
-                        'Enviando...',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    )
+                  : Text(
+                      text,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.2,
                       ),
-                    ],
-                  )
-                : Text(
-                    text,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
             ),
           ),
         ),
@@ -519,10 +502,11 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
       child: Form(
         key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Explicación del proceso
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -541,14 +525,14 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                   const Icon(
                     Icons.security,
                     color: Color(0xFF00b4db),
-                    size: 28,
+                    size: 32,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   const Text(
                     'Ingresa tu correo electrónico registrado y te enviaremos un código de verificación',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       height: 1.3,
                     ),
@@ -557,9 +541,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                 ],
               ),
             ),
-            
-            const SizedBox(height: 20),
-            
+
+            const SizedBox(height: 32),
+
             // Campo de correo electrónico
             _buildTextField(
               controller: _emailController,
@@ -571,15 +555,16 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
               keyboardType: TextInputType.emailAddress,
               validator: _validateEmail,
             ),
-            
-            const SizedBox(height: 20),
-            
+
+            const SizedBox(height: 32),
+
             // Botón de enviar código
             _buildButton(
               onTap: _enviando ? null : _enviarCodigoVerificacion,
               text: 'Enviar código',
               isLoading: _enviando,
             ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
