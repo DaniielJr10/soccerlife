@@ -593,12 +593,14 @@ class _PrincipalPageState extends State<PrincipalPage> {
     required String value,
     required IconData icon,
   }) {
+    // Si la tarjeta es de 'Partidos', cambia el orden: logo, texto 'Partidos', número debajo
+    // Todas las tarjetas: logo, título y debajo el número
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (title == 'Goles' || title == 'Partidos' || title == 'Asistencias' || title == 'Entrenamientos')
+          color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias' || title == 'Entrenamientos')
               ? const Color(0xFF00f5ff)
               : const Color(0xFF0065F8).withValues(alpha: 0.3),
           width: 1,
@@ -634,16 +636,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Color(0xFF1a1a2e),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text(
               title,
               style: const TextStyle(
                 color: Color(0xFF1a1a2e),
@@ -653,6 +645,16 @@ class _PrincipalPageState extends State<PrincipalPage> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Color(0xFF1a1a2e),
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
