@@ -159,7 +159,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF0065F8),
+        color: const Color(0xFF00f5ff),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -193,7 +193,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 28,
-                  color: Color(0xFF0065F8),
+                  color: Color(0xFF1a1a2e),
                 ),
               ),
             ),
@@ -206,7 +206,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 Text(
                   _perfilJugador.nombre,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1a1a2e),
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -221,18 +221,18 @@ class _PrincipalPageState extends State<PrincipalPage> {
                           Text(
                             'Club: ${_perfilJugador.club}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1a1a2e),
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Posición: ${_perfilJugador.posicion}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1a1a2e),
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
@@ -244,9 +244,9 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 Text(
                   'Edad: ${_perfilJugador.edad}',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1a1a2e),
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -268,7 +268,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0065F8),
+            color: Color(0xFF1a1a2e),
             letterSpacing: 0.5,
           ),
         ),
@@ -326,7 +326,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   ),
                   child: const Icon(
                     Icons.sports_soccer,
-                    color: Color(0xFF0065F8),
+                    color: Color(0xFF1a1a2e),
                     size: 18,
                   ),
                 ),
@@ -335,7 +335,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   child: Text(
                     'Próximo Partido',
                     style: TextStyle(
-                      color: Color(0xFF0065F8),
+                      color: Color(0xFF1a1a2e),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -355,7 +355,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: Color(0xFF0065F8),
+                      color: Color(0xFF1a1a2e),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -440,7 +440,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   ),
                   child: const Icon(
                     Icons.fitness_center,
-                    color: Color(0xFF0065F8),
+                    color: Color(0xFF1a1a2e),
                     size: 18,
                   ),
                 ),
@@ -449,7 +449,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   child: Text(
                     'Próximo Entrenamiento',
                     style: TextStyle(
-                      color: Color(0xFF0065F8),
+                      color: Color(0xFF1a1a2e),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -469,7 +469,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: Color(0xFF0065F8),
+                      color: Color(0xFF1a1a2e),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -546,7 +546,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0065F8),
+            color: Color(0xFF1a1a2e),
             letterSpacing: 0.5,
           ),
         ),
@@ -598,7 +598,9 @@ class _PrincipalPageState extends State<PrincipalPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF0065F8).withValues(alpha: 0.3),
+          color: title == 'Goles'
+              ? const Color(0xFF00f5ff)
+              : const Color(0xFF0065F8).withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
@@ -632,7 +634,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Color(0xFF0065F8),
+                color: Color(0xFF1a1a2e),
               ),
               textAlign: TextAlign.center,
             ),
@@ -640,9 +642,9 @@ class _PrincipalPageState extends State<PrincipalPage> {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.black87,
+                color: Color(0xFF1a1a2e),
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
