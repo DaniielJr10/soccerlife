@@ -435,219 +435,255 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
   }
 
   void _mostrarModal(String titulo, bool esEdicion, int index) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          ),
-          child: Column(
-            children: [
-              // Título del modal
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    titulo,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const Divider(),
-              
-              // Formulario
-              Expanded(
-                child: _buildFormularioEntrenamiento(esEdicion, index),
-              ),
-            ],
-          ),
-        ),
-      ),
+      builder: (context) => _buildFormularioEntrenamiento(titulo, esEdicion, index),
     );
   }
 
-  Widget _buildFormularioEntrenamiento(bool esEdicion, int index) {
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
+  Widget _buildFormularioEntrenamiento(String titulo, bool esEdicion, int index) {
+    return Dialog(
+      insetPadding: const EdgeInsets.all(16),
+      child: Container(
+        width: double.maxFinite,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
-              controller: _fechaController,
-              decoration: const InputDecoration(
-                labelText: 'Fecha del Entrenamiento',
-                hintText: 'Selecciona la fecha',
-                prefixIcon: Icon(Icons.calendar_today),
-                border: OutlineInputBorder(),
+            // Header
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1a1a2e),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               ),
-              readOnly: true,
-              onTap: _seleccionarFecha,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor selecciona una fecha';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            DropdownButtonFormField<String>(
-              value: _tipoSeleccionado,
-              decoration: const InputDecoration(
-                labelText: 'Tipo de Entrenamiento',
-                prefixIcon: Icon(Icons.fitness_center),
-                border: OutlineInputBorder(),
-              ),
-              items: _tiposEntrenamiento.map((tipo) {
-                return DropdownMenuItem(value: tipo, child: Text(tipo));
-              }).toList(),
-              onChanged: (value) => setState(() => _tipoSeleccionado = value),
-              validator: (value) {
-                if (value == null) {
-                  return 'Por favor selecciona un tipo';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _duracionController,
-              decoration: const InputDecoration(
-                labelText: 'Duración',
-                hintText: 'Ej: 90 min',
-                prefixIcon: Icon(Icons.timer),
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa la duración';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _ubicacionController,
-              decoration: const InputDecoration(
-                labelText: 'Ubicación',
-                hintText: 'Ej: Campo principal, Gimnasio',
-                prefixIcon: Icon(Icons.location_on),
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa la ubicación';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _objetivosController,
-              decoration: const InputDecoration(
-                labelText: 'Objetivos',
-                hintText: 'Ej: Mejorar pases, Resistencia',
-                prefixIcon: Icon(Icons.flag),
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 2,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa los objetivos';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _notasController,
-              decoration: const InputDecoration(
-                labelText: 'Notas (Opcional)',
-                hintText: 'Recordatorios o información adicional',
-                prefixIcon: Icon(Icons.note),
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 2,
-            ),
-            const SizedBox(height: 24),
-            
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      titulo,
+                      style: const TextStyle(
+                        color: Color(0xFF00f5ff),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancelar'),
+                    icon: const Icon(Icons.close, color: Color(0xFF00f5ff), size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF1a1a2e),
-                          Color(0xFF16213e),
-                        ],
+                ],
+              ),
+            ),
+            // Formulario scrollable
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      _buildCompactField(
+                        'Fecha',
+                        _fechaController,
+                        Icons.calendar_today,
+                        readOnly: true,
+                        onTap: () => _seleccionarFecha(),
+                        validator: (value) => value?.isEmpty ?? true ? 'Requerido' : null,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF1a1a2e).withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(15),
-                        onTap: () => _guardarEntrenamiento(esEdicion, index),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.save, color: const Color(0xFF00f5ff), size: 24),
-                            const SizedBox(width: 10),
-                            Text(
-                              esEdicion ? 'Actualizar' : 'Guardar',
-                              style: const TextStyle(
-                                color: Color(0xFF00f5ff),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      const SizedBox(height: 6),
+                      _buildCompactDropdown(
+                        'Tipo',
+                        _tipoSeleccionado,
+                        _tiposEntrenamiento,
+                        (value) => setState(() => _tipoSeleccionado = value),
+                        Icons.fitness_center,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Duración',
+                        _duracionController,
+                        Icons.timer,
+                        validator: _validateRequired,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Ubicación',
+                        _ubicacionController,
+                        Icons.location_on,
+                        validator: _validateRequired,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Objetivos',
+                        _objetivosController,
+                        Icons.flag,
+                        maxLines: 2,
+                        validator: _validateRequired,
+                      ),
+                      const SizedBox(height: 6),
+                      _buildCompactField(
+                        'Notas',
+                        _notasController,
+                        Icons.note,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: () => _guardarEntrenamiento(esEdicion, index),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1a1a2e),
+                            foregroundColor: const Color(0xFF00f5ff),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ],
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          child: Text(
+                            esEdicion ? 'Actualizar' : 'Guardar',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF00f5ff),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildCompactField(
+    String label,
+    TextEditingController controller,
+    IconData icon, {
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    int maxLines = 1,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      maxLines: maxLines,
+      readOnly: readOnly,
+      onTap: onTap,
+      style: const TextStyle(
+        fontSize: 12,
+        color: Color(0xFF1a1a2e),
+        fontWeight: FontWeight.bold,
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
+        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF1a1a2e)),
+        filled: true,
+        fillColor: Colors.grey[50],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
+        ),
+        errorStyle: const TextStyle(fontSize: 10),
+        isDense: true,
+      ),
+    );
+  }
+
+  Widget _buildCompactDropdown(
+    String label,
+    String? value,
+    List<String> items,
+    void Function(String?) onChanged,
+    IconData icon,
+  ) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      onChanged: onChanged,
+      validator: (value) => value == null ? 'Requerido' : null,
+      style: const TextStyle(
+        fontSize: 12,
+        color: Color(0xFF1a1a2e),
+        fontWeight: FontWeight.bold,
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
+        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF1a1a2e)),
+        filled: true,
+        fillColor: Colors.grey[50],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
+        ),
+        errorStyle: const TextStyle(fontSize: 10),
+        isDense: true,
+      ),
+      items: items.map((item) {
+        return DropdownMenuItem(
+          value: item,
+          child: Text(
+            item,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF1a1a2e),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // =============== Validaciones ===============
+  
+  String? _validateRequired(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Este campo es obligatorio';
+    }
+    return null;
   }
 
   // Abre el selector de fecha
