@@ -29,6 +29,9 @@ app.get('/', (req, res) => {
 });
 
 // Iniciar servidor
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`Disponible en:`);
+  console.log(`- Local: http://localhost:${PORT}`);
+  console.log(`- Red: http://192.168.1.44:${PORT}`);
 });

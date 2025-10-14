@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class UserRegistrationService {
   // URL base de tu API - Para navegador web
-  static const String baseUrl = 'http://192.168.1.40:3000/api';
+  static const String baseUrl = 'http://192.168.1.44:3000/api';
   
   // Registrar un nuevo usuario
   static Future<Map<String, dynamic>> registrarUsuario({
