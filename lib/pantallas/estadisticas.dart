@@ -30,15 +30,6 @@ class EstadisticaPartido {
   });
 }
 
-class ProgresoMensual {
-  final String mes;
-  final double rendimiento;
-
-  ProgresoMensual({
-    required this.mes,
-    required this.rendimiento,
-  });
-}
 
 // Pantalla principal de estadísticas con dashboard interactivo
 class EstadisticasPage extends StatefulWidget {
@@ -57,7 +48,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _progressAnimation;
 
-  final int _ratingGeneral = 87;
+
   
   final List<EstadisticaJugador> _estadisticasPrincipales = [
     EstadisticaJugador(
@@ -117,14 +108,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     ),
   ];
   
-  final List<ProgresoMensual> _progresoMensual = [
-    ProgresoMensual(mes: 'May', rendimiento: 75),
-    ProgresoMensual(mes: 'Jun', rendimiento: 82),
-    ProgresoMensual(mes: 'Jul', rendimiento: 78),
-    ProgresoMensual(mes: 'Ago', rendimiento: 85),
-    ProgresoMensual(mes: 'Sep', rendimiento: 91),
-    ProgresoMensual(mes: 'Oct', rendimiento: 87),
-  ];
 
   @override
   void initState() {
@@ -200,15 +183,11 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildRatingGeneral(),
-                      const SizedBox(height: 24),
+                      // ...eliminado _buildRatingGeneral()...
                       _buildEstadisticasPrincipales(),
                       const SizedBox(height: 24),
                       _buildEstadisticasPartidos(),
                       const SizedBox(height: 24),
-                      _buildProgresoMensual(),
-                      const SizedBox(height: 24),
-                      _buildComparacionEquipo(),
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -223,148 +202,30 @@ class _EstadisticasPageState extends State<EstadisticasPage>
 
   Widget _buildCustomAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 80,
       floating: false,
       pinned: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0065F8),
-              Color(0xFF42A5F5),
-            ],
-          ),
-        ),
-        child: FlexibleSpaceBar(
-          title: Text(
-            'Mis Estadísticas',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              shadows: [
-                Shadow(
-                  offset: const Offset(0, 1),
-                  blurRadius: 3,
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              ],
+      title: Text(
+        'Estadísticas',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+          shadows: [
+            Shadow(
+              offset: const Offset(0, 1),
+              blurRadius: 3,
+              color: Colors.black.withOpacity(0.1),
             ),
-          ),
-          centerTitle: true,
+          ],
         ),
       ),
+      centerTitle: true,
     );
   }
 
-  // Widget principal del rating con círculo de progreso animado
-  Widget _buildRatingGeneral() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0065F8),
-            Color(0xFF1976D2),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'Rating General',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 16),
-          AnimatedBuilder(
-            animation: _progressAnimation,
-            builder: (context, child) {
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: CircularProgressIndicator(
-                      value: 1.0,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.white.withOpacity(0.2),
-                      valueColor: AlwaysStoppedAnimation(
-                        Colors.white.withOpacity(0.2),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: CircularProgressIndicator(
-                      value: (_ratingGeneral / 100) * _progressAnimation.value,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.transparent,
-                      valueColor: const AlwaysStoppedAnimation(Colors.white),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        '${(_ratingGeneral * _progressAnimation.value).round()}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Text(
-                        '/100',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Excelente rendimiento',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildEstadisticasPrincipales() {
     return Column(
@@ -497,16 +358,22 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           ),
         ),
         const SizedBox(height: 16),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.1,
-          children: _estadisticasPartidos.map((estadistica) {
-            return _buildEstadisticaCard(estadistica);
-          }).toList(),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Ajustar el aspect ratio según el ancho disponible
+            double aspectRatio = constraints.maxWidth < 400 ? 1.2 : 1.5;
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: aspectRatio,
+              children: _estadisticasPartidos.map((estadistica) {
+                return _buildEstadisticaCard(estadistica);
+              }).toList(),
+            );
+          },
         ),
       ],
     );
@@ -517,7 +384,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
       animation: _progressAnimation,
       builder: (context, child) {
         return Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -535,10 +402,11 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: estadistica.color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -546,296 +414,40 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                 child: Icon(
                   estadistica.icono,
                   color: estadistica.color,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                '${(estadistica.valor * _progressAnimation.value).round()}',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: estadistica.color,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                estadistica.nombre,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF666666),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // Gráfico de barras para mostrar evolución mensual
-  Widget _buildProgresoMensual() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Progreso Mensual',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 200,
-            child: AnimatedBuilder(
-              animation: _progressAnimation,
-              builder: (context, child) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: _progresoMensual.map((progreso) {
-                    return _buildBarraProgreso(progreso);
-                  }).toList(),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBarraProgreso(ProgresoMensual progreso) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(
-          '${(progreso.rendimiento * _progressAnimation.value).round()}%',
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF0065F8),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          width: 24,
-          height: (progreso.rendimiento / 100) * 150 * _progressAnimation.value,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                Color(0xFF0065F8),
-                Color(0xFF42A5F5),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          progreso.mes,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF666666),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Sección de comparación de rendimiento con el equipo
-  Widget _buildComparacionEquipo() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF8F9FA),
-            Color(0xFFE3F2FD),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF0065F8).withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0065F8).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.trending_up,
-                  color: Color(0xFF0065F8),
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
-              const Text(
-                'Comparación con el Equipo',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A1A1A),
+              const SizedBox(height: 8),
+              FittedBox(
+                child: Text(
+                  '${(estadistica.valor * _progressAnimation.value).round()}',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: estadistica.color,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Flexible(
+                child: Text(
+                  estadistica.nombre,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF666666),
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          _buildComparacionItem('Goles por partido', 0.77, 0.65, 'Por encima del promedio'),
-          const SizedBox(height: 12),
-          _buildComparacionItem('Precisión de pases', 0.91, 0.83, 'Muy por encima'),
-          const SizedBox(height: 12),
-          _buildComparacionItem('Distancia recorrida', 0.82, 0.79, 'Ligeramente superior'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildComparacionItem(String titulo, double tuValor, double promedioEquipo, String descripcion) {
-    return AnimatedBuilder(
-      animation: _progressAnimation,
-      builder: (context, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  titulo,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
-                  ),
-                ),
-                Text(
-                  descripcion,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF4CAF50),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  flex: (tuValor * 100).round(),
-                  child: Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF0065F8), Color(0xFF42A5F5)],
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: FractionallySizedBox(
-                      widthFactor: _progressAnimation.value,
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF0065F8), Color(0xFF42A5F5)],
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 100 - (tuValor * 100).round(),
-                  child: Container(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  flex: (promedioEquipo * 100).round(),
-                  child: Container(
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: FractionallySizedBox(
-                      widthFactor: _progressAnimation.value,
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 100 - (promedioEquipo * 100).round(),
-                  child: Container(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Tu rendimiento: ${(tuValor * 100).round()}%',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF0065F8),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  'Promedio equipo: ${(promedioEquipo * 100).round()}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ],
         );
       },
     );
   }
+
+
 }
