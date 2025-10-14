@@ -24,8 +24,18 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 		return Scaffold(
 			backgroundColor: Colors.grey[50],
 			appBar: AppBar(
-				title: const Text('Editar Perfil'),
-				backgroundColor: const Color(0xFF1565C0),
+				leading: IconButton(
+				  icon: const Icon(Icons.arrow_back, color: Color(0xFF00f5ff)),
+				  onPressed: () => Navigator.of(context).pop(),
+				),
+				title: const Text(
+				  'Editar Perfil',
+				  style: TextStyle(
+				    color: Color(0xFF00f5ff),
+				    fontWeight: FontWeight.bold,
+				  ),
+				),
+				backgroundColor: const Color(0xFF1a1a2e),
 				elevation: 0,
 			),
 			body: SingleChildScrollView(
