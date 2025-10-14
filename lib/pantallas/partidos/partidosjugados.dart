@@ -23,15 +23,9 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   final _asistenciasController = TextEditingController();
   final _notasController = TextEditingController();
   
-  String? _posicionSeleccionada;
   String? _tarjetasSeleccionadas;
   DateTime? _fechaSeleccionada;
 
-  final List<String> _posiciones = [
-    'Arquero', 'Defensa Central', 'Lateral Derecho', 'Lateral Izquierdo',
-    'Volante Defensivo', 'Volante Central', 'Volante Ofensivo',
-    'Extremo Derecho', 'Extremo Izquierdo', 'Delantero', 'Segundo Delantero'
-  ];
 
   final List<String> _tarjetas = [
     'Ninguna', 'Amarilla', 'Roja', 'Doble Amarilla'
@@ -478,7 +472,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF0065F8),
+                color: const Color(0xFF1a1a2e),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               ),
               child: Row(
@@ -487,7 +481,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                     child: Text(
                       partido != null ? 'Editar Partido' : 'Registrar Partido',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF00f5ff),
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -496,7 +490,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                    icon: const Icon(Icons.close, color: Color(0xFF00f5ff), size: 20),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                   ),
@@ -559,14 +553,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                         validator: _validateMinutes,
                       ),
                       const SizedBox(height: 6),
-                      _buildCompactDropdown(
-                        'Posición',
-                        _posicionSeleccionada,
-                        _posiciones,
-                        (value) => setState(() => _posicionSeleccionada = value),
-                        Icons.person,
-                      ),
-                      const SizedBox(height: 6),
+
                       Row(
                         children: [
                           Expanded(
@@ -612,15 +599,23 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
                         child: ElevatedButton(
                           onPressed: () => _guardarPartido(partidoEditar: partido, index: index),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0065F8),
-                            foregroundColor: Colors.white,
+                            backgroundColor: const Color(0xFF1a1a2e),
+                            foregroundColor: const Color(0xFF00f5ff),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           child: Text(
                             partido != null ? 'Actualizar' : 'Guardar',
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF00f5ff),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -652,21 +647,29 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       maxLines: maxLines,
       readOnly: readOnly,
       onTap: onTap,
-      style: const TextStyle(fontSize: 12),
+      style: const TextStyle(
+        fontSize: 12,
+        color: Color(0xFF1a1a2e),
+        fontWeight: FontWeight.bold,
+      ),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
-        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF0065F8)),
+  labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF1a1a2e)),
         filled: true,
         fillColor: Colors.grey[50],
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: Color(0xFF0065F8)),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
         ),
         errorStyle: const TextStyle(fontSize: 10),
         isDense: true,
@@ -685,21 +688,29 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       value: value,
       onChanged: onChanged,
       validator: (value) => value == null ? 'Requerido' : null,
-      style: const TextStyle(fontSize: 12, color: Colors.black87),
+      style: const TextStyle(
+        fontSize: 12,
+        color: Color(0xFF1a1a2e),
+        fontWeight: FontWeight.bold,
+      ),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
-        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF0065F8)),
+  labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF1a1a2e)),
         filled: true,
         fillColor: Colors.grey[50],
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: Color(0xFF0065F8)),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
         ),
         errorStyle: const TextStyle(fontSize: 10),
         isDense: true,
@@ -707,7 +718,14 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       items: items.map((item) {
         return DropdownMenuItem(
           value: item,
-          child: Text(item, style: const TextStyle(fontSize: 12)),
+          child: Text(
+            item,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF1a1a2e),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         );
       }).toList(),
     );
@@ -787,7 +805,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
         golesAFavor: int.parse(_golesAFavorController.text),
         golesEnContra: int.parse(_golesEnContraController.text),
         minutosJugados: int.parse(_minutosController.text),
-        posicion: _posicionSeleccionada!,
+        posicion: '',
         golesAnotados: int.parse(_golesAnotadosController.text),
         asistencias: int.parse(_asistenciasController.text),
         tarjetas: _tarjetasSeleccionadas!,
@@ -837,7 +855,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     _golesAFavorController.text = partido.golesAFavor.toString();
     _golesEnContraController.text = partido.golesEnContra.toString();
     _minutosController.text = partido.minutosJugados.toString();
-    _posicionSeleccionada = partido.posicion;
     _golesAnotadosController.text = partido.golesAnotados.toString();
     _asistenciasController.text = partido.asistencias.toString();
     _tarjetasSeleccionadas = partido.tarjetas;
@@ -853,7 +870,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     _golesAnotadosController.text = '0';
     _asistenciasController.text = '0';
     _notasController.clear();
-    _posicionSeleccionada = null;
     _tarjetasSeleccionadas = 'Ninguna';
     _fechaSeleccionada = null;
   }
