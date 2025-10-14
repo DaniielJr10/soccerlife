@@ -319,8 +319,8 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
         borderRadius: BorderRadius.circular(15),
         color: Colors.white,
         border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
+          color: const Color(0xFF00f5ff),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
@@ -339,10 +339,10 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
               Expanded(
                 child: Text(
                   entrenamiento.tipo,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                    color: Color(0xFF1a1a2e),
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
@@ -403,11 +403,14 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             width: 100,
             child: Text(
               '$label:',
-              style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1a1a2e)),
             ),
           ),
           Expanded(
-            child: Text(value),
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1a1a2e)),
+            ),
           ),
         ],
       ),
