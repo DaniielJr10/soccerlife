@@ -449,7 +449,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
-        color: Color(0xFF0065F8),
+        color: Color(0xFF1a1a2e),
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
       child: Row(
@@ -458,7 +458,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
             child: Text(
               partido != null ? 'Editar Partido' : 'Programar Partido',
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF00f5ff),
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -466,7 +466,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
           ),
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close, color: Colors.white, size: 20),
+            icon: const Icon(Icons.close, color: Color(0xFF00f5ff), size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           ),
@@ -484,15 +484,23 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
             ? _actualizarPartido(index!) 
             : _guardarPartido(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0065F8),
-          foregroundColor: Colors.white,
+          backgroundColor: const Color(0xFF1a1a2e),
+          foregroundColor: const Color(0xFF00f5ff),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
           ),
         ),
         child: Text(
           partido != null ? 'Actualizar' : 'Programar',
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF00f5ff),
+          ),
         ),
       ),
     );
@@ -513,21 +521,33 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       maxLines: maxLines,
       readOnly: readOnly,
       onTap: onTap,
-      style: const TextStyle(fontSize: 12),
+      style: const TextStyle(
+        fontSize: 12,
+        color: Color(0xFF1a1a2e),
+        fontWeight: FontWeight.bold,
+      ),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, size: 16, color: const Color(0xFF0065F8)),
-        labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF0065F8)),
+        labelStyle: const TextStyle(
+          fontSize: 12,
+          color: Color(0xFF1a1a2e),
+          fontWeight: FontWeight.bold,
+        ),
         filled: true,
         fillColor: Colors.grey[50],
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: Color(0xFF0065F8)),
+          borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
         ),
         errorStyle: const TextStyle(fontSize: 10),
         isDense: true,
