@@ -51,31 +51,19 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF00f5ff), Color(0xFF0066ff)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
       title: const Text(
         'Estadísticas',
         style: TextStyle(
-          color: Colors.white,
+          color: Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 24,
         ),
       ),
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        onPressed: () => Navigator.pop(context),
-      ),
+      // Sin leading (flecha) ni fondo
       actions: [
         IconButton(
-          icon: const Icon(Icons.share, color: Colors.white),
+          icon: const Icon(Icons.share, color: Colors.black),
           onPressed: _compartirEstadisticas,
         ),
       ],
@@ -314,7 +302,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                   'T. Amarillas',
                   _estadisticasTemporada['tarjetas_amarillas'],
                   Colors.yellow[700]!,
-                  Icons.credit_card,
                 ),
               ),
               const SizedBox(width: 16),
@@ -323,7 +310,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
                   'T. Rojas',
                   _estadisticasTemporada['tarjetas_rojas'],
                   Colors.red,
-                  Icons.credit_card,
                 ),
               ),
             ],
@@ -334,16 +320,17 @@ class _EstadisticasPageState extends State<EstadisticasPage>
   }
 
   /// Construye un elemento de disciplina
-  Widget _buildDisciplinaItem(String label, int value, Color color, IconData icon) {
+  Widget _buildDisciplinaItem(String label, int value, Color color) {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          width: 22,
+          height: 30,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(6),
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.black26, width: 1),
           ),
-          child: Icon(icon, color: color, size: 18),
         ),
         const SizedBox(width: 8),
         Expanded(
