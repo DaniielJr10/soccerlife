@@ -302,7 +302,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFF0065F8).withValues(alpha: 0.1),
+            color: const Color(0xFF00f5ff),
             width: 1,
           ),
           boxShadow: [
@@ -416,7 +416,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFF0065F8).withValues(alpha: 0.1),
+            color: const Color(0xFF00f5ff),
             width: 1,
           ),
           boxShadow: [
@@ -598,7 +598,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: title == 'Goles'
+          color: (title == 'Goles' || title == 'Partidos' || title == 'Asistencias' || title == 'Entrenamientos')
               ? const Color(0xFF00f5ff)
               : const Color(0xFF0065F8).withValues(alpha: 0.3),
           width: 1,
