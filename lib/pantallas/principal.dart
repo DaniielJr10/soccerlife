@@ -321,12 +321,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0065F8).withValues(alpha: 0.1),
+                    color: const Color(0xFF1a1a2e),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.sports_soccer,
-                    color: Color(0xFF1a1a2e),
+                    color: Color(0xFF00f5ff),
                     size: 18,
                   ),
                 ),
@@ -435,12 +435,12 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0065F8).withValues(alpha: 0.1),
+                    color: const Color(0xFF1a1a2e),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.fitness_center,
-                    color: Color(0xFF1a1a2e),
+                    color: Color(0xFF00f5ff),
                     size: 18,
                   ),
                 ),
@@ -620,11 +620,15 @@ class _PrincipalPageState extends State<PrincipalPage> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: const Color(0xFF0065F8).withValues(alpha: 0.08),
+                color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias' || title == 'Entrenamientos')
+                    ? const Color(0xFF1a1a2e)
+                    : const Color(0xFF0065F8).withValues(alpha: 0.08),
               ),
               child: Icon(
                 icon,
-                color: const Color(0xFF0065F8),
+                color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias' || title == 'Entrenamientos')
+                    ? const Color(0xFF00f5ff)
+                    : const Color(0xFF0065F8),
                 size: 20,
               ),
             ),
