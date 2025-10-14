@@ -332,12 +332,12 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
         borderRadius: BorderRadius.circular(15),
         color: Colors.white,
         border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
+          color: const Color(0xFF00f5ff),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: const Color(0xFF00f5ff).withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -379,7 +379,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
           const SizedBox(height: 12),
           // Fecha
           _buildInfoRow('Fecha', _formatDate(partido.fecha)),
-          _buildInfoRow('Posición', partido.posicion),
           _buildInfoRow('Minutos jugados', '${partido.minutosJugados}\''),
           _buildInfoRow('Goles anotados', partido.golesAnotados.toString()),
           _buildInfoRow('Asistencias', partido.asistencias.toString()),
@@ -416,19 +415,20 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             width: 120,
             child: Text(
               '$label:',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+                color: Color(0xFF1a1a2e),
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey[800],
+                color: Color(0xFF1a1a2e),
+                fontWeight: FontWeight.bold,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: value.length > 50 ? 2 : 1,

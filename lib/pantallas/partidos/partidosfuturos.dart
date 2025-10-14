@@ -265,14 +265,14 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: const Color(0xFF0065F8).withOpacity(0.1),
+        color: Colors.white,
         border: Border.all(
-          color: const Color(0xFF0065F8).withOpacity(0.3),
-          width: 1,
+          color: const Color(0xFF00f5ff),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0065F8).withOpacity(0.1),
+            color: const Color(0xFF00f5ff).withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -334,17 +334,21 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
             width: 80,
             child: Text(
               '$label:',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+                color: Color(0xFF1a1a2e),
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF1a1a2e),
+                fontWeight: FontWeight.bold,
+              ),
               overflow: TextOverflow.ellipsis,
               maxLines: value.length > 50 ? 2 : 1,
             ),
