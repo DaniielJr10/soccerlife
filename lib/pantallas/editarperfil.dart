@@ -43,7 +43,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 											decoration: BoxDecoration(
 												shape: BoxShape.circle,
 												border: Border.all(
-													color: const Color(0xFF1565C0),
+													color: const Color(0xFF00f5ff),
 													width: 3,
 												),
 												boxShadow: [
@@ -56,11 +56,11 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 											),
 											child: const CircleAvatar(
 												radius: 50,
-												backgroundColor: Color(0xFF1565C0),
+												backgroundColor: Color(0xFF1a1a2e),
 												child: Icon(
 													Icons.person,
 													size: 60,
-													color: Colors.white,
+													color: Color(0xFF00f5ff),
 												),
 											),
 										),
@@ -78,11 +78,17 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 														),
 													],
 												),
-												child: IconButton(
-													icon: const Icon(Icons.edit, size: 20, color: Color(0xFF1565C0)),
-													onPressed: () {
-														// Acción para cambiar foto de perfil
-													},
+												child: Container(
+												  decoration: const BoxDecoration(
+												    color: Color(0xFF1a1a2e),
+												    shape: BoxShape.circle,
+												  ),
+												  child: IconButton(
+												    icon: const Icon(Icons.edit, size: 20, color: Color(0xFF00f5ff)),
+												    onPressed: () {
+												      // Acción para cambiar foto de perfil
+												    },
+												  ),
 												),
 											),
 										),
@@ -167,7 +173,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 									height: 48,
 									child: ElevatedButton(
 										style: ElevatedButton.styleFrom(
-											backgroundColor: const Color(0xFF1565C0),
+											backgroundColor: const Color(0xFF1a1a2e),
+											foregroundColor: const Color(0xFF00f5ff),
 											shape: RoundedRectangleBorder(
 												borderRadius: BorderRadius.circular(12),
 											),
@@ -182,7 +189,10 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 												Navigator.of(context).pop();
 											}
 										},
-										child: const Text('Guardar cambios', style: TextStyle(fontSize: 18)),
+										child: const Text(
+											'Guardar cambios',
+											style: TextStyle(fontSize: 18, color: Color(0xFF00f5ff), fontWeight: FontWeight.bold),
+										),
 									),
 								),
 							],
@@ -204,12 +214,24 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 			decoration: InputDecoration(
 				labelText: label,
 				prefixIcon: Icon(icon, color: const Color(0xFF1565C0)),
-				border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+				border: OutlineInputBorder(
+					borderRadius: BorderRadius.circular(12),
+					borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
+				),
+				enabledBorder: OutlineInputBorder(
+					borderRadius: BorderRadius.circular(12),
+					borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
+				),
+				focusedBorder: OutlineInputBorder(
+					borderRadius: BorderRadius.circular(12),
+					borderSide: const BorderSide(color: Color(0xFF00f5ff), width: 2),
+				),
 				filled: true,
 				fillColor: Colors.white,
 			),
 			initialValue: initialValue,
 			keyboardType: keyboardType,
+			style: const TextStyle(color: Color(0xFF1a1a2e), fontWeight: FontWeight.bold),
 			validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
 			onSaved: onSaved,
 		);
