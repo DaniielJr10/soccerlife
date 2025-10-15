@@ -86,6 +86,9 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           const SizedBox(height: 16),
           _buildDisciplinaCard(),
           const SizedBox(height: 20),
+          _buildTarjetaExtra(),
+          const SizedBox(height: 20),
+
         ],
       ),
     );
@@ -375,4 +378,41 @@ class _EstadisticasPageState extends State<EstadisticasPage>
   }
 }
 
-
+Widget _buildTarjetaExtra() {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(
+      color: Colors.deepPurple[50],
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.deepPurple.withOpacity(0.08),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Text(
+          'Mas del Jugador',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.deepPurple,
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          'Recuerda que la constancia y el esfuerzo diario son clave para alcanzar tus metas deportivas. ¡No te detengas!',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    ),
+  );
+}
