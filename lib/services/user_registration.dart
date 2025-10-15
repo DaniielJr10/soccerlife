@@ -32,7 +32,8 @@ class UserRegistrationService {
         if (telefono != null && telefono.isNotEmpty) 'telefono': telefono,
         if (club != null && club.isNotEmpty) 'club': club,
         if (edad != null && edad > 0) 'edad': edad,
-        if (estatura != null && estatura > 0) 'estatura': estatura,
+        // Convertir estatura de metros a centímetros
+        if (estatura != null && estatura > 0) 'estatura': (estatura * 100).round(),
         if (peso != null && peso > 0) 'peso': peso,
       };
 
