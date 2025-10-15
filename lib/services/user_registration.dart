@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_config.dart';
 
 class UserRegistrationService {
-  // URL base de tu API - Para navegador web
-  static const String baseUrl = 'http://192.168.1.44:3000/api';
+  // URL base de tu API - Ahora usa configuración dinámica
+  static String get baseUrl => ApiConfig.baseUrl;
   
   // Registrar un nuevo usuario
   static Future<Map<String, dynamic>> registrarUsuario({

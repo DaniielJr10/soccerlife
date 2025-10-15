@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'api_config.dart';
 
 class UserRecuperarService {
-  // URL base de tu API
-  static const String baseUrl = 'http://192.168.1.44:3000/api';
+  // URL base de tu API - Ahora usa configuración dinámica
+  static String get baseUrl => ApiConfig.baseUrl;
   
   // Generar código de recuperación de 4 dígitos (solo uso local/testing)
   static String _generarCodigoRecuperacion() {
