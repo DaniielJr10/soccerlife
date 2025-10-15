@@ -1,0 +1,399 @@
+# 📚 **HISTORIAS DE USUARIO - SOCCERLIFE**
+
+## 🔐 **1. GESTIÓN DE USUARIOS Y AUTENTICACIÓN**
+
+### **HU-001: Registro de Usuario**
+**Como** nuevo usuario futbolista  
+**Quiero** crear una cuenta en SoccerLife  
+**Para** poder gestionar mi información deportiva y estadísticas
+
+**Criterios de Aceptación:**
+- Puedo ingresar mi nombre, email y contraseña
+- El sistema valida que mi email sea único y válido
+- Puedo agregar información deportiva como posición y club
+- Recibo confirmación de cuenta creada exitosamente
+- Si hay errores, veo mensajes claros de qué corregir
+
+---
+
+### **HU-002: Inicio de Sesión**
+**Como** usuario registrado  
+**Quiero** iniciar sesión con mi email y contraseña  
+**Para** acceder a mi información deportiva personal
+
+**Criterios de Aceptación:**
+- Puedo ingresar email y contraseña en campos claramente identificados
+- Si mis credenciales son correctas, accedo al dashboard principal
+- Si mis credenciales son incorrectas, veo un mensaje de error claro
+- La sesión se mantiene activa hasta que cierre la aplicación
+
+---
+
+### **HU-003: Recuperación de Contraseña**
+**Como** usuario que olvidó su contraseña  
+**Quiero** poder recuperar el acceso a mi cuenta  
+**Para** no perder mi información deportiva almacenada
+
+**Criterios de Aceptación:**
+- Puedo solicitar recuperación ingresando solo mi email
+- Recibo un código de 4 dígitos en mi correo electrónico
+- Puedo verificar el código y establecer una nueva contraseña
+- El código expira en 15 minutos por seguridad
+- Solo tengo 3 intentos para ingresar el código correcto
+
+---
+
+### **HU-004: Gestión de Perfil**
+**Como** usuario registrado  
+**Quiero** ver y editar mi información personal y deportiva  
+**Para** mantener mis datos actualizados
+
+**Criterios de Aceptación:**
+- Puedo ver toda mi información en una pantalla organizada
+- Puedo editar datos como club, posición, peso y altura
+- Puedo cambiar mi foto de perfil desde la galería
+- Los cambios se guardan inmediatamente
+- Veo confirmación cuando actualizo información exitosamente
+
+---
+
+## 🏠 **2. DASHBOARD PRINCIPAL**
+
+### **HU-005: Dashboard Personalizado**
+**Como** usuario activo  
+**Quiero** ver un resumen de mi actividad deportiva  
+**Para** tener una visión general rápida de mi progreso
+
+**Criterios de Aceptación:**
+- Veo mi información básica (nombre, club, posición) destacada
+- Veo mi próximo partido y entrenamiento programado
+- Veo estadísticas rápidas: partidos, goles, asistencias, entrenamientos
+- La información se actualiza automáticamente cuando agrego datos
+- El diseño es atractivo y fácil de entender
+
+---
+
+### **HU-006: Navegación Principal**
+**Como** usuario de la aplicación  
+**Quiero** navegar fácilmente entre las diferentes secciones  
+**Para** acceder rápidamente a la información que necesito
+
+**Criterios de Aceptación:**
+- Veo claramente las 5 secciones principales en la barra inferior
+- Sé en qué sección estoy gracias a indicadores visuales
+- Puedo cambiar de sección con un solo toque
+- La navegación es consistente en toda la aplicación
+
+---
+
+## ⚽ **3. GESTIÓN DE PARTIDOS**
+
+### **HU-007: Registro de Partidos Jugados**
+**Como** jugador de fútbol  
+**Quiero** registrar los partidos que he jugado  
+**Para** llevar un historial completo de mi actividad deportiva
+
+**Criterios de Aceptación:**
+- Puedo ingresar fecha, rival y resultado del partido
+- Puedo agregar mis estadísticas personales (goles, asistencias, minutos)
+- Puedo registrar tarjetas recibidas y agregar notas
+- El partido aparece inmediatamente en mi historial
+- Veo el resultado clasificado como victoria, empate o derrota
+
+---
+
+### **HU-008: Programación de Partidos Futuros**
+**Como** jugador activo  
+**Quiero** programar mis próximos partidos  
+**Para** mantener mi agenda deportiva organizada
+
+**Criterios de Aceptación:**
+- Puedo ingresar fecha, hora, rival y lugar del partido
+- Puedo agregar notas preparatorias para el encuentro
+- El próximo partido aparece destacado en mi dashboard
+- Puedo editar o eliminar partidos programados
+- Recibo recordatorios antes del partido
+
+---
+
+### **HU-009: Historial de Partidos**
+**Como** jugador con experiencia  
+**Quiero** consultar mi historial completo de partidos  
+**Para** analizar mi progreso y recordar encuentros importantes
+
+**Criterios de Aceptación:**
+- Veo todos mis partidos ordenados cronológicamente
+- Puedo alternar entre partidos jugados y futuros
+- Cada partido muestra información completa y estadísticas
+- Puedo buscar partidos por rival o fecha
+- El historial se mantiene indefinidamente
+
+---
+
+## 🏋️ **4. GESTIÓN DE ENTRENAMIENTOS**
+
+### **HU-010: Registro de Entrenamientos Completados**
+**Como** jugador comprometido  
+**Quiero** registrar mis entrenamientos realizados  
+**Para** seguir mi progreso físico y técnico
+
+**Criterios de Aceptación:**
+- Puedo clasificar entrenamientos por tipo (técnico, físico, táctico, etc.)
+- Puedo registrar duración, objetivos y ubicación
+- Puedo calificar el entrenamiento con estrellas
+- Puedo agregar notas sobre mi progreso
+- El entrenamiento se suma a mis estadísticas totales
+
+---
+
+### **HU-011: Planificación de Entrenamientos**
+**Como** jugador organizado  
+**Quiero** programar mis próximos entrenamientos  
+**Para** mantener una rutina de preparación consistente
+
+**Criterios de Aceptación:**
+- Puedo programar entrenamientos con fecha y hora específica
+- Puedo definir tipo, objetivos y ubicación del entrenamiento
+- El próximo entrenamiento aparece en mi dashboard
+- Puedo modificar o cancelar entrenamientos programados
+- Recibo recordatorios antes del entrenamiento
+
+---
+
+### **HU-012: Seguimiento de Entrenamientos**
+**Como** atleta dedicado  
+**Quiero** analizar mi historial de entrenamientos  
+**Para** evaluar mi constancia y progreso en la preparación
+
+**Criterios de Aceptación:**
+- Veo todos mis entrenamientos organizados por fecha
+- Puedo filtrar por tipo de entrenamiento
+- Veo estadísticas de frecuencia y duración
+- Puedo comparar mi progreso entre períodos
+- El historial se mantiene completo y accesible
+
+---
+
+## 📊 **5. SISTEMA DE ESTADÍSTICAS**
+
+### **HU-013: Estadísticas Generales**
+**Como** jugador que busca mejorar  
+**Quiero** ver mis estadísticas deportivas generales  
+**Para** conocer mi rendimiento actual
+
+**Criterios de Aceptación:**
+- Veo totales de partidos, goles, asistencias y entrenamientos
+- Veo promedios por partido y por período
+- Puedo filtrar estadísticas por temporada o rango de fechas
+- Los números se actualizan automáticamente con nueva actividad
+- La información se presenta de forma clara y visual
+
+---
+
+### **HU-014: Análisis de Rendimiento**
+**Como** jugador ambicioso  
+**Quiero** analizar mi rendimiento deportivo detalladamente  
+**Para** identificar áreas de mejora y fortalezas
+
+**Criterios de Aceptación:**
+- Veo estadísticas ofensivas (goles, asistencias, efectividad)
+- Veo rendimiento por posición jugada
+- Veo estadísticas disciplinarias (tarjetas, faltas)
+- Puedo comparar mi rendimiento entre diferentes períodos
+- Recibo insights automáticos sobre tendencias
+
+---
+
+### **HU-015: Visualización de Datos**
+**Como** usuario visual  
+**Quiero** ver mis estadísticas en gráficos intuitivos  
+**Para** entender mejor mi progreso deportivo
+
+**Criterios de Aceptación:**
+- Veo gráficos de líneas mostrando progreso temporal
+- Veo gráficos circulares con distribuciones por categoría
+- Puedo interactuar con los gráficos para ver detalles
+- Los gráficos se actualizan automáticamente con nuevos datos
+- Puedo exportar gráficos para compartir
+
+---
+
+## 🔧 **6. CONFIGURACIÓN Y PREFERENCIAS**
+
+### **HU-016: Configuración de Cuenta**
+**Como** usuario responsable  
+**Quiero** gestionar la configuración de mi cuenta  
+**Para** personalizar mi experiencia y mantener seguridad
+
+**Criterios de Aceptación:**
+- Puedo cambiar mi contraseña actual
+- Puedo configurar preferencias de notificaciones
+- Puedo ajustar configuraciones de privacidad
+- Puedo elegir unidades de medida (métricas/imperiales)
+- Los cambios se aplican inmediatamente
+
+---
+
+### **HU-017: Gestión de Notificaciones**
+**Como** usuario ocupado  
+**Quiero** configurar qué notificaciones recibir  
+**Para** estar informado sin ser molestado excesivamente
+
+**Criterios de Aceptación:**
+- Puedo activar/desactivar recordatorios de partidos
+- Puedo configurar recordatorios de entrenamientos
+- Puedo elegir recibir resúmenes estadísticos periódicos
+- Puedo configurar notificaciones de logros alcanzados
+- Puedo elegir el método de notificación (push, email)
+
+---
+
+### **HU-018: Exportación de Datos**
+**Como** jugador profesional  
+**Quiero** exportar mis datos deportivos  
+**Para** compartir mi información con entrenadores o como respaldo
+
+**Criterios de Aceptación:**
+- Puedo exportar mi historial de partidos en PDF o Excel
+- Puedo exportar mis estadísticas en formato profesional
+- Puedo generar reportes de entrenamientos
+- Los reportes incluyen gráficos y análisis
+- Puedo compartir reportes directamente desde la app
+
+---
+
+## 🔒 **7. SEGURIDAD Y PRIVACIDAD**
+
+### **HU-019: Seguridad de Datos**
+**Como** usuario preocupado por la seguridad  
+**Quiero** que mis datos estén protegidos  
+**Para** confiar en la aplicación con mi información personal
+
+**Criterios de Aceptación:**
+- Mi contraseña está protegida y no es visible para administradores
+- Mis datos se transmiten de forma segura
+- Mi sesión expira automáticamente por inactividad prolongada
+- Recibo alertas si hay intentos de acceso sospechosos
+- Puedo ver el historial de mis inicios de sesión
+
+---
+
+### **HU-020: Privacidad del Usuario**
+**Como** usuario consciente de la privacidad  
+**Quiero** controlar quién puede ver mi información  
+**Para** mantener mi privacidad deportiva
+
+**Criterios de Aceptación:**
+- Solo yo puedo ver mis estadísticas completas
+- Puedo elegir qué información compartir públicamente
+- Puedo eliminar mi cuenta y todos mis datos cuando quiera
+- Tengo acceso a una política de privacidad clara
+- Puedo descargar todos mis datos cuando lo solicite
+
+---
+
+## 🌐 **8. COMUNICACIÓN CON EL BACKEND**
+
+### **HU-021: Conectividad Confiable**
+**Como** usuario de dispositivo móvil  
+**Quiero** que la aplicación se comunique confiablemente con el servidor  
+**Para** que mis datos se guarden y sincronicen correctamente
+
+**Criterios de Aceptación:**
+- Veo indicadores claros cuando la app está cargando datos
+- Mis datos se sincronizan automáticamente al hacer cambios
+- Si hay problemas de conexión, veo mensajes informativos
+- Puedo reintentar operaciones fallidas fácilmente
+- La app funciona con conexiones lentas de manera aceptable
+
+---
+
+### **HU-022: Manejo de Errores**
+**Como** usuario no técnico  
+**Quiero** entender qué está pasando cuando algo falla  
+**Para** saber qué acciones tomar
+
+**Criterios de Aceptación:**
+- Veo mensajes de error en lenguaje claro, no técnico
+- Recibo sugerencias de cómo resolver problemas comunes
+- Puedo reportar errores directamente desde la aplicación
+- La app se recupera graciosamente de errores temporales
+- Nunca pierdo datos por errores de conectividad
+
+---
+
+## 📱 **9. EXPERIENCIA DE USUARIO**
+
+### **HU-023: Interfaz Intuitiva**
+**Como** nuevo usuario de la aplicación  
+**Quiero** entender fácilmente cómo usar todas las funciones  
+**Para** aprovechar al máximo la herramienta desde el primer día
+
+**Criterios de Aceptación:**
+- La navegación es intuitiva sin necesidad de tutorial
+- Los íconos y etiquetas son claros y descriptivos
+- Las acciones importantes son fáciles de encontrar
+- El diseño es consistente en toda la aplicación
+- Puedo deshacer acciones accidentales importantes
+
+---
+
+### **HU-024: Retroalimentación Visual**
+**Como** usuario interactivo  
+**Quiero** recibir confirmación visual de mis acciones  
+**Para** saber que la aplicación está respondiendo correctamente
+
+**Criterios de Aceptación:**
+- Veo indicadores de carga cuando la app está procesando
+- Recibo confirmaciones cuando guardo información exitosamente
+- Veo animaciones suaves que hacen la experiencia agradable
+- Los errores se muestran claramente con opciones de solución
+- Los formularios validan datos mientras escribo
+
+---
+
+### **HU-025: Accesibilidad y Adaptabilidad**
+**Como** usuario con diferentes necesidades y dispositivos  
+**Quiero** que la aplicación funcione bien en mi situación específica  
+**Para** tener una experiencia óptima independientemente de mi contexto
+
+**Criterios de Aceptación:**
+- La app funciona bien en teléfonos de diferentes tamaños
+- Puedo usar la app tanto vertical como horizontalmente
+- Los textos son legibles sin esfuerzo
+- Los botones son suficientemente grandes para tocar fácilmente
+- La app responde rápidamente a mis toques y gestos
+
+---
+
+## 🚀 **10. RENDIMIENTO Y CONFIABILIDAD**
+
+### **HU-026: Rendimiento Óptimo**
+**Como** usuario impaciente  
+**Quiero** que la aplicación sea rápida y fluida  
+**Para** poder usarla eficientemente sin frustraciones
+
+**Criterios de Aceptación:**
+- La app carga en menos de 3 segundos al iniciarla
+- Navegar entre secciones es instantáneo
+- Las imágenes cargan rápidamente sin afectar el rendimiento
+- La app no se congela ni se cierra inesperadamente
+- El uso de batería es razonable durante sesiones normales
+
+---
+
+### **HU-027: Funcionamiento Offline**
+**Como** usuario que no siempre tiene conexión a internet  
+**Quiero** poder usar funciones básicas sin conexión  
+**Para** no perder productividad cuando no tengo internet
+
+**Criterios de Aceptación:**
+- Puedo ver mis datos previamente cargados sin conexión
+- Veo claramente cuando no tengo conexión a internet
+- Los datos se sincronizan automáticamente cuando recupero conexión
+- Puedo navegar por mis estadísticas históricas sin internet
+- La app me avisa qué funciones necesitan conexión
+
+---
+
+Estas historias de usuario cubren completamente todos los requisitos funcionales de tu aplicación SoccerLife, escritas desde la perspectiva del usuario final y con criterios de aceptación claros para cada funcionalidad.

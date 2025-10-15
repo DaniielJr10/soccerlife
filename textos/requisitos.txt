@@ -1,0 +1,312 @@
+Perfecto, basándome en la revisión completa que hice de tu aplicación SoccerLife, te voy a dar todos los requisitos funcionales detallados y completos.
+
+# 📋 **REQUISITOS FUNCIONALES COMPLETOS - SOCCERLIFE**
+
+## 🔐 **1. GESTIÓN DE USUARIOS Y AUTENTICACIÓN**
+
+### **RF-001: Registro de Usuario**
+- **Descripción**: El sistema debe permitir el registro de nuevos usuarios jugadores
+- **Datos requeridos**: 
+  - Nombre completo (obligatorio)
+  - Email único (obligatorio, validación formato)
+  - Contraseña (obligatorio, mín. 8 caracteres, mayúscula, minúscula, número)
+  - Confirmación de contraseña (debe coincidir)
+- **Datos opcionales del jugador**:
+  - Posición (Arquero, Defensa Central, Lateral, Volante, Extremo, Delantero)
+  - Número de jugador (1-99)
+  - Teléfono
+  - Club actual
+  - Edad (12-100 años)
+  - Estatura (100-250 cm)
+  - Peso (30-200 kg)
+- **Validaciones**: Email único, formato de email válido, contraseña segura
+- **Respuesta**: Usuario creado exitosamente o mensaje de error específico
+
+### **RF-002: Inicio de Sesión**
+- **Descripción**: El sistema debe autenticar usuarios registrados
+- **Datos de entrada**: Email y contraseña
+- **Validaciones**: Usuario existe, contraseña correcta, cuenta activa
+- **Respuesta**: Acceso al dashboard principal o mensaje de error
+- **Seguridad**: Protección contra ataques de fuerza bruta
+
+### **RF-003: Recuperación de Contraseña**
+- **Descripción**: El sistema debe permitir recuperar contraseña olvidada
+- **Proceso de 3 pasos**:
+  1. **Solicitar código**: Usuario ingresa email, sistema envía código de 4 dígitos
+  2. **Verificar código**: Usuario ingresa código recibido (15 min de validez, máx. 3 intentos)
+  3. **Nueva contraseña**: Usuario establece nueva contraseña
+- **Notificación**: Email automático con código de verificación
+- **Seguridad**: Códigos con expiración, límite de intentos, tokens únicos
+
+### **RF-004: Gestión de Perfil**
+- **Descripción**: El usuario debe poder visualizar y editar su información personal
+- **Funcionalidades**:
+  - Ver perfil completo con foto
+  - Editar datos personales y deportivos
+  - Cambiar foto de perfil (galería del dispositivo)
+  - Actualizar información física (altura, peso)
+  - Modificar datos deportivos (club, posición)
+- **Validaciones**: Formatos correctos, rangos válidos para edad/peso/altura
+
+---
+
+## 🏠 **2. DASHBOARD PRINCIPAL**
+
+### **RF-005: Dashboard Personalizado**
+- **Descripción**: El sistema debe mostrar un resumen personalizado del jugador
+- **Componentes obligatorios**:
+  - **Carta del jugador**: Avatar, nombre, club, posición, edad
+  - **Próximos eventos**: Siguiente partido y entrenamiento programado
+  - **Estadísticas rápidas**: Partidos, goles, asistencias, entrenamientos de la temporada
+- **Navegación**: Bottom navigation bar con 5 secciones principales
+- **Actualización**: Datos en tiempo real según actividad del usuario
+
+### **RF-006: Navegación Principal**
+- **Descripción**: El sistema debe proporcionar navegación intuitiva entre secciones
+- **Secciones**:
+  1. **Inicio**: Dashboard principal
+  2. **Partidos**: Gestión de partidos jugados y futuros
+  3. **Entrenamientos**: Gestión de entrenamientos anteriores y próximos
+  4. **Estadísticas**: Análisis detallado de rendimiento
+  5. **Perfil**: Gestión de cuenta y configuración
+- **Estado visual**: Indicador claro de sección activa
+
+---
+
+## ⚽ **3. GESTIÓN DE PARTIDOS**
+
+### **RF-007: Registro de Partidos Jugados**
+- **Descripción**: El usuario debe poder registrar partidos completados
+- **Datos del partido**:
+  - Fecha del partido (obligatorio)
+  - Equipo contrario (obligatorio)
+  - Resultado del equipo (goles a favor y en contra)
+  - Lugar del partido
+- **Estadísticas personales**:
+  - Minutos jugados (0-120)
+  - Posición jugada
+  - Goles anotados
+  - Asistencias realizadas
+  - Tarjetas recibidas (Ninguna, Amarilla, Roja, Doble Amarilla)
+  - Notas adicionales del partido
+- **Clasificación automática**: Victoria, empate o derrota según resultado
+
+### **RF-008: Programación de Partidos Futuros**
+- **Descripción**: El usuario debe poder programar partidos próximos
+- **Datos requeridos**:
+  - Fecha y hora del partido
+  - Equipo rival
+  - Lugar del encuentro
+  - Notas preparatorias
+- **Gestión**: Crear, editar, eliminar partidos programados
+- **Integración**: Los partidos aparecen en el dashboard principal
+
+### **RF-009: Historial de Partidos**
+- **Descripción**: El sistema debe mantener un historial completo de partidos
+- **Funcionalidades**:
+  - Lista cronológica de partidos jugados
+  - Filtros por resultado, fecha, rival
+  - Estadísticas agregadas por partido
+  - Búsqueda por equipo rival
+- **Visualización**: Tarjetas con información resumida y detallada
+
+---
+
+## 🏋️ **4. GESTIÓN DE ENTRENAMIENTOS**
+
+### **RF-010: Registro de Entrenamientos Completados**
+- **Descripción**: El usuario debe poder registrar entrenamientos realizados
+- **Datos del entrenamiento**:
+  - Fecha de realización
+  - Tipo de entrenamiento (Técnico, Físico, Táctico, Mixto, Recuperación, Pre-partido)
+  - Duración en minutos
+  - Objetivos trabajados
+  - Ubicación (campo, gimnasio, etc.)
+  - Calificación personal (1-5 estrellas)
+  - Notas de progreso
+- **Categorización**: Por tipo con íconos distintivos
+
+### **RF-011: Planificación de Entrenamientos**
+- **Descripción**: El usuario debe poder programar entrenamientos futuros
+- **Datos requeridos**:
+  - Fecha y hora programada
+  - Tipo de entrenamiento
+  - Duración estimada
+  - Objetivos específicos
+  - Ubicación
+  - Notas preparatorias
+- **Gestión**: Crear, modificar, eliminar entrenamientos programados
+
+### **RF-012: Seguimiento de Entrenamientos**
+- **Descripción**: El sistema debe proporcionar seguimiento del progreso
+- **Funcionalidades**:
+  - Historial completo de entrenamientos
+  - Estadísticas por tipo de entrenamiento
+  - Frecuencia de entrenamientos
+  - Progreso en objetivos específicos
+- **Visualización**: Separación clara entre completados y programados
+
+---
+
+## 📊 **5. SISTEMA DE ESTADÍSTICAS**
+
+### **RF-013: Estadísticas Generales**
+- **Descripción**: El sistema debe calcular y mostrar estadísticas deportivas
+- **Métricas básicas**:
+  - Total de partidos jugados
+  - Goles anotados totales y promedio por partido
+  - Asistencias totales y promedio por partido
+  - Total de entrenamientos realizados
+  - Rating promedio personal
+- **Período**: Filtros por temporada, mes, rango personalizado
+
+### **RF-014: Análisis de Rendimiento**
+- **Descripción**: El sistema debe proporcionar análisis detallado del rendimiento
+- **Estadísticas ofensivas**:
+  - Goles por partido, mes, temporada
+  - Asistencias y efectividad
+  - Remates al arco y precisión
+- **Estadísticas por posición**:
+  - Distribución de minutos por posición jugada
+  - Rendimiento según posición
+- **Estadísticas disciplinarias**:
+  - Tarjetas amarillas y rojas
+  - Faltas cometidas
+  - Fair play rating
+
+### **RF-015: Visualización de Datos**
+- **Descripción**: Las estadísticas deben presentarse de forma visual e intuitiva
+- **Gráficos requeridos**:
+  - Gráfico de líneas: Rendimiento por mes
+  - Gráfico circular: Distribución por posición
+  - Gráficos de barras: Comparativas por período
+- **Interactividad**: Filtros dinámicos, drill-down en datos
+
+---
+
+## 🔧 **6. CONFIGURACIÓN Y PREFERENCIAS**
+
+### **RF-016: Configuración de Cuenta**
+- **Descripción**: El usuario debe poder gestionar configuraciones de su cuenta
+- **Opciones disponibles**:
+  - Cambiar contraseña actual
+  - Configurar notificaciones
+  - Preferencias de privacidad
+  - Configuración de unidades (métricas/imperiales)
+  - Tema de la aplicación (si aplica)
+
+### **RF-017: Gestión de Notificaciones**
+- **Descripción**: El sistema debe permitir configurar notificaciones
+- **Tipos de notificaciones**:
+  - Recordatorios de partidos próximos
+  - Recordatorios de entrenamientos
+  - Estadísticas semanales/mensuales
+  - Logros y milestones alcanzados
+- **Canales**: Push notifications, email (configurables)
+
+### **RF-018: Exportación de Datos**
+- **Descripción**: El usuario debe poder exportar sus datos deportivos
+- **Formatos**: PDF, Excel para estadísticas
+- **Contenido**: Historial de partidos, entrenamientos, estadísticas resumidas
+- **Uso**: Backup personal, compartir con entrenadores
+
+---
+
+## 🔒 **7. SEGURIDAD Y PRIVACIDAD**
+
+### **RF-019: Seguridad de Datos**
+- **Descripción**: El sistema debe proteger la información del usuario
+- **Implementaciones**:
+  - Contraseñas hasheadas (no almacenadas en texto plano)
+  - Validación de sesiones
+  - Protección contra inyección SQL
+  - Sanitización de inputs
+  - HTTPS en todas las comunicaciones
+
+### **RF-020: Privacidad del Usuario**
+- **Descripción**: El sistema debe respetar la privacidad del usuario
+- **Controles**:
+  - Datos personales solo visibles por el propietario
+  - Opción de eliminar cuenta y datos
+  - Control sobre compartir estadísticas
+  - Política de privacidad clara
+
+---
+
+## 🌐 **8. COMUNICACIÓN CON EL BACKEND**
+
+### **RF-021: API REST Completa**
+- **Descripción**: El sistema debe comunicarse eficientemente con el backend
+- **Endpoints implementados**:
+  - `POST /api/usuarios` - Registro
+  - `POST /api/usuarios/login` - Autenticación
+  - `GET /api/usuarios/:id` - Obtener perfil
+  - `PUT /api/usuarios/:id` - Actualizar perfil
+  - `POST /api/usuarios/recuperar-password/email` - Solicitar recuperación
+  - `POST /api/usuarios/verificar-codigo-recuperacion` - Verificar código
+  - `POST /api/usuarios/cambiar-password-recuperacion` - Cambiar contraseña
+
+### **RF-022: Manejo de Errores**
+- **Descripción**: El sistema debe manejar errores de comunicación elegantemente
+- **Tipos de errores**:
+  - Errores de red (sin conexión)
+  - Errores del servidor (500, 404, etc.)
+  - Errores de validación (400)
+  - Timeouts de conexión
+- **Respuestas**: Mensajes user-friendly, opciones de reintento
+
+### **RF-023: Sincronización de Datos**
+- **Descripción**: Los datos deben mantenerse sincronizados entre cliente y servidor
+- **Estrategias**:
+  - Actualización en tiempo real al hacer cambios
+  - Carga inicial al iniciar sesión
+  - Refresh manual disponible
+  - Cache local para datos frecuentes
+
+---
+
+## 📱 **9. EXPERIENCIA DE USUARIO**
+
+### **RF-024: Interfaz Responsiva**
+- **Descripción**: La aplicación debe funcionar correctamente en diferentes dispositivos
+- **Compatibilidad**: Smartphones Android e iOS
+- **Orientaciones**: Portrait y landscape (donde aplique)
+- **Resoluciones**: Adaptable a diferentes tamaños de pantalla
+
+### **RF-025: Feedback Visual**
+- **Descripción**: El usuario debe recibir retroalimentación clara de sus acciones
+- **Implementaciones**:
+  - Estados de carga (spinners, skeletons)
+  - Mensajes de éxito/error
+  - Animaciones de transición
+  - Validación en tiempo real en formularios
+  - Feedback háptico en dispositivos compatibles
+
+### **RF-026: Navegación Intuitiva**
+- **Descripción**: La navegación debe ser clara y consistente
+- **Elementos**:
+  - Breadcrumbs donde aplique
+  - Botones de retroceso funcionales
+  - Indicadores de sección activa
+  - Transiciones suaves entre pantallas
+
+---
+
+## 🚀 **10. RENDIMIENTO Y ESCALABILIDAD**
+
+### **RF-027: Optimización de Rendimiento**
+- **Descripción**: La aplicación debe cargar y responder rápidamente
+- **Métricas objetivo**:
+  - Tiempo de carga inicial < 3 segundos
+  - Respuesta de navegación < 1 segundo
+  - Carga de imágenes optimizada
+  - Uso eficiente de memoria
+
+### **RF-028: Manejo de Datos Offline**
+- **Descripción**: Funcionalidad básica disponible sin conexión
+- **Capacidades offline**:
+  - Ver datos previamente cargados
+  - Mensaje claro de estado de conexión
+  - Sincronización automática al recuperar conexión
+
+Este es el conjunto completo de requisitos funcionales basado exactamente en tu aplicación SoccerLife. ¿Necesitas que profundice en algún requisito específico o que agregue algo más?
