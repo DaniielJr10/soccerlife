@@ -100,11 +100,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF00f5ff), Color(0xFF0066ff)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: const Color(0xFF00f5ff),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -383,11 +379,11 @@ Widget _buildTarjetaExtra() {
     width: double.infinity,
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: Colors.deepPurple[50],
+      color: Colors.white,
       borderRadius: BorderRadius.circular(18),
       boxShadow: [
         BoxShadow(
-          color: Colors.deepPurple.withOpacity(0.08),
+          color: Colors.black.withOpacity(0.08),
           blurRadius: 10,
           offset: const Offset(0, 2),
         ),
@@ -395,22 +391,69 @@ Widget _buildTarjetaExtra() {
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
+      children: [
+        const Text(
           'Mas del Jugador',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.deepPurple,
+            color: Color(0xFF1a1a2e),
           ),
         ),
-        SizedBox(height: 8),
-        Text(
-          'Recuerda que la constancia y el esfuerzo diario son clave para alcanzar tus metas deportivas. ¡No te detengas!',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black87,
-          ),
+        const SizedBox(height: 8),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: Card(
+                color: Colors.white,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.emoji_events, color: Colors.deepPurple, size: 32),
+                        SizedBox(height: 8),
+                        Text('Logros', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Card(
+                color: Colors.white,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.star, color: Colors.deepPurple, size: 32),
+                        SizedBox(height: 8),
+                        Text('Habilidades', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     ),
