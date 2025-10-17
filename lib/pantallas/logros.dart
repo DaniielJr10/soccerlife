@@ -189,11 +189,7 @@ class _LogrosPageState extends State<LogrosPage>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF00f5ff), Color(0xFF0066ff)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: const Color(0xFF00f5ff),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -615,7 +611,6 @@ class _DialogoRegistrarLogroState extends State<_DialogoRegistrarLogro> {
   final _objetivoController = TextEditingController(text: '1');
   
   IconData _iconoSeleccionado = Icons.emoji_events;
-  Color _colorSeleccionado = Colors.amber;
   
   final List<IconData> _iconosDisponibles = [
     Icons.emoji_events,
@@ -630,18 +625,7 @@ class _DialogoRegistrarLogroState extends State<_DialogoRegistrarLogro> {
     Icons.grade,
   ];
   
-  final List<Color> _coloresDisponibles = [
-    Colors.amber,
-    Colors.green,
-    Colors.blue,
-    Colors.purple,
-    Colors.orange,
-    Colors.red,
-    Colors.teal,
-    Colors.indigo,
-    Colors.pink,
-    Colors.deepPurple,
-  ];
+
 
   @override
   void dispose() {
@@ -815,51 +799,6 @@ class _DialogoRegistrarLogroState extends State<_DialogoRegistrarLogro> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
-                
-                // Selector de color
-                const Text(
-                  'Selecciona un color:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 50,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _coloresDisponibles.length,
-                    itemBuilder: (context, index) {
-                      final color = _coloresDisponibles[index];
-                      final seleccionado = color == _colorSeleccionado;
-                      
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _colorSeleccionado = color;
-                          });
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 12),
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(20),
-                            border: seleccionado
-                                ? Border.all(color: Colors.black, width: 3)
-                                : Border.all(color: Colors.grey[300]!, width: 1),
-                          ),
-                          child: seleccionado
-                              ? const Icon(Icons.check, color: Colors.white, size: 20)
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
-                ),
                 const SizedBox(height: 24),
                 
                 // Botones
@@ -912,7 +851,7 @@ class _DialogoRegistrarLogroState extends State<_DialogoRegistrarLogro> {
         'descripcion': _descripcionController.text.trim(),
         'icono': _iconoSeleccionado,
         'objetivo': int.parse(_objetivoController.text),
-        'color': _colorSeleccionado,
+        'color': const Color(0xFF00f5ff),
       };
       
       widget.onLogroRegistrado(nuevoLogro);
