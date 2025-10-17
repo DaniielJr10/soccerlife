@@ -6,7 +6,9 @@ import 'editarperfil.dart';
 /// Página de perfil del usuario donde puede ver y gestionar su información personal
 /// Incluye datos del jugador, configuraciones y opciones de la cuenta
 class PerfilPage extends StatefulWidget {
-  const PerfilPage({super.key});
+  final Function(Map<String, dynamic>)? onPerfilActualizado;
+  
+  const PerfilPage({super.key, this.onPerfilActualizado});
 
   @override
   State<PerfilPage> createState() => _PerfilPageState();
@@ -669,12 +671,29 @@ class _PerfilPageState extends State<PerfilPage>
   /// Funciones de manejo de acciones - Actualmente muestran placeholders
   /// En una implementación completa, estas navegarían a pantallas específicas
   
-  void _editProfile(BuildContext context) {
-    Navigator.of(context).push(
+  void _editProfile(BuildContext context) async {
+    final updatedData = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
-        builder: (context) => EditarPerfilPage(),
+        builder: (context) => EditarPerfilPage(initialData: _userInfo),
       ),
     );
+    
+    // Si se devolvieron datos actualizados, actualizar la información local
+    if (updatedData != null) {
+      setState(() {
+        _userInfo['nombre'] = updatedData['nombre'];
+        _userInfo['posicion'] = updatedData['posicion'];
+        _userInfo['edad'] = int.tryParse(updatedData['edad']) ?? _userInfo['edad'];
+        _userInfo['club'] = updatedData['equipo'];
+        _userInfo['altura'] = double.tryParse(updatedData['altura'].replaceAll('m', '')) ?? _userInfo['altura'];
+        _userInfo['peso'] = int.tryParse(updatedData['peso'].replaceAll('kg', '')) ?? _userInfo['peso'];
+      });
+      
+      // Notificar a la página principal que el perfil se actualizó
+      if (widget.onPerfilActualizado != null) {
+        widget.onPerfilActualizado!(updatedData);
+      }
+    }
   }
 
   void _openNotificationSettings(BuildContext context) {

@@ -72,10 +72,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
   int _selectedIndex = 0;
 
   // Datos del perfil del jugador (en una app real vendrían de una base de datos)
-  final PerfilJugador _perfilJugador = PerfilJugador(
-    nombre: 'Daniel Jr',
-    edad: 22,
-    club: 'FC Barcelona',
+  PerfilJugador _perfilJugador = PerfilJugador(
+    nombre: 'Daniel Rodriguez',
+    edad: 20,
+    club: 'FC Barcelona Academy',
     posicion: 'Delantero',
     numero: 10,
     rating: 87,
@@ -97,6 +97,20 @@ class _PrincipalPageState extends State<PrincipalPage> {
     ubicacion: 'Campo principal',
   );
 
+  /// Actualiza los datos del perfil del jugador
+  void _actualizarPerfil(Map<String, dynamic> datosActualizados) {
+    setState(() {
+      _perfilJugador = PerfilJugador(
+        nombre: datosActualizados['nombre'] ?? _perfilJugador.nombre,
+        edad: int.tryParse(datosActualizados['edad']?.toString() ?? '') ?? _perfilJugador.edad,
+        club: datosActualizados['equipo'] ?? _perfilJugador.club,
+        posicion: datosActualizados['posicion'] ?? _perfilJugador.posicion,
+        numero: _perfilJugador.numero,
+        rating: _perfilJugador.rating,
+      );
+    });
+  }
+
   /// Determina qué contenido mostrar según el tab seleccionado
   /// Cada caso corresponde a una sección diferente de la app
   Widget _buildTabContent() {
@@ -110,7 +124,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
       case 3:
         return const EstadisticasPage();
       case 4:
-        return const PerfilPage();
+        return PerfilPage(onPerfilActualizado: _actualizarPerfil);
       default:
         return _buildHomeTab();
     }

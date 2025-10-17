@@ -3,21 +3,41 @@ import 'package:flutter/material.dart';
 
 
 class EditarPerfilPage extends StatefulWidget {
+	final Map<String, dynamic>? initialData;
+	
+	const EditarPerfilPage({super.key, this.initialData});
+	
 	@override
 	State<EditarPerfilPage> createState() => _EditarPerfilPageState();
 }
 
 class _EditarPerfilPageState extends State<EditarPerfilPage> {
 	final _formKey = GlobalKey<FormState>();
-	// Simulación de datos actuales del usuario (en producción vendrían de un modelo o provider)
-	String _nombre = 'Daniel Rodriguez';
-	String _username = '@daniel_jr10';
-	String _posicion = 'Delantero';
-	String _edad = '20';
-	String _equipo = 'FC Barcelona Academy';
-	String _nacionalidad = 'Colombia';
-	String _altura = '1.80m';
-	String _peso = '75kg';
+	// Datos del usuario que se pueden editar
+	late String _nombre;
+	late String _username;
+	late String _posicion;
+	late String _edad;
+	late String _equipo;
+	late String _altura;
+	late String _peso;
+	
+	@override
+	void initState() {
+		super.initState();
+		// Inicializar con datos proporcionados o valores por defecto
+		_nombre = widget.initialData?['nombre'] ?? 'Daniel Rodriguez';
+		_username = '@daniel_jr10'; // Este campo no se edita desde perfil
+		_posicion = widget.initialData?['posicion'] ?? 'Delantero';
+		_edad = widget.initialData?['edad']?.toString() ?? '20';
+		_equipo = widget.initialData?['club'] ?? 'FC Barcelona Academy';
+		_altura = widget.initialData?['altura'] != null 
+			? '${widget.initialData!['altura']}m' 
+			: '1.80m';
+		_peso = widget.initialData?['peso'] != null 
+			? '${widget.initialData!['peso']}kg' 
+			: '75kg';
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -149,26 +169,11 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 									],
 								),
 								const SizedBox(height: 16),
-								Row(
-									children: [
-										Expanded(
-											child: _buildTextField(
-												label: 'Nacionalidad',
-												initialValue: _nacionalidad,
-												icon: Icons.flag,
-												onSaved: (v) => _nacionalidad = v ?? '',
-											),
-										),
-										const SizedBox(width: 16),
-										Expanded(
-											child: _buildTextField(
-												label: 'Altura',
-												initialValue: _altura,
-												icon: Icons.height,
-												onSaved: (v) => _altura = v ?? '',
-											),
-										),
-									],
+								_buildTextField(
+									label: 'Altura',
+									initialValue: _altura,
+									icon: Icons.height,
+									onSaved: (v) => _altura = v ?? '',
 								),
 								const SizedBox(height: 16),
 								_buildTextField(
@@ -192,11 +197,24 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 										onPressed: () {
 											if (_formKey.currentState?.validate() ?? false) {
 												_formKey.currentState?.save();
-												// Aquí puedes agregar la lógica para guardar los cambios
+												
+												// Crear mapa con los datos actualizados
+												final updatedData = {
+													'nombre': _nombre,
+													'username': _username,
+													'posicion': _posicion,
+													'edad': _edad,
+													'equipo': _equipo,
+													'altura': _altura,
+													'peso': _peso,
+												};
+												
 												ScaffoldMessenger.of(context).showSnackBar(
 													const SnackBar(content: Text('Perfil actualizado')),
 												);
-												Navigator.of(context).pop();
+												
+												// Devolver los datos actualizados
+												Navigator.of(context).pop(updatedData);
 											}
 										},
 										child: const Text(
