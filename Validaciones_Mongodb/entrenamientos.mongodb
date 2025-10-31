@@ -1,0 +1,21 @@
+use ("soccerlife");
+
+// Crear la colección "entrenamientos" con validación de esquema
+db.createCollection("entrenamientos", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["fecha", "tipo", "jugadores"],
+      properties: {
+        fecha: { bsonType: "date", description: "Fecha del entrenamiento" },
+        tipo: { bsonType: "string", description: "Tipo de entrenamiento (ej: Físico, Técnico, Táctico)" },
+        jugadores: {
+          bsonType: "array",
+          description: "IDs de los jugadores que asistieron",
+          items: { bsonType: "objectId" }
+        },
+        notas: { bsonType: "string", description: "Notas adicionales del entrenamiento" }
+      }
+    }
+  }
+});

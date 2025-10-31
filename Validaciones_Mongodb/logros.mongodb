@@ -1,0 +1,17 @@
+use ("soccerlife");
+
+// Crear la colección "logros" con validación de esquema
+db.createCollection("logros", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["usuarioId", "nombre", "fecha"],
+      properties: {
+        usuarioId: { bsonType: "objectId", description: "ID del usuario que obtuvo el logro" },
+        nombre: { bsonType: "string", description: "Nombre del logro" },
+        descripcion: { bsonType: "string", description: "Descripción del logro" },
+        fecha: { bsonType: "date", description: "Fecha en que se obtuvo el logro" }
+      }
+    }
+  }
+});

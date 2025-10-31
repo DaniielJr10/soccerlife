@@ -1,0 +1,17 @@
+use ("soccerlife");
+
+// Crear la colección "estadisticas" con validación de esquema
+db.createCollection("estadisticas", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["usuarioId", "goles", "asistencias", "partidosJugados"],
+      properties: {
+        usuarioId: { bsonType: "objectId", description: "ID del usuario" },
+        goles: { bsonType: "int", description: "Cantidad de goles" },
+        asistencias: { bsonType: "int", description: "Cantidad de asistencias" },
+        partidosJugados: { bsonType: "int", description: "Cantidad de partidos jugados" }
+      }
+    }
+  }
+});

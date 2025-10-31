@@ -1,0 +1,22 @@
+use ("soccerlife");
+
+// Crear colección de partidos
+db.createCollection("partidos", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["fecha", "equipoA", "equipoB", "jugadores", "resultado"],
+      properties: {
+        fecha: { bsonType: "date", description: "Fecha del partido" },
+        equipoA: { bsonType: "string", description: "Nombre del equipo A" },
+        equipoB: { bsonType: "string", description: "Nombre del equipo B" },
+        jugadores: {
+          bsonType: "array",
+          description: "IDs de los jugadores participantes",
+          items: { bsonType: "objectId" }
+        },
+        resultado: { bsonType: "string", description: "Resultado del partido (ej: 2-1)" }
+      }
+    }
+  }
+});
