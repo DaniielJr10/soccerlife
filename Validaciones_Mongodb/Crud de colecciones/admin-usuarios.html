@@ -1,360 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        form {
+            max-width: 600px;
+            margin: 32px auto;
+            background: #fff;
+            padding: 12px 32px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #ccc;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+        }
+        form label, form input, form select, form button {
+            flex: 1 1 220px;
+            min-width: 180px;
+        }
+        form label {
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-right: 8px;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: #fff;
+            cursor: pointer;
+        }
+        button[type="button"] {
+            background: #aaa;
+        }
+        #message {
+            text-align: center;
+            margin: 10px auto;
+            max-width: 400px;
+        }
+        table {
+            margin: 20px auto;
+            width: 90%;
+            background: #fff;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #eaeaea;
+        }
+        #loading, #empty-state {
+            text-align: center;
+            margin: 20px auto;
+            color: #888;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Usuarios - SoccerLife Admin</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2e7d32, #4caf50);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-        }
-
-        .crud-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .crud-section h2 {
-            color: #2e7d32;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #4caf50;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: #4caf50;
-            outline: none;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        }
-
-        .btn-danger {
-            background-color: #f44336;
-        }
-
-        .btn-danger:hover {
-            background-color: #da190b;
-        }
-
-        .btn-warning {
-            background-color: #ff9800;
-        }
-
-        .btn-warning:hover {
-            background-color: #e68900;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            flex: 1;
-        }
-
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .users-table th,
-        .users-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .users-table th {
-            background-color: #4caf50;
-            color: white;
-            font-weight: bold;
-        }
-
-        .users-table tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        .users-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-
-        .action-buttons button {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-
-        .message {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .empty-state img {
-            width: 100px;
-            opacity: 0.5;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .form-row {
-                flex-direction: column;
-            }
-            
-            .users-table {
-                font-size: 12px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <!-- Sin estilos: HTML básico -->
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>⚽ CRUD Usuarios - SoccerLife</h1>
-            <p>Panel de administración para gestionar usuarios del sistema</p>
-        </div>
-
-        <!-- Messages -->
-        <div id="message" class="message hidden"></div>
-
-        <!-- Crear/Actualizar Usuario -->
-        <div class="crud-section">
-            <h2 id="form-title">➕ Crear Nuevo Usuario</h2>
-            <form id="user-form">
-                <input type="hidden" id="user-id" value="">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nombre">Nombre Completo *</label>
-                        <input type="text" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">Contraseña *</label>
-                        <input type="password" id="password" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="posicion">Posición</label>
-                        <select id="posicion" name="posicion">
-                            <option value="">Seleccionar posición</option>
-                            <option value="Arquero">Arquero</option>
-                            <option value="Defensa Central">Defensa Central</option>
-                            <option value="Lateral">Lateral</option>
-                            <option value="Volante">Volante</option>
-                            <option value="Extremo">Extremo</option>
-                            <option value="Delantero">Delantero</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="numeroJugador">Número de Jugador</label>
-                        <input type="number" id="numeroJugador" name="numeroJugador" min="1" max="99">
-                    </div>
-                    <div class="form-group">
-                        <label for="telefono">Teléfono</label>
-                        <input type="tel" id="telefono" name="telefono">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="club">Club</label>
-                        <input type="text" id="club" name="club">
-                    </div>
-                    <div class="form-group">
-                        <label for="edad">Edad</label>
-                        <input type="number" id="edad" name="edad" min="12" max="100">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="estatura">Estatura (cm)</label>
-                        <input type="number" id="estatura" name="estatura" min="100" max="250">
-                    </div>
-                    <div class="form-group">
-                        <label for="peso">Peso (kg)</label>
-                        <input type="number" id="peso" name="peso" min="30" max="200">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn" id="submit-btn">💾 Crear Usuario</button>
-                    <button type="button" class="btn btn-warning" id="cancel-btn" onclick="cancelEdit()">❌ Cancelar</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Buscar Usuarios -->
-        <div class="crud-section">
-            <h2>🔍 Buscar y Gestionar Usuarios</h2>
-            
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="🔍 Buscar por nombre, email, club o posición...">
-                <button class="btn" onclick="searchUsers()">Buscar</button>
-                <button class="btn btn-warning" onclick="loadAllUsers()">Ver Todos</button>
-            </div>
-
-            <!-- Tabla de Usuarios -->
-            <div id="users-container">
-                <div class="loading" id="loading">Cargando usuarios...</div>
-                
-                <table class="users-table hidden" id="users-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Posición</th>
-                            <th>Número</th>
-                            <th>Club</th>
-                            <th>Edad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-tbody">
-                        <!-- Los usuarios se cargarán aquí -->
-                    </tbody>
-                </table>
-
-                <div class="empty-state hidden" id="empty-state">
-                    <h3>📭 No hay usuarios</h3>
-                    <p>No se encontraron usuarios en el sistema</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h2>CRUD Usuarios - SoccerLife</h2>
+    <div id="message" style="color: red; display: none;"></div>
+    <form id="user-form">
+        <input type="hidden" id="user-id" value="">
+        <label>Nombre Completo *</label>
+        <input type="text" id="nombre" name="nombre" required><br>
+        <label>Email *</label>
+        <input type="email" id="email" name="email" required><br>
+        <label>Contraseña *</label>
+        <input type="password" id="password" name="password" required><br>
+        <label>Posición</label>
+        <select id="posicion" name="posicion">
+            <option value="">Seleccionar posición</option>
+            <option value="Arquero">Arquero</option>
+            <option value="Defensa Central">Defensa Central</option>
+            <option value="Lateral">Lateral</option>
+            <option value="Volante">Volante</option>
+            <option value="Extremo">Extremo</option>
+            <option value="Delantero">Delantero</option>
+        </select><br>
+        <label>Número de Jugador</label>
+        <input type="number" id="numeroJugador" name="numeroJugador" min="1" max="99"><br>
+        <label>Teléfono</label>
+        <input type="tel" id="telefono" name="telefono"><br>
+        <label>Club</label>
+        <input type="text" id="club" name="club"><br>
+        <label>Edad</label>
+        <input type="number" id="edad" name="edad" min="12" max="100"><br>
+        <label>Estatura (cm)</label>
+        <input type="number" id="estatura" name="estatura" min="100" max="250"><br>
+        <label>Peso (kg)</label>
+        <input type="number" id="peso" name="peso" min="30" max="200"><br>
+        <button type="submit" id="submit-btn">Crear Usuario</button>
+        <button type="button" id="cancel-btn" onclick="cancelEdit()">Cancelar</button>
+    </form>
+    <hr>
+    <input type="text" id="search-input" placeholder="Buscar por nombre, email, club o posición...">
+    <button onclick="searchUsers()">Buscar</button>
+    <button onclick="loadAllUsers()">Ver Todos</button>
+    <div id="loading" style="display:none;">Cargando usuarios...</div>
+    <table border="1" id="users-table" style="width:100%; display:none;">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Posición</th>
+                <th>Número</th>
+                <th>Club</th>
+                <th>Edad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="users-tbody"></tbody>
+    </table>
+    <div id="empty-state" style="display:none;">No hay usuarios</div>
 
     <script>
         // Configuración de la API
@@ -499,17 +283,15 @@
             showLoading(false);
         }
 
-        // Mostrar usuarios en la tabla
+        // Mostrar usuarios en la tabla (diseño básico)
         function displayUsers(users) {
             usersTbody.innerHTML = '';
-
             if (users.length === 0) {
                 showEmptyState();
                 return;
             }
-
             hideEmptyState();
-            
+            usersTable.style.display = '';
             users.forEach(user => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -520,16 +302,12 @@
                     <td>${user.club || '-'}</td>
                     <td>${user.edad || '-'}</td>
                     <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-warning" onclick="editUser('${user._id}')">✏️ Editar</button>
-                            <button class="btn btn-danger" onclick="deleteUser('${user._id}', '${user.nombre}')">🗑️ Eliminar</button>
-                        </div>
+                        <button onclick="editUser('${user._id}')">Editar</button>
+                        <button onclick="deleteUser('${user._id}', '${user.nombre}')">Eliminar</button>
                     </td>
                 `;
                 usersTbody.appendChild(row);
             });
-
-            usersTable.classList.remove('hidden');
         }
 
         // Editar usuario
@@ -604,38 +382,34 @@
             }
         }
 
-        // Mostrar mensaje
+        // Mostrar mensaje (básico)
         function showMessage(text, type) {
             messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.classList.remove('hidden');
-            
-            // Auto-hide después de 5 segundos
+            messageDiv.style.display = '';
             setTimeout(() => {
-                messageDiv.classList.add('hidden');
-            }, 5000);
+                messageDiv.style.display = 'none';
+            }, 3000);
         }
 
-        // Mostrar/ocultar loading
+        // Mostrar/ocultar loading (básico)
         function showLoading(show) {
             if (show) {
-                loadingDiv.classList.remove('hidden');
-                usersTable.classList.add('hidden');
-                emptyStateDiv.classList.add('hidden');
+                loadingDiv.style.display = '';
+                usersTable.style.display = 'none';
+                emptyStateDiv.style.display = 'none';
             } else {
-                loadingDiv.classList.add('hidden');
+                loadingDiv.style.display = 'none';
             }
         }
 
-        // Mostrar estado vacío
+        // Mostrar estado vacío (básico)
         function showEmptyState() {
-            emptyStateDiv.classList.remove('hidden');
-            usersTable.classList.add('hidden');
+            emptyStateDiv.style.display = '';
+            usersTable.style.display = 'none';
         }
-
-        // Ocultar estado vacío
+        // Ocultar estado vacío (básico)
         function hideEmptyState() {
-            emptyStateDiv.classList.add('hidden');
+            emptyStateDiv.style.display = 'none';
         }
 
         // Permitir búsqueda con Enter
