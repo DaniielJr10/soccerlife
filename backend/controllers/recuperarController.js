@@ -101,7 +101,12 @@ const verificarCodigoRecuperacion = async (req, res) => {
     }
 
     // Verificar código
-    if (datosRecuperacion.codigo !== codigo) {
+    console.log(`🔍 Comparando códigos:`);
+    console.log(`   - Código guardado: "${datosRecuperacion.codigo}" (tipo: ${typeof datosRecuperacion.codigo})`);
+    console.log(`   - Código recibido: "${codigo}" (tipo: ${typeof codigo})`);
+    console.log(`   - ¿Son iguales? ${datosRecuperacion.codigo === codigo}`);
+    
+    if (datosRecuperacion.codigo !== codigo.trim()) {
       datosRecuperacion.intentos++;
       return res.status(400).json({ 
         message: `Código incorrecto. Intentos restantes: ${datosRecuperacion.maxIntentos - datosRecuperacion.intentos}` 

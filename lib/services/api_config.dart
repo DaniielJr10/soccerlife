@@ -1,7 +1,7 @@
 class ApiConfig {
   // Configuración para diferentes entornos
   static const String _casaIP = '192.168.1.44:3000';
-  static const String _localhost = 'localhost:3000';
+  static const String _localhost = '127.0.0.1:3000';
   
   // URLs para diferentes entornos
   static const String _baseUrlCasa = 'http://$_casaIP/api';

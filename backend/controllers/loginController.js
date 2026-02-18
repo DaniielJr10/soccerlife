@@ -1,4 +1,5 @@
 const Usuario = require('../models/Usuario');
+const tokenService = require('../services/tokenService');
 
 // Login de usuario
 const loginUsuario = async (req, res) => {
@@ -21,12 +22,16 @@ const loginUsuario = async (req, res) => {
       return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
     }
     
+    // Generar token JWT
+    const token = tokenService.generarToken(usuario);
+    
     // Login exitoso - no devolver la contraseña
     const { password: _, ...usuarioSinPassword } = usuario.toObject();
     
     res.json({ 
       success: true, 
       message: 'Inicio de sesión exitoso',
+      token,
       usuario: usuarioSinPassword 
     });
     

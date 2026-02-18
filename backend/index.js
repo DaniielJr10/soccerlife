@@ -21,7 +21,16 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/soccerlif
 
 // Rutas
 const usuariosRoutes = require('./routes/usuarios');
+const partidosRoutes = require('./routes/partidos');
+const entrenamientosRoutes = require('./routes/entrenamientos');
+const estadisticasRoutes = require('./routes/estadisticas');
+const logrosRoutes = require('./routes/logros');
+
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/partidos', partidosRoutes);
+app.use('/api/entrenamientos', entrenamientosRoutes);
+app.use('/api/estadisticas', estadisticasRoutes);
+app.use('/api/logros', logrosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
