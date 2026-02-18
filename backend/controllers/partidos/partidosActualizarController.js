@@ -150,6 +150,9 @@ const actualizarEstadisticasUsuario = async (usuarioId, partido) => {
     // Minutos jugados
     estadistica.minutosJugados += partido.estadisticasPersonales.minutosJugados || 0;
     
+    // Actualizar rachas
+    actualizarRachas(estadistica, golesLocal, golesVisitante);
+    
     // Recalcular promedios
     estadistica.actualizarGolesPorPartido();
     
@@ -192,6 +195,53 @@ const eliminarPartido = async (req, res) => {
       message: 'Error al eliminar partido', 
       error: error.message 
     });
+  }
+};
+
+/**
+ * Función auxiliar para actualizar rachas
+ */
+const actualizarRachas = (estadistica, golesLocal, golesVisitante) => {
+  const ganador = golesLocal > golesVisitante;
+  const empate = golesLocal === golesVisitante;
+  const perdido = golesLocal < golesVisitante;
+  
+  // Actualizar racha actual
+  if (ganador) {
+    if (estadistica.rachaActual.tipo === 'victorias') {
+      estadistica.rachaActual.cantidad += 1;
+    } else {
+      estadistica.rachaActual.tipo = 'victorias';
+      estadistica.rachaActual.cantidad = 1;
+    }
+    
+    // Actualizar racha sin perder
+    if (['victorias', 'empates', 'sin_perder'].includes(estadistica.rachaActual.tipo)) {
+      const rachaSinPerder = estadistica.rachaActual.cantidad;
+      if (rachaSinPerder > estadistica.mejorRacha.sinPerder) {
+        estadistica.mejorRacha.sinPerder = rachaSinPerder;
+      }
+    }
+    
+    // Actualizar mejor racha de victorias
+    if (estadistica.rachaActual.cantidad > estadistica.mejorRacha.victorias) {
+      estadistica.mejorRacha.victorias = estadistica.rachaActual.cantidad;
+    }
+    
+  } else if (empate) {
+    if (estadistica.rachaActual.tipo === 'empates') {
+      estadistica.rachaActual.cantidad += 1;
+    } else {
+      estadistica.rachaActual.tipo = 'empates';
+      estadistica.rachaActual.cantidad = 1;
+    }
+  } else if (perdido) {
+    if (estadistica.rachaActual.tipo === 'derrotas') {
+      estadistica.rachaActual.cantidad += 1;
+    } else {
+      estadistica.rachaActual.tipo = 'derrotas';
+      estadistica.rachaActual.cantidad = 1;
+    }
   }
 };
 

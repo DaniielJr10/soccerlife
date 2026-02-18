@@ -1,4 +1,5 @@
 const Usuario = require('../models/Usuario');
+const Estadistica = require('../models/Estadistica');
 
 // Obtener todos los usuarios
 const obtenerUsuarios = async (req, res) => {
@@ -28,6 +29,15 @@ const crearUsuario = async (req, res) => {
   try {
     const nuevoUsuario = new Usuario(req.body);
     const usuarioGuardado = await nuevoUsuario.save();
+    
+    // Crear estadística inicial en cero para el nuevo usuario
+    const estadisticaInicial = new Estadistica({
+      usuarioId: usuarioGuardado._id
+    });
+    await estadisticaInicial.save();
+    
+    console.log(`✅ Usuario registrado: ${usuarioGuardado.email}`);
+    console.log(`📊 Estadísticas inicializadas en CERO para el usuario`);
     
     // No devolver la contraseña en la respuesta
     const { password, ...usuarioSinPassword } = usuarioGuardado.toObject();
