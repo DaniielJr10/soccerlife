@@ -24,9 +24,16 @@ class EstadisticasService {
           'estadisticas': data['estadisticas'],
         };
       } else {
+        String? message;
+        try {
+          final data = json.decode(response.body);
+          message = data['message']?.toString();
+        } catch (_) {
+          // Ignorar parseo si el backend no envía JSON
+        }
         return {
           'success': false,
-          'message': 'Error al obtener estadísticas',
+          'message': message ?? 'Error al obtener estadísticas',
           'estadisticas': null,
         };
       }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'logros.dart';
+import '../services/estadisticas_service.dart';
 // import 'dart:math' as math;
 
 /// Página de estadísticas del jugador donde puede ver su rendimiento
@@ -18,19 +19,69 @@ class _EstadisticasPageState extends State<EstadisticasPage>
 
   //
 
-  // Datos de estadísticas (en producción vendrían de una API)
-  final Map<String, dynamic> _estadisticasTemporada = {
-    'partidos_jugados': 28,
-    'partidos_ganados': 18,
-    'partidos_empatados': 7,
-    'partidos_perdidos': 3,
-    'goles': 15,
-    'asistencias': 8,
-    'tarjetas_amarillas': 3,
+  bool _cargando = true;
+  String? _error;
+
+  Map<String, dynamic> _estadisticasTemporada = {
+    'partidos_jugados': 0,
+    'partidos_ganados': 0,
+    'partidos_empatados': 0,
+    'partidos_perdidos': 0,
+    'goles': 0,
+    'asistencias': 0,
+    'tarjetas_amarillas': 0,
     'tarjetas_rojas': 0,
-    'minutos_jugados': 2340,
-    'rating_promedio': 7.8,
+    'minutos_jugados': 0,
+    'rating_promedio': 0.0,
+    'entrenamientos': 0,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarEstadisticas();
+  }
+
+  Future<void> _cargarEstadisticas() async {
+    setState(() {
+      _cargando = true;
+      _error = null;
+    });
+
+    final resultado = await EstadisticasService.obtenerEstadisticas();
+    if (!mounted) return;
+
+    if (resultado['success'] == true && resultado['estadisticas'] != null) {
+      final stats = resultado['estadisticas'] as Map<String, dynamic>;
+      final partidos = (stats['partidos'] as Map?)?.cast<String, dynamic>() ?? {};
+      final goles = (stats['goles'] as Map?)?.cast<String, dynamic>() ?? {};
+      final tarjetas = (stats['tarjetas'] as Map?)?.cast<String, dynamic>() ?? {};
+      final entrenamientos = (stats['entrenamientos'] as Map?)?.cast<String, dynamic>() ?? {};
+
+      setState(() {
+        _estadisticasTemporada = {
+          'partidos_jugados': partidos['jugados'] ?? 0,
+          'partidos_ganados': partidos['ganados'] ?? 0,
+          'partidos_empatados': partidos['empatados'] ?? 0,
+          'partidos_perdidos': partidos['perdidos'] ?? 0,
+          'goles': goles['total'] ?? 0,
+          'asistencias': stats['asistencias'] ?? 0,
+          'tarjetas_amarillas': tarjetas['amarillas'] ?? 0,
+          'tarjetas_rojas': tarjetas['rojas'] ?? 0,
+          'minutos_jugados': stats['minutosJugados'] ?? 0,
+          'rating_promedio': (stats['valoracionPromedio'] ?? 0).toDouble(),
+          'entrenamientos': entrenamientos['completados'] ?? 0,
+        };
+        _cargando = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _error = resultado['message']?.toString() ?? 'No se pudieron cargar las estadísticas';
+      _cargando = false;
+    });
+  }
 
 
 
@@ -43,7 +94,30 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: _buildAppBar(),
-  body: _buildEstadisticasGenerales(),
+      body: _cargando
+          ? const Center(child: CircularProgressIndicator())
+          : (_error != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.black87),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _cargarEstadisticas,
+                          child: const Text('Reintentar'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : _buildEstadisticasGenerales()),
     );
   }
 

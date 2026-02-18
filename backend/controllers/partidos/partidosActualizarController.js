@@ -1,5 +1,5 @@
 const Partido = require('../../models/Partido');
-const Estadistica = require('../../models/Estadistica');
+const { recalcularEstadisticasUsuario } = require('../../services/estadisticasRecalculoService');
 
 /**
  * Actualizar información de un partido
@@ -32,6 +32,9 @@ const actualizarPartido = async (req, res) => {
     });
     
     await partido.save();
+
+    // Mantener estadísticas consistentes ante cambios
+    await recalcularEstadisticasUsuario(usuarioId);
     
     res.json({
       success: true,
@@ -95,9 +98,9 @@ const registrarResultado = async (req, res) => {
     
     partido.estado = 'finalizado';
     await partido.save();
-    
-    // Actualizar estadísticas globales del usuario
-    await actualizarEstadisticasUsuario(usuarioId, partido);
+
+    // Recalcular estadísticas globales para evitar doble conteo/desincronización
+    await recalcularEstadisticasUsuario(usuarioId);
     
     res.json({
       success: true,
@@ -111,55 +114,6 @@ const registrarResultado = async (req, res) => {
       message: 'Error al registrar resultado', 
       error: error.message 
     });
-  }
-};
-
-/**
- * Función auxiliar para actualizar estadísticas globales
- */
-const actualizarEstadisticasUsuario = async (usuarioId, partido) => {
-  try {
-    let estadistica = await Estadistica.findOne({ usuarioId });
-    
-    // Si no existe, crear estadística
-    if (!estadistica) {
-      estadistica = new Estadistica({ usuarioId });
-    }
-    
-    // Incrementar partidos jugados
-    estadistica.partidos.jugados += 1;
-    
-    // Determinar resultado
-    const { golesLocal, golesVisitante } = partido.resultado;
-    if (golesLocal > golesVisitante) {
-      estadistica.partidos.ganados += 1;
-    } else if (golesLocal < golesVisitante) {
-      estadistica.partidos.perdidos += 1;
-    } else {
-      estadistica.partidos.empatados += 1;
-    }
-    
-    // Actualizar goles y asistencias
-    estadistica.goles.total += partido.estadisticasPersonales.goles || 0;
-    estadistica.asistencias += partido.estadisticasPersonales.asistencias || 0;
-    
-    // Tarjetas
-    estadistica.tarjetas.amarillas += partido.estadisticasPersonales.tarjetasAmarillas || 0;
-    estadistica.tarjetas.rojas += partido.estadisticasPersonales.tarjetasRojas || 0;
-    
-    // Minutos jugados
-    estadistica.minutosJugados += partido.estadisticasPersonales.minutosJugados || 0;
-    
-    // Actualizar rachas
-    actualizarRachas(estadistica, golesLocal, golesVisitante);
-    
-    // Recalcular promedios
-    estadistica.actualizarGolesPorPartido();
-    
-    await estadistica.save();
-    
-  } catch (error) {
-    console.error('Error actualizando estadísticas:', error);
   }
 };
 
@@ -183,6 +137,9 @@ const eliminarPartido = async (req, res) => {
     
     partido.activo = false;
     await partido.save();
+
+    // Mantener estadísticas consistentes ante eliminaciones
+    await recalcularEstadisticasUsuario(usuarioId);
     
     res.json({
       success: true,
@@ -195,53 +152,6 @@ const eliminarPartido = async (req, res) => {
       message: 'Error al eliminar partido', 
       error: error.message 
     });
-  }
-};
-
-/**
- * Función auxiliar para actualizar rachas
- */
-const actualizarRachas = (estadistica, golesLocal, golesVisitante) => {
-  const ganador = golesLocal > golesVisitante;
-  const empate = golesLocal === golesVisitante;
-  const perdido = golesLocal < golesVisitante;
-  
-  // Actualizar racha actual
-  if (ganador) {
-    if (estadistica.rachaActual.tipo === 'victorias') {
-      estadistica.rachaActual.cantidad += 1;
-    } else {
-      estadistica.rachaActual.tipo = 'victorias';
-      estadistica.rachaActual.cantidad = 1;
-    }
-    
-    // Actualizar racha sin perder
-    if (['victorias', 'empates', 'sin_perder'].includes(estadistica.rachaActual.tipo)) {
-      const rachaSinPerder = estadistica.rachaActual.cantidad;
-      if (rachaSinPerder > estadistica.mejorRacha.sinPerder) {
-        estadistica.mejorRacha.sinPerder = rachaSinPerder;
-      }
-    }
-    
-    // Actualizar mejor racha de victorias
-    if (estadistica.rachaActual.cantidad > estadistica.mejorRacha.victorias) {
-      estadistica.mejorRacha.victorias = estadistica.rachaActual.cantidad;
-    }
-    
-  } else if (empate) {
-    if (estadistica.rachaActual.tipo === 'empates') {
-      estadistica.rachaActual.cantidad += 1;
-    } else {
-      estadistica.rachaActual.tipo = 'empates';
-      estadistica.rachaActual.cantidad = 1;
-    }
-  } else if (perdido) {
-    if (estadistica.rachaActual.tipo === 'derrotas') {
-      estadistica.rachaActual.cantidad += 1;
-    } else {
-      estadistica.rachaActual.tipo = 'derrotas';
-      estadistica.rachaActual.cantidad = 1;
-    }
   }
 };
 

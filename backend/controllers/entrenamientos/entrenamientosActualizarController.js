@@ -1,5 +1,5 @@
 const Entrenamiento = require('../../models/Entrenamiento');
-const Estadistica = require('../../models/Estadistica');
+const { recalcularEstadisticasUsuario } = require('../../services/estadisticasRecalculoService');
 
 /**
  * Actualizar un entrenamiento
@@ -31,6 +31,9 @@ const actualizarEntrenamiento = async (req, res) => {
     });
     
     await entrenamiento.save();
+
+    // Mantener estadísticas consistentes ante cambios
+    await recalcularEstadisticasUsuario(usuarioId);
     
     res.json({
       success: true,
@@ -85,9 +88,9 @@ const completarEntrenamiento = async (req, res) => {
     if (lesiones) entrenamiento.lesiones = lesiones;
     
     await entrenamiento.save();
-    
-    // Actualizar estadísticas del usuario
-    await actualizarEstadisticasEntrenamiento(usuarioId, entrenamiento);
+
+    // Recalcular estadísticas globales (evita desincronización)
+    await recalcularEstadisticasUsuario(usuarioId);
     
     res.json({
       success: true,
@@ -101,31 +104,6 @@ const completarEntrenamiento = async (req, res) => {
       message: 'Error al completar entrenamiento', 
       error: error.message 
     });
-  }
-};
-
-/**
- * Función auxiliar para actualizar estadísticas de entrenamientos
- */
-const actualizarEstadisticasEntrenamiento = async (usuarioId, entrenamiento) => {
-  try {
-    let estadistica = await Estadistica.findOne({ usuarioId });
-    
-    if (!estadistica) {
-      estadistica = new Estadistica({ usuarioId });
-    }
-    
-    // Incrementar entrenamientos completados
-    estadistica.entrenamientos.completados += 1;
-    
-    // Sumar horas totales (duracion está en minutos)
-    const horas = entrenamiento.duracion / 60;
-    estadistica.entrenamientos.horasTotales += horas;
-    
-    await estadistica.save();
-    
-  } catch (error) {
-    console.error('Error actualizando estadísticas de entrenamiento:', error);
   }
 };
 
@@ -149,6 +127,9 @@ const eliminarEntrenamiento = async (req, res) => {
     
     entrenamiento.activo = false;
     await entrenamiento.save();
+
+    // Mantener estadísticas consistentes ante eliminaciones
+    await recalcularEstadisticasUsuario(usuarioId);
     
     res.json({
       success: true,
