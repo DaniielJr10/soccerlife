@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'proximos.dart';
+import '../../services/entrenamientos_service.dart';
 
 class EntrenamientoAnterior {
+  final String? id;
   final DateTime fecha;
   final String tipo;
   final String duracion;
@@ -11,6 +13,7 @@ class EntrenamientoAnterior {
   final String observaciones;
 
   EntrenamientoAnterior({
+    this.id,
     required this.fecha,
     required this.tipo,
     required this.duracion,
@@ -30,6 +33,7 @@ class EntrenamientosAnterioresPage extends StatefulWidget {
 
 class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresPage> {
   final List<EntrenamientoAnterior> _entrenamientosAnteriores = [];
+  bool _cargando = false;
   
   final _formAnteriorKey = GlobalKey<FormState>();
   final _fechaAnteriorController = TextEditingController();
@@ -43,7 +47,7 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
   DateTime? _fechaEntrenamientoAnterior;
 
   final List<String> _tiposEntrenamiento = [
-    'Técnico', 'Físico', 'Táctico', 'Mixto', 'Recuperación', 'Pre-partido'
+    'Técnico', 'Físico', 'Táctico', 'Estratégico', 'Recuperación', 'Completo'
   ];
 
   final List<String> _intensidades = [
@@ -53,6 +57,46 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
   @override
   void initState() {
     super.initState();
+    _cargarEntrenamientos();
+  }
+
+  Future<void> _cargarEntrenamientos() async {
+    setState(() => _cargando = true);
+    try {
+      final resultado = await EntrenamientosService.obtenerEntrenamientosAnteriores();
+      if (resultado['success'] == true && mounted) {
+        final lista = resultado['entrenamientos'] as List;
+        setState(() {
+          _entrenamientosAnteriores
+            ..clear()
+            ..addAll(lista.map((e) => EntrenamientoAnterior(
+              id: e['_id'] as String?,
+              fecha: DateTime.parse(e['fecha'] as String),
+              tipo: (e['tipo'] as String?) ?? 'Técnico',
+              duracion: '${e['duracion'] ?? 60} min',
+              intensidad: (e['intensidad'] as String?) ?? 'Media',
+              objetivos: (e['objetivos'] as String?) ?? '',
+              ubicacion: (e['ubicacion'] as String?) ?? '',
+              observaciones: (e['notas'] as String?) ?? '',
+            )))
+            ..sort((a, b) => b.fecha.compareTo(a.fecha));
+        });
+      }
+    } catch (e) {
+      // silencioso en error de red
+    } finally {
+      if (mounted) setState(() => _cargando = false);
+    }
+  }
+
+  /// Extrae la duración en minutos de un texto como "90 min" o "90"
+  int _parseDuracion(String texto) {
+    final digits = texto.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return 60;
+    final val = int.parse(digits);
+    if (val < 15) return 15;
+    if (val > 300) return 300;
+    return val;
   }
 
   @override
@@ -99,9 +143,11 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: _entrenamientosAnteriores.isEmpty
-                  ? _buildEmptyState('No hay entrenamientos registrados', Icons.fitness_center)
-                  : ListView.builder(
+              child: _cargando
+                  ? const Center(child: CircularProgressIndicator())
+                  : _entrenamientosAnteriores.isEmpty
+                      ? _buildEmptyState('No hay entrenamientos registrados', Icons.fitness_center)
+                      : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _entrenamientosAnteriores.length,
                       itemBuilder: (context, index) {
@@ -695,36 +741,70 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
   }
 
   // Guarda un nuevo entrenamiento o actualiza uno existente
-  void _guardarEntrenamiento(bool esEdicion, int index) {
+  Future<void> _guardarEntrenamiento(bool esEdicion, int index) async {
     if (_formAnteriorKey.currentState!.validate()) {
-      final entrenamiento = EntrenamientoAnterior(
+      // Si es edición, solo actualizar localmente
+      if (esEdicion) {
+        final entrenamiento = EntrenamientoAnterior(
+          id: _entrenamientosAnteriores[index].id,
+          fecha: _fechaEntrenamientoAnterior!,
+          tipo: _tipoSeleccionado!,
+          duracion: _duracionController.text,
+          intensidad: _intensidadSeleccionada!,
+          objetivos: _objetivosController.text,
+          ubicacion: _ubicacionController.text,
+          observaciones: _observacionesController.text,
+        );
+        setState(() {
+          _entrenamientosAnteriores[index] = entrenamiento;
+          _entrenamientosAnteriores.sort((a, b) => b.fecha.compareTo(a.fecha));
+        });
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Entrenamiento actualizado correctamente'),
+          backgroundColor: Color(0xFF0065F8),
+        ));
+        return;
+      }
+
+      // Nuevo entrenamiento: guardar en API
+      final durMinutos = _parseDuracion(_duracionController.text);
+      final crearRes = await EntrenamientosService.crearEntrenamiento(
         fecha: _fechaEntrenamientoAnterior!,
+        duracion: durMinutos,
         tipo: _tipoSeleccionado!,
-        duracion: _duracionController.text,
-        intensidad: _intensidadSeleccionada!,
-        objetivos: _objetivosController.text,
         ubicacion: _ubicacionController.text,
-        observaciones: _observacionesController.text,
+        objetivos: _objetivosController.text,
+        notas: _observacionesController.text.isEmpty ? null : _observacionesController.text,
       );
 
-      setState(() {
-        if (esEdicion) {
-          _entrenamientosAnteriores[index] = entrenamiento;
-        } else {
-          _entrenamientosAnteriores.add(entrenamiento);
-        }
-        _entrenamientosAnteriores.sort((a, b) => b.fecha.compareTo(a.fecha));
-      });
+      if (!mounted) return;
+
+      if (crearRes['success'] != true) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${crearRes['message']}'),
+          backgroundColor: Colors.red,
+        ));
+        return;
+      }
+
+      final entrenamientoId = crearRes['entrenamiento']['_id'] as String;
+
+      // Marcar como completado
+      await EntrenamientosService.completarEntrenamiento(
+        entrenamientoId: entrenamientoId,
+        intensidad: _intensidadSeleccionada!,
+        notas: _observacionesController.text.isEmpty ? null : _observacionesController.text,
+      );
+
+      if (!mounted) return;
 
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(esEdicion 
-            ? 'Entrenamiento actualizado correctamente' 
-            : 'Entrenamiento registrado correctamente'),
-          backgroundColor: const Color(0xFF0065F8),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Entrenamiento registrado correctamente'),
+        backgroundColor: Color(0xFF0065F8),
+      ));
+      _cargarEntrenamientos();
     }
   }
 
@@ -740,17 +820,19 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
             child: const Text('Cancelar'),
           ),
           TextButton(
-            onPressed: () {
-              setState(() {
-                _entrenamientosAnteriores.removeAt(index);
-              });
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+              final id = _entrenamientosAnteriores[index].id;
+              if (id != null) {
+                await EntrenamientosService.eliminarEntrenamiento(id);
+              }
+              if (mounted) {
+                setState(() => _entrenamientosAnteriores.removeAt(index));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('Entrenamiento eliminado'),
                   backgroundColor: Colors.red,
-                ),
-              );
+                ));
+              }
             },
             child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
           ),

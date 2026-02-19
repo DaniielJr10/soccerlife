@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'partidosfuturos.dart';
+import '../../services/partidos_service.dart';
+import '../../services/partidos_resultado_service.dart';
 
 /// Pantalla principal para gestionar partidos jugados
 class PartidosJugadosPage extends StatefulWidget {
@@ -11,6 +13,7 @@ class PartidosJugadosPage extends StatefulWidget {
 
 class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   final List<PartidoJugado> _partidosJugados = [];
+  bool _cargando = false;
   
   // Controladores del formulario
   final _formKey = GlobalKey<FormState>();
@@ -34,6 +37,54 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   @override
   void initState() {
     super.initState();
+    _cargarPartidos();
+  }
+
+  Future<void> _cargarPartidos() async {
+    setState(() => _cargando = true);
+    try {
+      final resultado = await PartidosService.obtenerPartidosJugados();
+      if (resultado['success'] == true && mounted) {
+        final lista = resultado['partidos'] as List;
+        setState(() {
+          _partidosJugados
+            ..clear()
+            ..addAll(lista.map((p) {
+              final res = p['resultado'] as Map<String, dynamic>? ?? {};
+              final amarillas = (res['tarjetasAmarillas'] as int?) ?? 0;
+              final rojas = (res['tarjetasRojas'] as int?) ?? 0;
+              String tarjetas;
+              if (rojas >= 1 && amarillas >= 2) {
+                tarjetas = 'Doble Amarilla';
+              } else if (rojas >= 1) {
+                tarjetas = 'Roja';
+              } else if (amarillas >= 1) {
+                tarjetas = 'Amarilla';
+              } else {
+                tarjetas = 'Ninguna';
+              }
+              return PartidoJugado(
+                id: p['_id'] as String?,
+                fecha: DateTime.parse(p['fecha'] as String),
+                equipoContrario: (p['equipoRival'] as String?) ?? '',
+                golesAFavor: (res['golesLocal'] as int?) ?? 0,
+                golesEnContra: (res['golesVisitante'] as int?) ?? 0,
+                minutosJugados: (res['minutosJugados'] as int?) ?? 0,
+                posicion: '',
+                golesAnotados: (res['goles'] as int?) ?? 0,
+                asistencias: (res['asistencias'] as int?) ?? 0,
+                tarjetas: tarjetas,
+                notas: (p['notas'] as String?) ?? '',
+              );
+            }))
+            ..sort((a, b) => b.fecha.compareTo(a.fecha));
+        });
+      }
+    } catch (e) {
+      // silencioso en error de red
+    } finally {
+      if (mounted) setState(() => _cargando = false);
+    }
   }
 
   @override
@@ -83,9 +134,11 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: _partidosJugados.isEmpty
-                  ? _buildEmptyState('No hay partidos registrados', Icons.sports_soccer)
-                  : ListView.builder(
+              child: _cargando
+                  ? const Center(child: CircularProgressIndicator())
+                  : _partidosJugados.isEmpty
+                      ? _buildEmptyState('No hay partidos registrados', Icons.sports_soccer)
+                      : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _partidosJugados.length,
                       itemBuilder: (context, index) {
@@ -754,36 +807,77 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     }
   }
 
-  void _guardarPartido({PartidoJugado? partidoEditar, int? index}) {
+  Future<void> _guardarPartido({PartidoJugado? partidoEditar, int? index}) async {
     if (_formKey.currentState?.validate() ?? false) {
-      final partido = PartidoJugado(
-        fecha: _fechaSeleccionada!,
-        equipoContrario: _equipoContrarioController.text,
-        golesAFavor: int.parse(_golesAFavorController.text),
-        golesEnContra: int.parse(_golesEnContraController.text),
-        minutosJugados: int.parse(_minutosController.text),
-        posicion: '',
-        golesAnotados: int.parse(_golesAnotadosController.text),
-        asistencias: int.parse(_asistenciasController.text),
-        tarjetas: _tarjetasSeleccionadas!,
-        notas: _notasController.text,
-      );
-
-      setState(() {
-        if (partidoEditar != null && index != null) {
-          // Editar partido existente
+      // Si es edición, solo actualizar localmente
+      if (partidoEditar != null && index != null) {
+        final partido = PartidoJugado(
+          id: partidoEditar.id,
+          fecha: _fechaSeleccionada!,
+          equipoContrario: _equipoContrarioController.text,
+          golesAFavor: int.parse(_golesAFavorController.text),
+          golesEnContra: int.parse(_golesEnContraController.text),
+          minutosJugados: int.parse(_minutosController.text),
+          posicion: '',
+          golesAnotados: int.parse(_golesAnotadosController.text),
+          asistencias: int.parse(_asistenciasController.text),
+          tarjetas: _tarjetasSeleccionadas!,
+          notas: _notasController.text,
+        );
+        setState(() {
           _partidosJugados[index] = partido;
-        } else {
-          // Agregar nuevo partido
-          _partidosJugados.add(partido);
-        }
-        _partidosJugados.sort((a, b) => b.fecha.compareTo(a.fecha));
-      });
+          _partidosJugados.sort((a, b) => b.fecha.compareTo(a.fecha));
+        });
+        Navigator.pop(context);
+        _mostrarMensajeExito('Partido actualizado correctamente');
+        return;
+      }
 
-      Navigator.pop(context);
-      _mostrarMensajeExito(
-        partidoEditar != null ? 'Partido actualizado correctamente' : 'Partido registrado correctamente'
+      // Nuevo partido: guardar en API
+      final tarjetaStr = _tarjetasSeleccionadas ?? 'Ninguna';
+      int amarillas = 0, rojas = 0;
+      if (tarjetaStr == 'Amarilla') { amarillas = 1; }
+      else if (tarjetaStr == 'Doble Amarilla') { amarillas = 2; rojas = 1; }
+      else if (tarjetaStr == 'Roja') { rojas = 1; }
+
+      // Paso 1: crear el partido
+      final crearRes = await PartidosService.crearPartido(
+        equipoRival: _equipoContrarioController.text,
+        fecha: _fechaSeleccionada!,
+        hora: '00:00',
+        lugar: '-',
       );
+
+      if (!mounted) return;
+
+      if (crearRes['success'] != true) {
+        _mostrarMensajeExito('Error al registrar: ${crearRes['message']}');
+        return;
+      }
+
+      final partidoId = crearRes['partido']['_id'] as String;
+
+      // Paso 2: registrar resultado
+      final resultRes = await PartidosResultadoService.registrarResultado(
+        partidoId: partidoId,
+        golesLocal: int.parse(_golesAFavorController.text),
+        golesVisitante: int.parse(_golesEnContraController.text),
+        goles: int.parse(_golesAnotadosController.text),
+        asistencias: int.parse(_asistenciasController.text),
+        tarjetasAmarillas: amarillas,
+        tarjetasRojas: rojas,
+        minutosJugados: int.parse(_minutosController.text),
+      );
+
+      if (!mounted) return;
+
+      if (resultRes['success'] == true) {
+        Navigator.pop(context);
+        _mostrarMensajeExito('Partido registrado correctamente');
+        _cargarPartidos();
+      } else {
+        _mostrarMensajeExito('Error al registrar resultado: ${resultRes['message']}');
+      }
     }
   }
 
@@ -792,11 +886,15 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     _mostrarDialogoConfirmacion(
       'Eliminar partido',
       '¿Estás seguro de que deseas eliminar este partido?',
-      () {
-        setState(() {
-          _partidosJugados.removeAt(index);
-        });
-        _mostrarMensajeExito('Partido eliminado');
+      () async {
+        final id = _partidosJugados[index].id;
+        if (id != null) {
+          await PartidosService.eliminarPartido(id);
+        }
+        if (mounted) {
+          setState(() => _partidosJugados.removeAt(index));
+          _mostrarMensajeExito('Partido eliminado');
+        }
       },
     );
   }
@@ -882,6 +980,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
 }
 
 class PartidoJugado {
+  final String? id;
   final DateTime fecha;
   final String equipoContrario;
   final int golesAFavor;
@@ -894,6 +993,7 @@ class PartidoJugado {
   final String notas;
 
   PartidoJugado({
+    this.id,
     required this.fecha,
     required this.equipoContrario,
     required this.golesAFavor,

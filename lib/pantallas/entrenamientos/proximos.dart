@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../services/entrenamientos_service.dart';
 
 class EntrenamientoProximo {
+  final String? id;
   final DateTime fecha;
   final String tipo;
   final String duracion;
@@ -9,6 +11,7 @@ class EntrenamientoProximo {
   final String? notas;
 
   EntrenamientoProximo({
+    this.id,
     required this.fecha,
     required this.tipo,
     required this.duracion,
@@ -28,6 +31,7 @@ class EntrenamientosProximosPage extends StatefulWidget {
 
 class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage> {
   final List<EntrenamientoProximo> _entrenamientosProximos = [];
+  bool _cargando = false;
   final _formKey = GlobalKey<FormState>();
   
   // Controladores del formulario
@@ -41,12 +45,51 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
   DateTime? _fechaSeleccionada;
 
   final List<String> _tiposEntrenamiento = [
-    'Técnico', 'Físico', 'Táctico', 'Mixto', 'Recuperación', 'Pre-partido'
+    'Técnico', 'Físico', 'Táctico', 'Estratégico', 'Recuperación', 'Completo'
   ];
 
   @override
   void initState() {
     super.initState();
+    _cargarEntrenamientos();
+  }
+
+  Future<void> _cargarEntrenamientos() async {
+    setState(() => _cargando = true);
+    try {
+      final resultado = await EntrenamientosService.obtenerEntrenamientosProximos();
+      if (resultado['success'] == true && mounted) {
+        final lista = resultado['entrenamientos'] as List;
+        setState(() {
+          _entrenamientosProximos
+            ..clear()
+            ..addAll(lista.map((e) => EntrenamientoProximo(
+              id: e['_id'] as String?,
+              fecha: DateTime.parse(e['fecha'] as String),
+              tipo: (e['tipo'] as String?) ?? 'Técnico',
+              duracion: '${e['duracion'] ?? 60} min',
+              objetivos: (e['objetivos'] as String?) ?? '',
+              ubicacion: (e['ubicacion'] as String?) ?? '',
+              notas: e['notas'] as String?,
+            )))
+            ..sort((a, b) => a.fecha.compareTo(b.fecha));
+        });
+      }
+    } catch (e) {
+      // silencioso en error de red
+    } finally {
+      if (mounted) setState(() => _cargando = false);
+    }
+  }
+
+  /// Extrae la duración en minutos de un texto como "90 min" o "90"
+  int _parseDuracion(String texto) {
+    final digits = texto.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return 60;
+    final val = int.parse(digits);
+    if (val < 15) return 15;
+    if (val > 300) return 300;
+    return val;
   }
 
   @override
@@ -96,9 +139,11 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: _entrenamientosProximos.isEmpty
-                  ? _buildEmptyState('No hay entrenamientos programados', Icons.fitness_center)
-                  : ListView.builder(
+              child: _cargando
+                  ? const Center(child: CircularProgressIndicator())
+                  : _entrenamientosProximos.isEmpty
+                      ? _buildEmptyState('No hay entrenamientos programados', Icons.fitness_center)
+                      : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _entrenamientosProximos.length,
                       itemBuilder: (context, index) {
@@ -683,36 +728,57 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
   }
 
   // Guarda o actualiza el entrenamiento
-  void _guardarEntrenamiento(bool esEdicion, int index) {
+  Future<void> _guardarEntrenamiento(bool esEdicion, int index) async {
     if (_formKey.currentState!.validate()) {
-      final entrenamiento = EntrenamientoProximo(
+      // Si es edición, solo actualizar localmente
+      if (esEdicion) {
+        final entrenamiento = EntrenamientoProximo(
+          id: _entrenamientosProximos[index].id,
+          fecha: _fechaSeleccionada!,
+          tipo: _tipoSeleccionado!,
+          duracion: _duracionController.text,
+          objetivos: _objetivosController.text,
+          ubicacion: _ubicacionController.text,
+          notas: _notasController.text.isEmpty ? null : _notasController.text,
+        );
+        setState(() {
+          _entrenamientosProximos[index] = entrenamiento;
+          _entrenamientosProximos.sort((a, b) => a.fecha.compareTo(b.fecha));
+        });
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Entrenamiento actualizado correctamente'),
+          backgroundColor: Color(0xFF0065F8),
+        ));
+        return;
+      }
+
+      // Nuevo entrenamiento: guardar en API
+      final durMinutos = _parseDuracion(_duracionController.text);
+      final crearRes = await EntrenamientosService.crearEntrenamiento(
         fecha: _fechaSeleccionada!,
+        duracion: durMinutos,
         tipo: _tipoSeleccionado!,
-        duracion: _duracionController.text,
-        objetivos: _objetivosController.text,
         ubicacion: _ubicacionController.text,
+        objetivos: _objetivosController.text,
         notas: _notasController.text.isEmpty ? null : _notasController.text,
       );
 
-      setState(() {
-        if (esEdicion) {
-          _entrenamientosProximos[index] = entrenamiento;
-        } else {
-          _entrenamientosProximos.add(entrenamiento);
-        }
-        // Ordenar por fecha para mantener cronología
-        _entrenamientosProximos.sort((a, b) => a.fecha.compareTo(b.fecha));
-      });
+      if (!mounted) return;
 
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(esEdicion 
-            ? 'Entrenamiento actualizado correctamente' 
-            : 'Entrenamiento planificado correctamente'),
-          backgroundColor: const Color(0xFF0065F8),
-        ),
-      );
+      if (crearRes['success'] == true) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Entrenamiento planificado correctamente'),
+          backgroundColor: Color(0xFF0065F8),
+        ));
+        _cargarEntrenamientos();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${crearRes['message']}'),
+          backgroundColor: Colors.red,
+        ));
+      }
     }
   }
 
@@ -728,17 +794,19 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
             child: const Text('Cancelar'),
           ),
           TextButton(
-            onPressed: () {
-              setState(() {
-                _entrenamientosProximos.removeAt(index);
-              });
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+              final id = _entrenamientosProximos[index].id;
+              if (id != null) {
+                await EntrenamientosService.eliminarEntrenamiento(id);
+              }
+              if (mounted) {
+                setState(() => _entrenamientosProximos.removeAt(index));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('Entrenamiento eliminado'),
                   backgroundColor: Colors.red,
-                ),
-              );
+                ));
+              }
             },
             child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
           ),

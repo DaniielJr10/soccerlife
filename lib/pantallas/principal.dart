@@ -728,7 +728,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
       child: BottomNavigationBar(
         currentIndex: _selectedIndex,
         // Actualiza el estado cuando se selecciona un tab diferente
-        onTap: (index) => setState(() => _selectedIndex = index),
+        onTap: (index) {
+          setState(() => _selectedIndex = index);
+          if (index == 0) _cargarDatos(); // refrescar estadísticas al volver al inicio
+        },
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
         selectedItemColor: const Color(0xFF00f5ff),

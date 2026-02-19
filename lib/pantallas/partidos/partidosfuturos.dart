@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/partidos_service.dart';
 
 /// Pantalla de partidos futuros - permite programar y gestionar partidos próximos
 class PartidosFuturosPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class PartidosFuturosPage extends StatefulWidget {
 class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
   // Variables principales
   final List<PartidoFuturo> _partidosFuturos = [];
+  bool _cargando = false;
   
   // Controladores del formulario
   final _formKey = GlobalKey<FormState>();
@@ -27,6 +29,41 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
   @override
   void initState() {
     super.initState();
+    _cargarPartidos();
+  }
+
+  Future<void> _cargarPartidos() async {
+    setState(() => _cargando = true);
+    try {
+      final resultado = await PartidosService.obtenerPartidosFuturos();
+      if (resultado['success'] == true && mounted) {
+        final lista = resultado['partidos'] as List;
+        setState(() {
+          _partidosFuturos
+            ..clear()
+            ..addAll(lista.map((p) {
+              final horaStr = (p['hora'] as String?) ?? '00:00';
+              final partes = horaStr.split(':');
+              return PartidoFuturo(
+                id: p['_id'] as String?,
+                fecha: DateTime.parse(p['fecha'] as String),
+                lugar: (p['lugar'] as String?) ?? '',
+                hora: TimeOfDay(
+                  hour: int.tryParse(partes[0]) ?? 0,
+                  minute: int.tryParse(partes.length > 1 ? partes[1] : '0') ?? 0,
+                ),
+                equipoRival: (p['equipoRival'] as String?) ?? '',
+                notas: (p['notas'] as String?) ?? '',
+              );
+            }))
+            ..sort((a, b) => a.fecha.compareTo(b.fecha));
+        });
+      }
+    } catch (e) {
+      // silencioso en error de red
+    } finally {
+      if (mounted) setState(() => _cargando = false);
+    }
   }
 
   @override
@@ -76,9 +113,11 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: _partidosFuturos.isEmpty
-                  ? _buildEmptyState('No hay partidos programados', Icons.event)
-                  : ListView.builder(
+              child: _cargando
+                  ? const Center(child: CircularProgressIndicator())
+                  : _partidosFuturos.isEmpty
+                      ? _buildEmptyState('No hay partidos programados', Icons.event)
+                      : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _partidosFuturos.length,
                       itemBuilder: (context, index) {
@@ -598,29 +637,50 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
   }
 
   // Funciones de gestión de datos
-  void _guardarPartido() {
+  Future<void> _guardarPartido() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final partido = PartidoFuturo(
-        fecha: _fechaSeleccionada!,
-        lugar: _lugarController.text,
-        hora: _horaSeleccionada!,
+      final hora = _horaSeleccionada!;
+      final horaStr = '${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}';
+
+      final resultado = await PartidosService.crearPartido(
         equipoRival: _equipoRivalController.text,
-        notas: _notasController.text,
+        fecha: _fechaSeleccionada!,
+        hora: horaStr,
+        lugar: _lugarController.text,
+        notas: _notasController.text.isEmpty ? null : _notasController.text,
       );
 
-      setState(() {
-        _partidosFuturos.add(partido);
-        _partidosFuturos.sort((a, b) => a.fecha.compareTo(b.fecha));
-      });
+      if (!mounted) return;
 
-      Navigator.pop(context);
-      _mostrarMensaje('Partido programado correctamente');
+      if (resultado['success'] == true) {
+        Navigator.pop(context);
+        _mostrarMensaje('Partido programado correctamente');
+        _cargarPartidos();
+      } else {
+        _mostrarMensaje('Error: ${resultado['message'] ?? 'No se pudo guardar'}');
+      }
     }
   }
 
-  void _actualizarPartido(int index) {
+  Future<void> _actualizarPartido(int index) async {
     if (_formKey.currentState?.validate() ?? false) {
+      final id = _partidosFuturos[index].id;
+      final hora = _horaSeleccionada!;
+      final horaStr = '${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}';
+
+      if (id != null) {
+        await PartidosService.actualizarPartido(
+          partidoId: id,
+          equipoRival: _equipoRivalController.text,
+          fecha: _fechaSeleccionada!,
+          hora: horaStr,
+          lugar: _lugarController.text,
+          notas: _notasController.text.isEmpty ? null : _notasController.text,
+        );
+      }
+
       final partido = PartidoFuturo(
+        id: id,
         fecha: _fechaSeleccionada!,
         lugar: _lugarController.text,
         hora: _horaSeleccionada!,
@@ -628,6 +688,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
         notas: _notasController.text,
       );
 
+      if (!mounted) return;
       setState(() {
         _partidosFuturos[index] = partido;
         _partidosFuturos.sort((a, b) => a.fecha.compareTo(b.fecha));
@@ -646,11 +707,15 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     _mostrarDialogoConfirmacion(
       'Eliminar partido',
       '¿Estás seguro de que deseas eliminar este partido programado?',
-      () {
-        setState(() {
-          _partidosFuturos.removeAt(index);
-        });
-        _mostrarMensaje('Partido eliminado');
+      () async {
+        final id = _partidosFuturos[index].id;
+        if (id != null) {
+          await PartidosService.eliminarPartido(id);
+        }
+        if (mounted) {
+          setState(() => _partidosFuturos.removeAt(index));
+          _mostrarMensaje('Partido eliminado');
+        }
       },
     );
   }
@@ -721,6 +786,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
 
 // Modelo de datos
 class PartidoFuturo {
+  final String? id;
   final DateTime fecha;
   final String lugar;
   final TimeOfDay hora;
@@ -728,6 +794,7 @@ class PartidoFuturo {
   final String notas;
 
   PartidoFuturo({
+    this.id,
     required this.fecha,
     required this.lugar,
     required this.hora,
