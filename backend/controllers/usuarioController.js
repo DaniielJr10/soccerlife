@@ -30,14 +30,19 @@ const crearUsuario = async (req, res) => {
     const nuevoUsuario = new Usuario(req.body);
     const usuarioGuardado = await nuevoUsuario.save();
     
-    // Crear estadística inicial en cero para el nuevo usuario
-    const estadisticaInicial = new Estadistica({
-      usuarioId: usuarioGuardado._id
-    });
-    await estadisticaInicial.save();
+    // Crear estadística inicial en cero — error aquí no debe bloquear el registro
+    try {
+      const estadisticaInicial = new Estadistica({
+        usuarioId: usuarioGuardado._id
+      });
+      await estadisticaInicial.save();
+      console.log(`📊 Estadísticas inicializadas en CERO para el usuario`);
+    } catch (statsError) {
+      console.warn(`⚠️ No se pudieron crear estadísticas iniciales: ${statsError.message}`);
+      // No es crítico — se crearán cuando el usuario registre su primer dato
+    }
     
     console.log(`✅ Usuario registrado: ${usuarioGuardado.email}`);
-    console.log(`📊 Estadísticas inicializadas en CERO para el usuario`);
     
     // No devolver la contraseña en la respuesta
     const { password, ...usuarioSinPassword } = usuarioGuardado.toObject();

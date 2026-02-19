@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/user_registration.dart';
+import '../services/storage_service.dart';
 
 class RegistrarsePage extends StatefulWidget {
   const RegistrarsePage({super.key});
@@ -191,9 +192,35 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         setState(() => _isLoading = false);
         
         if (resultado['success']) {
-          // Registro exitoso
+          // Registro exitoso — mostrar pantalla de éxito de inmediato
           setState(() => _registroExitoso = true);
           HapticFeedback.mediumImpact();
+
+          // Guardar datos localmente (error aquí no bloquea la pantalla de éxito)
+          try {
+            final data = resultado['data'];
+            final usuario = (data is Map && data['usuario'] != null)
+                ? data['usuario'] as Map
+                : (data is Map ? data : <String, dynamic>{});
+            await StorageService.guardarDatosUsuario(
+              userId: usuario['_id']?.toString() ?? '',
+              email: _emailController.text.trim(),
+              nombre: _nombreController.text.trim(),
+            );
+            await StorageService.guardarPerfilCompleto(
+              posicion: _posicionSeleccionada ?? 'Volante',
+              club: _clubController.text.trim(),
+              edad: int.tryParse(_edadController.text.trim()) ?? 0,
+            );
+          } catch (storageError) {
+            // Error de almacenamiento local — no afecta al flujo del usuario
+            print('⚠️ Error al guardar datos localmente: $storageError');
+          }
+        } else if (resultado['emailDuplicado'] == true) {
+          // El registro pudo haberse completado pero la respuesta no llegó.
+          // Mostramos mensaje amigable para que el usuario inicie sesión.
+          HapticFeedback.mediumImpact();
+          _mostrarDialogoEmailDuplicado();
         } else {
           // Error en el registro
           HapticFeedback.heavyImpact();
@@ -215,6 +242,49 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         content: Text(mensaje),
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _mostrarDialogoEmailDuplicado() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1a1a2e),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Color(0xFF00f5ff), size: 28),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                '¡Cuenta creada!',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Tu cuenta fue registrada exitosamente. Por favor inicia sesión para continuar.',
+          style: TextStyle(color: Colors.white70, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop(); // volver al login
+            },
+            child: const Text(
+              'Ir a iniciar sesión',
+              style: TextStyle(
+                color: Color(0xFF00f5ff),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -881,29 +951,29 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
                           child: const Icon(Icons.check, color: Colors.black, size: 50),
                         ),
                         const SizedBox(height: 32),
-                        Text(
-                          '¡Bienvenido, ${_nombreController.text}!',
+                        const Text(
+                          '¡Cuenta creada exitosamente!',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Color(0xFF00f5ff),
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Text(
-                          'Tu cuenta ha sido creada. \n¡Es hora de brillar en el campo!',
+                          'Bienvenido, ${_nombreController.text.trim()}\n¡Todo listo para brillar en el campo!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: Colors.white.withValues(alpha: 0.85),
                             fontSize: 16,
-                            height: 1.4,
+                            height: 1.5,
                           ),
                         ),
                         const SizedBox(height: 32),
                         _buildButton(
                           onTap: () => Navigator.of(context).pop(),
-                          text: 'Comenzar',
+                          text: 'Ir a iniciar sesión',
                         ),
                       ],
                     ),

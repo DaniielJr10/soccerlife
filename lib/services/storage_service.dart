@@ -1,9 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/usuario_model.dart';
 
-/**
- * Servicio de almacenamiento local
- * Gestiona el guardado y recuperación de datos en el dispositivo
- */
+/// Servicio de almacenamiento local.
+/// Gestiona el guardado y recuperación de datos en el dispositivo.
 class StorageService {
   // Keys para almacenamiento
   static const String _keyToken = 'auth_token';
@@ -11,6 +10,9 @@ class StorageService {
   static const String _keyUserEmail = 'user_email';
   static const String _keyUserNombre = 'user_nombre';
   static const String _keyUserData = 'user_data';
+  static const String _keyUserPosicion = 'user_posicion';
+  static const String _keyUserClub = 'user_club';
+  static const String _keyUserEdad = 'user_edad';
 
   /// Guardar token de autenticación
   static Future<bool> guardarToken(String token) async {
@@ -34,7 +36,7 @@ class StorageService {
     }
   }
 
-  /// Guardar datos del usuario
+  /// Guardar datos básicos del usuario
   static Future<bool> guardarDatosUsuario({
     required String userId,
     required String email,
@@ -50,6 +52,70 @@ class StorageService {
       print('Error guardando datos de usuario: $e');
       return false;
     }
+  }
+
+  /// Guardar perfil completo del usuario (incluyendo posición, club y edad)
+  static Future<bool> guardarPerfilCompleto({
+    required String posicion,
+    required String club,
+    required int edad,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_keyUserPosicion, posicion);
+      await prefs.setString(_keyUserClub, club);
+      await prefs.setInt(_keyUserEdad, edad);
+      return true;
+    } catch (e) {
+      print('Error guardando perfil: $e');
+      return false;
+    }
+  }
+
+  /// Obtener posición del usuario
+  static Future<String> obtenerUserPosicion() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_keyUserPosicion) ?? '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// Obtener club del usuario
+  static Future<String> obtenerUserClub() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_keyUserClub) ?? '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// Obtener edad del usuario
+  static Future<int> obtenerUserEdad() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getInt(_keyUserEdad) ?? 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  /// Obtener todos los datos del usuario como modelo
+  static Future<UsuarioModel> obtenerUsuarioModel() async {
+    final nombre = await obtenerUserNombre() ?? '';
+    final email = await obtenerUserEmail() ?? '';
+    final posicion = await obtenerUserPosicion();
+    final club = await obtenerUserClub();
+    final edad = await obtenerUserEdad();
+    return UsuarioModel(
+      nombre: nombre,
+      email: email,
+      posicion: posicion,
+      club: club,
+      edad: edad,
+    );
   }
 
   /// Obtener ID del usuario
@@ -100,6 +166,9 @@ class StorageService {
       await prefs.remove(_keyUserEmail);
       await prefs.remove(_keyUserNombre);
       await prefs.remove(_keyUserData);
+      await prefs.remove(_keyUserPosicion);
+      await prefs.remove(_keyUserClub);
+      await prefs.remove(_keyUserEdad);
       return true;
     } catch (e) {
       print('Error limpiando datos: $e');

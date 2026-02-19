@@ -47,6 +47,13 @@ class AuthService {
             email: usuario['email'] ?? '',
             nombre: usuario['nombre'] ?? '',
           );
+          await StorageService.guardarPerfilCompleto(
+            posicion: usuario['posicion']?.toString() ?? '',
+            club: usuario['club']?.toString() ?? '',
+            edad: usuario['edad'] is int
+                ? usuario['edad'] as int
+                : int.tryParse(usuario['edad']?.toString() ?? '') ?? 0,
+          );
         }
 
         return {
@@ -90,16 +97,21 @@ class AuthService {
         'password': password,
         if (posicion != null) 'posicion': posicion,
         if (club != null && club.isNotEmpty) 'club': club,
-        if (edad != null) 'edad': edad,
-        if (estatura != null) 'estatura': (estatura * 100).round(),
-        if (peso != null) 'peso': peso,
+        if (edad != null && edad > 0) 'edad': edad,
+        if (estatura != null && estatura > 0) 'estatura': (estatura * 100).round(),
+        if (peso != null && peso > 0) 'peso': peso,
       };
 
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(body),
-      );
+      final response = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(body),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+            onTimeout: () => throw Exception('Tiempo de espera agotado. Verifica tu conexión.'),
+          );
 
       if (response.statusCode == 201) {
         return {
@@ -108,17 +120,31 @@ class AuthService {
           'data': json.decode(response.body),
         };
       } else {
-        final errorData = json.decode(response.body);
+        Map<String, dynamic> errorData = {};
+        try {
+          errorData = json.decode(response.body) as Map<String, dynamic>;
+        } catch (_) {}
+        // Mostrar el error detallado de Mongoose si está disponible
+        final detalle = errorData['error']?.toString();
+        final mensajeBase = errorData['message']?.toString() ?? 'Error al registrar usuario';
+        final mensaje = (detalle != null && detalle.isNotEmpty)
+            ? '$mensajeBase: $detalle'
+            : mensajeBase;
+        final esEmailDuplicado = mensajeBase.toLowerCase().contains('ya está registrado') ||
+            mensajeBase.toLowerCase().contains('email') ||
+            response.statusCode == 400 && errorData['code'] == 11000;
         return {
           'success': false,
-          'message': errorData['message'] ?? 'Error al registrar usuario',
+          'message': mensaje,
+          'emailDuplicado': esEmailDuplicado,
         };
       }
     } catch (e) {
       print('❌ Error en registro: $e');
       return {
         'success': false,
-        'message': 'Error de conexión: $e',
+        'message': e.toString().replaceAll('Exception: ', ''),
+        'emailDuplicado': false,
       };
     }
   }

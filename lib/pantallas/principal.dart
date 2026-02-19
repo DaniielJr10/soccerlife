@@ -5,6 +5,9 @@ import 'entrenamientos/anteriores.dart';
 import 'entrenamientos/proximos.dart';
 import 'perfil.dart';
 import 'estadisticas.dart';
+import '../models/usuario_model.dart';
+import '../services/storage_service.dart';
+import '../services/estadisticas_service.dart';
 
 /// Clase que representa un partido próximo a jugar
 /// Contiene toda la información necesaria para mostrar el siguiente encuentro
@@ -38,26 +41,6 @@ class EntrenamientoProximo {
   });
 }
 
-/// Clase que contiene la información completa del perfil del jugador
-/// Incluye datos personales, club actual y estadísticas básicas
-class PerfilJugador {
-  final String nombre;
-  final int edad;
-  final String club;
-  final String posicion;
-  final int numero;
-  final int rating;
-
-  PerfilJugador({
-    required this.nombre,
-    required this.edad,
-    required this.club,
-    required this.posicion,
-    required this.numero,
-    required this.rating,
-  });
-}
-
 /// Pantalla principal de la aplicación SoccerLife
 /// Muestra el dashboard con información del jugador, próximos eventos y estadísticas
 class PrincipalPage extends StatefulWidget {
@@ -71,42 +54,81 @@ class _PrincipalPageState extends State<PrincipalPage> {
   // Índice del tab seleccionado en el bottom navigation bar
   int _selectedIndex = 0;
 
-  // Datos del perfil del jugador (en una app real vendrían de una base de datos)
-  PerfilJugador _perfilJugador = PerfilJugador(
-    nombre: 'Daniel Rodriguez',
-    edad: 20,
-    club: 'FC Barcelona Academy',
-    posicion: 'Delantero',
-    numero: 10,
-    rating: 87,
-  );
-  
+  // Datos del usuario cargados desde almacenamiento local
+  UsuarioModel _usuario = UsuarioModel.vacio();
+
+  // Estadísticas rápidas cargadas desde la API
+  Map<String, int> _statsResumen = {
+    'partidos': 0,
+    'goles': 0,
+    'asistencias': 0,
+    'entrenamientos': 0,
+  };
+
+  bool _cargando = true;
+
   // Información del próximo partido programado
   final PartidoProximo _proximoPartido = PartidoProximo(
     fecha: DateTime.now().add(const Duration(days: 3)),
-    equipoRival: 'Valencia CF',
-    lugar: 'Estadio Santiago Bernabéu',
-    hora: const TimeOfDay(hour: 16, minute: 0),
+    equipoRival: 'Sin partido aún',
+    lugar: '- -',
+    hora: const TimeOfDay(hour: 0, minute: 0),
   );
-  
+
   // Información del próximo entrenamiento programado
   final EntrenamientoProximo _proximoEntrenamiento = EntrenamientoProximo(
-    fecha: DateTime.now().add(const Duration(days: 2)),
-    tipo: 'Técnico',
-    objetivos: 'Centros y remates',
-    ubicacion: 'Campo principal',
+    fecha: DateTime.now().add(const Duration(days: 1)),
+    tipo: 'Sin entrenamiento',
+    objetivos: '- -',
+    ubicacion: '- -',
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatos();
+  }
+
+  /// Carga los datos del usuario y las estadísticas desde almacenamiento y API
+  Future<void> _cargarDatos() async {
+    setState(() => _cargando = true);
+    final usuario = await StorageService.obtenerUsuarioModel();
+    final resultado = await EstadisticasService.obtenerEstadisticas();
+    Map<String, int> stats = {
+      'partidos': 0,
+      'goles': 0,
+      'asistencias': 0,
+      'entrenamientos': 0,
+    };
+    if (resultado['success'] == true && resultado['estadisticas'] != null) {
+      final s = resultado['estadisticas'] as Map<String, dynamic>;
+      final partidos = (s['partidos'] as Map?)?.cast<String, dynamic>() ?? {};
+      final goles = (s['goles'] as Map?)?.cast<String, dynamic>() ?? {};
+      final entrenos = (s['entrenamientos'] as Map?)?.cast<String, dynamic>() ?? {};
+      stats = {
+        'partidos': (partidos['jugados'] ?? 0) as int,
+        'goles': (goles['total'] ?? 0) as int,
+        'asistencias': (s['asistencias'] ?? 0) as int,
+        'entrenamientos': (entrenos['completados'] ?? 0) as int,
+      };
+    }
+    if (!mounted) return;
+    setState(() {
+      _usuario = usuario;
+      _statsResumen = stats;
+      _cargando = false;
+    });
+  }
 
   /// Actualiza los datos del perfil del jugador
   void _actualizarPerfil(Map<String, dynamic> datosActualizados) {
     setState(() {
-      _perfilJugador = PerfilJugador(
-        nombre: datosActualizados['nombre'] ?? _perfilJugador.nombre,
-        edad: int.tryParse(datosActualizados['edad']?.toString() ?? '') ?? _perfilJugador.edad,
-        club: datosActualizados['equipo'] ?? _perfilJugador.club,
-        posicion: datosActualizados['posicion'] ?? _perfilJugador.posicion,
-        numero: _perfilJugador.numero,
-        rating: _perfilJugador.rating,
+      _usuario = UsuarioModel(
+        nombre: datosActualizados['nombre']?.toString() ?? _usuario.nombre,
+        email: _usuario.email,
+        posicion: datosActualizados['posicion']?.toString() ?? _usuario.posicion,
+        club: datosActualizados['equipo']?.toString() ?? _usuario.club,
+        edad: int.tryParse(datosActualizados['edad']?.toString() ?? '') ?? _usuario.edad,
       );
     });
   }
@@ -143,6 +165,9 @@ class _PrincipalPageState extends State<PrincipalPage> {
   /// Construye la pestaña principal (Home) con el dashboard completo
   /// Incluye la carta del jugador, próximos eventos y estadísticas rápidas
   Widget _buildHomeTab() {
+    if (_cargando) {
+      return const Center(child: CircularProgressIndicator(color: Color(0xFF00f5ff)));
+    }
     return Container(
       color: Colors.white,
       child: SingleChildScrollView(
@@ -203,7 +228,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
             // Avatar circular con las iniciales del jugador
             child: Center(
               child: Text(
-                _perfilJugador.nombre.substring(0, 2).toUpperCase(),
+                _usuario.iniciales,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 28,
@@ -218,14 +243,16 @@ class _PrincipalPageState extends State<PrincipalPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _perfilJugador.nombre,
+                  _usuario.nombre.isEmpty ? 'Jugador' : _usuario.nombre,
                   style: const TextStyle(
                     color: Color(0xFF1a1a2e),
-                    fontSize: 24,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
@@ -233,19 +260,21 @@ class _PrincipalPageState extends State<PrincipalPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Club: ${_perfilJugador.club}',
+                            _usuario.club.isEmpty ? 'Sin club' : 'Club: ${_usuario.club}',
                             style: const TextStyle(
                               color: Color(0xFF1a1a2e),
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Posición: ${_perfilJugador.posicion}',
+                            _usuario.posicion.isEmpty ? 'Sin posición' : 'Posición: ${_usuario.posicion}',
                             style: const TextStyle(
                               color: Color(0xFF1a1a2e),
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -256,10 +285,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Edad: ${_perfilJugador.edad}',
+                  _usuario.edad == 0 ? '' : 'Edad: ${_usuario.edad} años',
                   style: const TextStyle(
                     color: Color(0xFF1a1a2e),
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -576,22 +605,22 @@ class _PrincipalPageState extends State<PrincipalPage> {
           children: [
             _buildPremiumStatCard(
               title: 'Partidos',
-              value: '24',
+              value: '${_statsResumen['partidos'] ?? 0}',
               icon: Icons.sports_esports,
             ),
             _buildPremiumStatCard(
               title: 'Goles',
-              value: '15',
+              value: '${_statsResumen['goles'] ?? 0}',
               icon: Icons.sports_soccer,
             ),
             _buildPremiumStatCard(
               title: 'Asistencias',
-              value: '7',
+              value: '${_statsResumen['asistencias'] ?? 0}',
               icon: Icons.handshake,
             ),
             _buildPremiumStatCard(
               title: 'Entrenamientos',
-              value: '30',
+              value: '${_statsResumen['entrenamientos'] ?? 0}',
               icon: Icons.fitness_center,
             ),
           ],
