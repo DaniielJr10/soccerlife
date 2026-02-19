@@ -34,7 +34,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
   @override
   void initState() {
     super.initState();
-    _cargarPartidosEjemplo();
   }
 
   @override
@@ -48,48 +47,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
     _asistenciasController.dispose();
     _notasController.dispose();
     super.dispose();
-  }
-
-  // Carga datos de ejemplo
-  void _cargarPartidosEjemplo() {
-    _partidosJugados.addAll([
-      PartidoJugado(
-        fecha: DateTime.now().subtract(const Duration(days: 7)),
-        equipoContrario: 'Real Madrid CF',
-        golesAFavor: 2,
-        golesEnContra: 1,
-        minutosJugados: 90,
-        posicion: 'Delantero',
-        golesAnotados: 1,
-        asistencias: 1,
-        tarjetas: 'Amarilla',
-        notas: 'Buen partido, marcamos en el último minuto'
-      ),
-      PartidoJugado(
-        fecha: DateTime.now().subtract(const Duration(days: 14)),
-        equipoContrario: 'FC Barcelona',
-        golesAFavor: 1,
-        golesEnContra: 3,
-        minutosJugados: 75,
-        posicion: 'Extremo Derecho',
-        golesAnotados: 0,
-        asistencias: 1,
-        tarjetas: 'Ninguna',
-        notas: 'Partido difícil, nos superaron en el medio campo'
-      ),
-      PartidoJugado(
-        fecha: DateTime.now().subtract(const Duration(days: 21)),
-        equipoContrario: 'Atlético Madrid',
-        golesAFavor: 0,
-        golesEnContra: 0,
-        minutosJugados: 90,
-        posicion: 'Volante Central',
-        golesAnotados: 0,
-        asistencias: 0,
-        tarjetas: 'Amarilla',
-        notas: 'Empate defensivo, poca ocasiones de gol'
-      ),
-    ]);
   }
 
   @override

@@ -27,7 +27,6 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
   @override
   void initState() {
     super.initState();
-    _cargarDatosEjemplo();
   }
 
   @override
@@ -38,25 +37,6 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
     _equipoRivalController.dispose();
     _notasController.dispose();
     super.dispose();
-  }
-
-  void _cargarDatosEjemplo() {
-    _partidosFuturos.addAll([
-      PartidoFuturo(
-        fecha: DateTime.now().add(const Duration(days: 3)),
-        lugar: 'Estadio Santiago Bernabéu',
-        hora: const TimeOfDay(hour: 16, minute: 0),
-        equipoRival: 'Valencia CF',
-        notas: 'Partido importante por la liga'
-      ),
-      PartidoFuturo(
-        fecha: DateTime.now().add(const Duration(days: 10)),
-        lugar: 'Camp Nou',
-        hora: const TimeOfDay(hour: 20, minute: 30),
-        equipoRival: 'Sevilla FC',
-        notas: 'Clásico en casa, preparar táctica especial'
-      ),
-    ]);
   }
 
   @override

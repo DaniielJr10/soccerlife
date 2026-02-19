@@ -47,7 +47,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
   @override
   void initState() {
     super.initState();
-    _cargarEntrenamientosEjemplo();
   }
 
   @override
@@ -58,29 +57,6 @@ class _EntrenamientosProximosPageState extends State<EntrenamientosProximosPage>
     _ubicacionController.dispose();
     _notasController.dispose();
     super.dispose();
-  }
-
-  // Cargar algunos entrenamientos de ejemplo al iniciar
-  void _cargarEntrenamientosEjemplo() {
-    setState(() {
-      _entrenamientosProximos.addAll([
-        EntrenamientoProximo(
-          fecha: DateTime.now().add(const Duration(days: 2)),
-          tipo: 'Técnico',
-          duracion: '90 min',
-          objetivos: 'Centros y remates',
-          ubicacion: 'Campo principal',
-          notas: 'Llevar conos adicionales',
-        ),
-        EntrenamientoProximo(
-          fecha: DateTime.now().add(const Duration(days: 5)),
-          tipo: 'Físico',
-          duracion: '75 min',
-          objetivos: 'Fuerza y resistencia',
-          ubicacion: 'Gimnasio',
-        ),
-      ]);
-    });
   }
 
   @override

@@ -53,7 +53,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
   @override
   void initState() {
     super.initState();
-    _cargarEntrenamientosEjemplo();
   }
 
   @override
@@ -64,32 +63,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
     _ubicacionController.dispose();
     _observacionesController.dispose();
     super.dispose();
-  }
-
-  // Carga algunos entrenamientos de ejemplo para mostrar al usuario
-  void _cargarEntrenamientosEjemplo() {
-    setState(() {
-      _entrenamientosAnteriores.addAll([
-        EntrenamientoAnterior(
-          fecha: DateTime.now().subtract(const Duration(days: 3)),
-          tipo: 'Técnico',
-          duracion: '90 min',
-          intensidad: 'Media',
-          objetivos: 'Pases y control',
-          ubicacion: 'Campo principal',
-          observaciones: 'Buen rendimiento general',
-        ),
-        EntrenamientoAnterior(
-          fecha: DateTime.now().subtract(const Duration(days: 7)),
-          tipo: 'Físico',
-          duracion: '75 min',
-          intensidad: 'Alta',
-          objetivos: 'Resistencia cardiovascular',
-          ubicacion: 'Gimnasio',
-          observaciones: 'Intensidad adecuada mantenida',
-        ),
-      ]);
-    });
   }
 
   @override
