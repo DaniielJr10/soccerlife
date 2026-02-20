@@ -124,6 +124,58 @@ class EntrenamientosService {
     }
   }
 
+  /// Actualizar un entrenamiento existente
+  static Future<Map<String, dynamic>> actualizarEntrenamiento({
+    required String entrenamientoId,
+    DateTime? fecha,
+    int? duracion,
+    String? tipo,
+    String? ubicacion,
+    String? objetivos,
+    List<String>? habilidadesTrabajadas,
+    String? notas,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/$entrenamientoId');
+      final headers = await AuthService.obtenerHeadersAutenticados();
+
+      final body = <String, dynamic>{};
+      if (fecha != null) body['fecha'] = fecha.toIso8601String();
+      if (duracion != null) body['duracion'] = duracion;
+      if (tipo != null) body['tipo'] = tipo;
+      if (ubicacion != null) body['ubicacion'] = ubicacion;
+      if (objetivos != null) body['objetivos'] = objetivos;
+      if (habilidadesTrabajadas != null) body['habilidadesTrabajadas'] = habilidadesTrabajadas;
+      if (notas != null) body['notas'] = notas;
+
+      final response = await http.put(
+        url,
+        headers: headers,
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': 'Entrenamiento actualizado exitosamente',
+          'entrenamiento': json.decode(response.body)['entrenamiento'],
+        };
+      } else {
+        final errorData = json.decode(response.body);
+        return {
+          'success': false,
+          'message': errorData['message'] ?? 'Error al actualizar entrenamiento',
+        };
+      }
+    } catch (e) {
+      print('❌ Error en actualizarEntrenamiento: $e');
+      return {
+        'success': false,
+        'message': 'Error de conexión: $e',
+      };
+    }
+  }
+
   /// Marcar entrenamiento como completado
   static Future<Map<String, dynamic>> completarEntrenamiento({
     required String entrenamientoId,

@@ -809,8 +809,34 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
 
   Future<void> _guardarPartido({PartidoJugado? partidoEditar, int? index}) async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Si es edición, solo actualizar localmente
+      final tarjetaStr = _tarjetasSeleccionadas ?? 'Ninguna';
+      int amarillas = 0, rojas = 0;
+      if (tarjetaStr == 'Amarilla') { amarillas = 1; }
+      else if (tarjetaStr == 'Doble Amarilla') { amarillas = 2; rojas = 1; }
+      else if (tarjetaStr == 'Roja') { rojas = 1; }
+
       if (partidoEditar != null && index != null) {
+        // Edición: actualizar en el backend
+        final id = partidoEditar.id;
+        if (id != null) {
+          await PartidosService.actualizarPartido(
+            partidoId: id,
+            equipoRival: _equipoContrarioController.text,
+            fecha: _fechaSeleccionada,
+            lugar: '-',
+          );
+          await PartidosResultadoService.registrarResultado(
+            partidoId: id,
+            golesLocal: int.parse(_golesAFavorController.text),
+            golesVisitante: int.parse(_golesEnContraController.text),
+            goles: int.parse(_golesAnotadosController.text),
+            asistencias: int.parse(_asistenciasController.text),
+            tarjetasAmarillas: amarillas,
+            tarjetasRojas: rojas,
+            minutosJugados: int.parse(_minutosController.text),
+          );
+        }
+        if (!mounted) return;
         final partido = PartidoJugado(
           id: partidoEditar.id,
           fecha: _fechaSeleccionada!,
@@ -821,7 +847,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
           posicion: '',
           golesAnotados: int.parse(_golesAnotadosController.text),
           asistencias: int.parse(_asistenciasController.text),
-          tarjetas: _tarjetasSeleccionadas!,
+          tarjetas: tarjetaStr,
           notas: _notasController.text,
         );
         setState(() {
@@ -834,13 +860,6 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       }
 
       // Nuevo partido: guardar en API
-      final tarjetaStr = _tarjetasSeleccionadas ?? 'Ninguna';
-      int amarillas = 0, rojas = 0;
-      if (tarjetaStr == 'Amarilla') { amarillas = 1; }
-      else if (tarjetaStr == 'Doble Amarilla') { amarillas = 2; rojas = 1; }
-      else if (tarjetaStr == 'Roja') { rojas = 1; }
-
-      // Paso 1: crear el partido
       final crearRes = await PartidosService.crearPartido(
         equipoRival: _equipoContrarioController.text,
         fecha: _fechaSeleccionada!,
@@ -857,7 +876,7 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
 
       final partidoId = crearRes['partido']['_id'] as String;
 
-      // Paso 2: registrar resultado
+      // Registrar resultado
       final resultRes = await PartidosResultadoService.registrarResultado(
         partidoId: partidoId,
         golesLocal: int.parse(_golesAFavorController.text),

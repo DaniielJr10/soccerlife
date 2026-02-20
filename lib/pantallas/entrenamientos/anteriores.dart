@@ -743,8 +743,29 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
   // Guarda un nuevo entrenamiento o actualiza uno existente
   Future<void> _guardarEntrenamiento(bool esEdicion, int index) async {
     if (_formAnteriorKey.currentState!.validate()) {
-      // Si es edición, solo actualizar localmente
+      final durMinutos = _parseDuracion(_duracionController.text);
+
       if (esEdicion) {
+        final id = _entrenamientosAnteriores[index].id;
+        if (id != null) {
+          final res = await EntrenamientosService.actualizarEntrenamiento(
+            entrenamientoId: id,
+            fecha: _fechaEntrenamientoAnterior,
+            duracion: durMinutos,
+            tipo: _tipoSeleccionado,
+            ubicacion: _ubicacionController.text,
+            objetivos: _objetivosController.text,
+            notas: _observacionesController.text.isEmpty ? null : _observacionesController.text,
+          );
+          if (!mounted) return;
+          if (res['success'] != true) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Error: ${res['message']}'),
+              backgroundColor: Colors.red,
+            ));
+            return;
+          }
+        }
         final entrenamiento = EntrenamientoAnterior(
           id: _entrenamientosAnteriores[index].id,
           fecha: _fechaEntrenamientoAnterior!,
@@ -768,7 +789,6 @@ class _EntrenamientosAnterioresPageState extends State<EntrenamientosAnterioresP
       }
 
       // Nuevo entrenamiento: guardar en API
-      final durMinutos = _parseDuracion(_duracionController.text);
       final crearRes = await EntrenamientosService.crearEntrenamiento(
         fecha: _fechaEntrenamientoAnterior!,
         duracion: durMinutos,
