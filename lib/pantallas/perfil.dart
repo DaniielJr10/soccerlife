@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'editarperfil.dart';
+import '../models/usuario_model.dart';
+import '../services/storage_service.dart';
+import '../services/auth_service.dart';
 
 /// Página de perfil del usuario donde puede ver y gestionar su información personal
 /// Incluye datos del jugador, configuraciones y opciones de la cuenta
@@ -23,17 +26,9 @@ class _PerfilPageState extends State<PerfilPage>
   // Para manejar la imagen del perfil
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
-  
-  // Información del usuario (en producción vendría de una base de datos o API)
-  final Map<String, dynamic> _userInfo = {
-    'nombre': 'Daniel Rodriguez',
-    'email': 'daniel@email.com',
-    'posicion': 'Delantero',
-    'edad': 20,
-    'club': 'FC Barcelona Academy',
-    'altura': 1.80,
-    'peso': 75,
-  };
+
+  // Información del usuario cargada desde el almacenamiento local
+  UsuarioModel _usuario = UsuarioModel.vacio();
 
   @override
   void initState() {
@@ -48,6 +43,18 @@ class _PerfilPageState extends State<PerfilPage>
     );
     // Iniciamos la animación automáticamente al cargar la página
     _animationController.forward();
+    // Cargamos los datos reales del usuario
+    _cargarDatosUsuario();
+  }
+
+  /// Carga los datos del usuario desde el almacenamiento local
+  Future<void> _cargarDatosUsuario() async {
+    final usuario = await StorageService.obtenerUsuarioModel();
+    if (mounted) {
+      setState(() {
+        _usuario = usuario;
+      });
+    }
   }
 
   @override
@@ -262,7 +269,7 @@ class _PerfilPageState extends State<PerfilPage>
                             backgroundImage: _profileImage != null ? FileImage(_profileImage!) : null,
                             child: _profileImage == null
                                 ? Text(
-                                    _userInfo['nombre'].split(' ').map((n) => n[0]).take(2).join().toUpperCase(),
+                                    _usuario.iniciales,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 24,
@@ -309,7 +316,7 @@ class _PerfilPageState extends State<PerfilPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _userInfo['nombre'],
+                        _usuario.nombre,
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -319,7 +326,7 @@ class _PerfilPageState extends State<PerfilPage>
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        _userInfo['email'],
+                        _usuario.email,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Color(0xFF1a1a2e),
@@ -369,7 +376,7 @@ class _PerfilPageState extends State<PerfilPage>
                           ),
                         ),
                         Text(
-                          _userInfo['posicion'],
+                          _usuario.posicion,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -388,11 +395,11 @@ class _PerfilPageState extends State<PerfilPage>
             // Estadísticas del jugador en tarjetas
             Row(
               children: [
-                Expanded(child: _buildStatCard('Edad', '${_userInfo['edad']} años', Icons.cake_outlined, const Color(0xFFf093fb), cardColor: Color(0xFF1a1a2e))),
+                Expanded(child: _buildStatCard('Edad', _usuario.edad > 0 ? '${_usuario.edad} años' : '-', Icons.cake_outlined, const Color(0xFFf093fb), cardColor: Color(0xFF1a1a2e))),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatCard('Altura', '${_userInfo['altura']}m', Icons.height_outlined, const Color(0xFF4facfe), cardColor: Color(0xFF1a1a2e))),
+                Expanded(child: _buildStatCard('Altura', _usuario.estatura > 0 ? '${(_usuario.estatura / 100).toStringAsFixed(2)}m' : '-', Icons.height_outlined, const Color(0xFF4facfe), cardColor: Color(0xFF1a1a2e))),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatCard('Peso', '${_userInfo['peso']}kg', Icons.monitor_weight_outlined, const Color(0xFF43e97b), cardColor: Color(0xFF1a1a2e))),
+                Expanded(child: _buildStatCard('Peso', _usuario.peso > 0 ? '${_usuario.peso}kg' : '-', Icons.monitor_weight_outlined, const Color(0xFF43e97b), cardColor: Color(0xFF1a1a2e))),
               ],
             ),
             
@@ -433,7 +440,7 @@ class _PerfilPageState extends State<PerfilPage>
                           ),
                         ),
                         Text(
-                          _userInfo['club'],
+                          _usuario.club,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -672,23 +679,83 @@ class _PerfilPageState extends State<PerfilPage>
   /// En una implementación completa, estas navegarían a pantallas específicas
   
   void _editProfile(BuildContext context) async {
+    final initialData = {
+      'nombre': _usuario.nombre,
+      'posicion': _usuario.posicion,
+      'edad': _usuario.edad,
+      'club': _usuario.club,
+      'altura': _usuario.estatura > 0 ? _usuario.estatura / 100 : null,
+      'peso': _usuario.peso > 0 ? _usuario.peso : null,
+    };
+
     final updatedData = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
-        builder: (context) => EditarPerfilPage(initialData: _userInfo),
+        builder: (context) => EditarPerfilPage(initialData: initialData),
       ),
     );
-    
-    // Si se devolvieron datos actualizados, actualizar la información local
+
+    // Si se devolvieron datos actualizados, actualizar el modelo del usuario
     if (updatedData != null) {
+      // 'altura' viene como "1.80m", la BD la guarda en cm
+      final estaturaMetros = double.tryParse(
+            (updatedData['altura']?.toString() ?? '').replaceAll('m', ''),
+          ) ?? 0.0;
+      final estaturaEnCm = estaturaMetros > 0 ? estaturaMetros * 100 : _usuario.estatura;
+      final nuevoPeso = int.tryParse(
+            (updatedData['peso']?.toString() ?? '').replaceAll('kg', ''),
+          ) ?? _usuario.peso;
+
+      final nuevoUsuario = UsuarioModel(
+        nombre: updatedData['nombre'] ?? _usuario.nombre,
+        email: _usuario.email,
+        posicion: updatedData['posicion'] ?? _usuario.posicion,
+        club: updatedData['equipo'] ?? _usuario.club,
+        edad: int.tryParse(updatedData['edad']?.toString() ?? '') ?? _usuario.edad,
+        estatura: estaturaEnCm,
+        peso: nuevoPeso,
+      );
+
+      // Persistir en la base de datos
+      final userId = await StorageService.obtenerUserId() ?? '';
+      if (userId.isNotEmpty) {
+        final resultado = await AuthService.actualizarPerfil(
+          userId: userId,
+          datos: {
+            'nombre': nuevoUsuario.nombre,
+            'posicion': nuevoUsuario.posicion,
+            'club': nuevoUsuario.club,
+            'edad': nuevoUsuario.edad,
+            'estatura': nuevoUsuario.estatura.round(),
+            'peso': nuevoUsuario.peso,
+          },
+        );
+        if (mounted && !resultado['success']) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Advertencia: no se pudo guardar en servidor. ${resultado['message']}'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+
+      // Guardar localmente
+      await StorageService.guardarDatosUsuario(
+        userId: userId,
+        email: nuevoUsuario.email,
+        nombre: nuevoUsuario.nombre,
+      );
+      await StorageService.guardarPerfilCompleto(
+        posicion: nuevoUsuario.posicion,
+        club: nuevoUsuario.club,
+        edad: nuevoUsuario.edad,
+        estatura: nuevoUsuario.estatura,
+        peso: nuevoUsuario.peso,
+      );
       setState(() {
-        _userInfo['nombre'] = updatedData['nombre'];
-        _userInfo['posicion'] = updatedData['posicion'];
-        _userInfo['edad'] = int.tryParse(updatedData['edad']) ?? _userInfo['edad'];
-        _userInfo['club'] = updatedData['equipo'];
-        _userInfo['altura'] = double.tryParse(updatedData['altura'].replaceAll('m', '')) ?? _userInfo['altura'];
-        _userInfo['peso'] = int.tryParse(updatedData['peso'].replaceAll('kg', '')) ?? _userInfo['peso'];
+        _usuario = nuevoUsuario;
       });
-      
+
       // Notificar a la página principal que el perfil se actualizó
       if (widget.onPerfilActualizado != null) {
         widget.onPerfilActualizado!(updatedData);

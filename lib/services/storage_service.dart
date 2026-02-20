@@ -13,6 +13,8 @@ class StorageService {
   static const String _keyUserPosicion = 'user_posicion';
   static const String _keyUserClub = 'user_club';
   static const String _keyUserEdad = 'user_edad';
+  static const String _keyUserEstatura = 'user_estatura';
+  static const String _keyUserPeso = 'user_peso';
 
   /// Guardar token de autenticación
   static Future<bool> guardarToken(String token) async {
@@ -54,17 +56,21 @@ class StorageService {
     }
   }
 
-  /// Guardar perfil completo del usuario (incluyendo posición, club y edad)
+  /// Guardar perfil completo del usuario (incluyendo posición, club, edad, estatura y peso)
   static Future<bool> guardarPerfilCompleto({
     required String posicion,
     required String club,
     required int edad,
+    double estatura = 0.0,
+    int peso = 0,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_keyUserPosicion, posicion);
       await prefs.setString(_keyUserClub, club);
       await prefs.setInt(_keyUserEdad, edad);
+      await prefs.setDouble(_keyUserEstatura, estatura);
+      await prefs.setInt(_keyUserPeso, peso);
       return true;
     } catch (e) {
       print('Error guardando perfil: $e');
@@ -102,6 +108,26 @@ class StorageService {
     }
   }
 
+  /// Obtener estatura del usuario (en metros)
+  static Future<double> obtenerUserEstatura() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getDouble(_keyUserEstatura) ?? 0.0;
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  /// Obtener peso del usuario (en kg)
+  static Future<int> obtenerUserPeso() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getInt(_keyUserPeso) ?? 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
   /// Obtener todos los datos del usuario como modelo
   static Future<UsuarioModel> obtenerUsuarioModel() async {
     final nombre = await obtenerUserNombre() ?? '';
@@ -109,12 +135,16 @@ class StorageService {
     final posicion = await obtenerUserPosicion();
     final club = await obtenerUserClub();
     final edad = await obtenerUserEdad();
+    final estatura = await obtenerUserEstatura();
+    final peso = await obtenerUserPeso();
     return UsuarioModel(
       nombre: nombre,
       email: email,
       posicion: posicion,
       club: club,
       edad: edad,
+      estatura: estatura,
+      peso: peso,
     );
   }
 
@@ -169,6 +199,8 @@ class StorageService {
       await prefs.remove(_keyUserPosicion);
       await prefs.remove(_keyUserClub);
       await prefs.remove(_keyUserEdad);
+      await prefs.remove(_keyUserEstatura);
+      await prefs.remove(_keyUserPeso);
       return true;
     } catch (e) {
       print('Error limpiando datos: $e');

@@ -211,6 +211,8 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
               posicion: _posicionSeleccionada ?? 'Volante',
               club: _clubController.text.trim(),
               edad: int.tryParse(_edadController.text.trim()) ?? 0,
+              estatura: (double.tryParse(_estaturaController.text.trim().replaceAll(',', '.')) ?? 0.0) * 100,
+              peso: int.tryParse(_pesoController.text.trim()) ?? 0,
             );
           } catch (storageError) {
             // Error de almacenamiento local — no afecta al flujo del usuario

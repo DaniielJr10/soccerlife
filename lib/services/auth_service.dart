@@ -53,6 +53,12 @@ class AuthService {
             edad: usuario['edad'] is int
                 ? usuario['edad'] as int
                 : int.tryParse(usuario['edad']?.toString() ?? '') ?? 0,
+            estatura: usuario['estatura'] is double
+                ? usuario['estatura'] as double
+                : double.tryParse(usuario['estatura']?.toString() ?? '') ?? 0.0,
+            peso: usuario['peso'] is int
+                ? usuario['peso'] as int
+                : int.tryParse(usuario['peso']?.toString() ?? '') ?? 0,
           );
         }
 
@@ -146,6 +152,36 @@ class AuthService {
         'message': e.toString().replaceAll('Exception: ', ''),
         'emailDuplicado': false,
       };
+    }
+  }
+
+  /// Actualizar perfil del usuario en la base de datos
+  static Future<Map<String, dynamic>> actualizarPerfil({
+    required String userId,
+    required Map<String, dynamic> datos,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/usuarios/$userId');
+      final headers = await obtenerHeadersAutenticados();
+
+      final response = await http.put(
+        url,
+        headers: headers,
+        body: json.encode(datos),
+      );
+
+      if (response.statusCode == 200) {
+        return {'success': true, 'data': json.decode(response.body)};
+      } else {
+        final errorData = json.decode(response.body);
+        return {
+          'success': false,
+          'message': errorData['message'] ?? 'Error al actualizar perfil',
+        };
+      }
+    } catch (e) {
+      print('❌ Error actualizando perfil: $e');
+      return {'success': false, 'message': 'Error de conexión: $e'};
     }
   }
 

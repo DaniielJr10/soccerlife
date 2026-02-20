@@ -6,6 +6,8 @@ class UsuarioModel {
   final String posicion;
   final String club;
   final int edad;
+  final double estatura;
+  final int peso;
 
   const UsuarioModel({
     required this.nombre,
@@ -13,6 +15,8 @@ class UsuarioModel {
     required this.posicion,
     required this.club,
     required this.edad,
+    this.estatura = 0.0,
+    this.peso = 0,
   });
 
   /// Crea un usuario vacío (valores por defecto para nuevos usuarios).
@@ -22,6 +26,8 @@ class UsuarioModel {
         posicion: '',
         club: '',
         edad: 0,
+        estatura: 0.0,
+        peso: 0,
       );
 
   /// Crea el modelo desde un mapa (respuesta del backend).
@@ -33,6 +39,12 @@ class UsuarioModel {
         edad: map['edad'] is int
             ? map['edad'] as int
             : int.tryParse(map['edad']?.toString() ?? '') ?? 0,
+        estatura: map['estatura'] is double
+            ? map['estatura'] as double
+            : double.tryParse(map['estatura']?.toString() ?? '') ?? 0.0,
+        peso: map['peso'] is int
+            ? map['peso'] as int
+            : int.tryParse(map['peso']?.toString() ?? '') ?? 0,
       );
 
   /// Iniciales del nombre para el avatar.
