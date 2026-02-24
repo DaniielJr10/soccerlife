@@ -1,9 +1,13 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../models/usuario_model.dart';
 import '../../../../services/profile_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../hoja_de_vida/presentation/pages/hoja_de_vida_page.dart';
+import '../../../profile_picture/application/profile_picture_service.dart';
+import '../../../profile_picture/presentation/pages/profile_picture_page.dart';
+import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
 import 'edit_profile_page.dart';
 
 /// Página de perfil del jugador.
@@ -20,6 +24,10 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _cargando = true;
   String? _errorMsg;
 
+  // Foto de perfil
+  Uint8List? _photoBytes;
+  bool _cargandoFoto = true;
+
   @override
   void initState() {
     super.initState();
@@ -29,23 +37,49 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _cargar() async {
     setState(() { _cargando = true; _errorMsg = null; });
 
-    // Intenta cargar desde MongoDB
-    final resultado = await ProfileService.obtenerPerfil();
+    // Carga perfil y foto en paralelo
+    final results = await Future.wait([
+      ProfileService.obtenerPerfil(),
+      ProfilePictureService.obtenerFoto(),
+    ]);
+
     if (mounted) {
-      if (resultado['success'] == true) {
-        final u = resultado['usuario'] as Map<String, dynamic>;
-        setState(() {
-          _usuario = UsuarioModel.fromMap(u);
-          _cargando = false;
-        });
+      // Perfil
+      final perfilResult = results[0] as Map<String, dynamic>;
+      if (perfilResult['success'] == true) {
+        final u = perfilResult['usuario'] as Map<String, dynamic>;
+        _usuario = UsuarioModel.fromMap(u);
       } else {
-        // Fallback a caché local
         final cached = await StorageService.obtenerUsuarioModel();
-        setState(() {
-          _usuario = cached;
-          _cargando = false;
-          _errorMsg = 'Sin conexión — mostrando datos locales';
-        });
+        _usuario = cached;
+        _errorMsg = 'Sin conexión — mostrando datos locales';
+      }
+
+      // Foto de perfil
+      final fotoResult = results[1] as ProfilePictureResult;
+      if (fotoResult.success) {
+        _photoBytes = fotoResult.entity?.imageBytes;
+      }
+
+      setState(() { _cargando = false; _cargandoFoto = false; });
+    }
+  }
+
+  Future<void> _abrirFotoPerfil() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProfilePicturePage(
+          nombre: _usuario.nombre,
+          fotoActual: _photoBytes,
+        ),
+      ),
+    );
+    // Al volver, recarga la foto desde el servidor para reflejar cualquier cambio
+    if (mounted) {
+      final res = await ProfilePictureService.obtenerFoto();
+      if (mounted && res.success) {
+        setState(() => _photoBytes = res.entity?.imageBytes);
       }
     }
   }
@@ -159,18 +193,15 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
   Widget _buildAvatar() {
-    final initials = _initials(_usuario.nombre);
     return Center(
       child: Column(
         children: [
-          CircleAvatar(
-            radius: 48,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-            child: Text(initials,
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary)),
+          ProfileAvatarWidget(
+            nombre: _usuario.nombre,
+            imageBytes: _cargandoFoto ? null : _photoBytes,
+            radius: 52,
+            showEditBadge: true,
+            onTap: _abrirFotoPerfil,
           ),
           const SizedBox(height: 12),
           Text(
@@ -184,6 +215,17 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(_usuario.email,
               style: const TextStyle(
                   color: AppColors.textSecondary, fontSize: 14)),
+          const SizedBox(height: 6),
+          GestureDetector(
+            onTap: _abrirFotoPerfil,
+            child: Text(
+              _photoBytes != null ? 'Cambiar foto' : 'Añadir foto',
+              style: const TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
         ],
       ),
     );
@@ -312,11 +354,5 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  String _initials(String name) {
-    final parts = name.trim().split(' ');
-    if (parts.isEmpty || parts.first.isEmpty) return '?';
-    if (parts.length == 1) return parts.first[0].toUpperCase();
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
-  }
 }
 

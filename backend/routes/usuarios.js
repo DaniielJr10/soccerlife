@@ -16,6 +16,10 @@ const {
   obtenerInfoCv,
   guardarCv,
   eliminarCv,
+  // Foto de perfil
+  obtenerFotoPerfil,
+  guardarFotoPerfil,
+  eliminarFotoPerfil,
 } = require('../controllers/usuarioController');
 const { loginUsuario } = require('../controllers/loginController');
 const { verificarToken } = require('../middleware/auth');
@@ -54,6 +58,14 @@ router.post('/login', loginUsuario);
 router.post('/recuperar-password/email', solicitarRecuperacionEmail);
 router.post('/verificar-codigo-recuperacion', verificarCodigoRecuperacion);
 router.post('/cambiar-password-recuperacion', cambiarPasswordRecuperacion);
+
+// ── Foto de perfil ──────────────────────────────────────────────────────────
+// GET  /api/usuarios/foto-perfil
+router.get('/foto-perfil', verificarToken, obtenerFotoPerfil);
+// PUT  /api/usuarios/foto-perfil
+router.put('/foto-perfil', verificarToken, guardarFotoPerfil);
+// DELETE /api/usuarios/foto-perfil
+router.delete('/foto-perfil', verificarToken, eliminarFotoPerfil);
 
 // ── CRUD general ──────────────────────────────────────────────────────────────
 router.get('/', obtenerUsuarios);

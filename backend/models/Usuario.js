@@ -76,6 +76,8 @@ const usuarioSchema = new mongoose.Schema({
   cartaFifa: { type: cartaFifaSchema, default: null },
   cvNombre:  { type: String, trim: true },     // nombre del archivo PDF
   cvBase64:  { type: String },                 // PDF codificado en base64
+  // ── Foto de perfil ───────────────────────────────────────────────────
+  fotoPerfil: { type: String },                // imagen en base64 (JPEG/PNG)
 }, {
   timestamps: true // Agrega createdAt y updatedAt automáticamente
 });

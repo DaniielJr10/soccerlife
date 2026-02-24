@@ -226,6 +226,53 @@ const eliminarCv = async (req, res) => {
   }
 };
 
+// ── Foto de Perfil ────────────────────────────────────────────────────────────────
+
+// GET /usuarios/foto-perfil— devuelve la foto si existe
+const obtenerFotoPerfil = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuarioId).select('fotoPerfil');
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json({
+      success: true,
+      existe: !!usuario.fotoPerfil,
+      fotoPerfil: usuario.fotoPerfil ?? null,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener foto de perfil', error: error.message });
+  }
+};
+
+// PUT /usuarios/foto-perfil — guarda/reemplaza la foto (base64)
+const guardarFotoPerfil = async (req, res) => {
+  try {
+    const { fotoBase64 } = req.body;
+    if (!fotoBase64) {
+      return res.status(400).json({ message: 'El campo fotoBase64 es requerido' });
+    }
+    // Validación básica: debe ser base64 de imagen
+    if (!fotoBase64.startsWith('data:image') && fotoBase64.length < 50) {
+      return res.status(400).json({ message: 'Formato de imagen inválido' });
+    }
+    await Usuario.findByIdAndUpdate(req.usuarioId, { fotoPerfil: fotoBase64 });
+    console.log(`📸 Foto de perfil guardada para usuario ${req.usuarioId}`);
+    res.json({ success: true, message: 'Foto de perfil guardada correctamente' });
+  } catch (error) {
+    res.status(400).json({ message: 'Error al guardar foto de perfil', error: error.message });
+  }
+};
+
+// DELETE /usuarios/foto-perfil — elimina la foto del usuario
+const eliminarFotoPerfil = async (req, res) => {
+  try {
+    await Usuario.findByIdAndUpdate(req.usuarioId, { $unset: { fotoPerfil: '' } });
+    console.log(`🗑️ Foto de perfil eliminada para usuario ${req.usuarioId}`);
+    res.json({ success: true, message: 'Foto de perfil eliminada correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar foto de perfil', error: error.message });
+  }
+};
+
 module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
@@ -242,4 +289,8 @@ module.exports = {
   obtenerInfoCv,
   guardarCv,
   eliminarCv,
+  // Foto de perfil
+  obtenerFotoPerfil,
+  guardarFotoPerfil,
+  eliminarFotoPerfil,
 };
