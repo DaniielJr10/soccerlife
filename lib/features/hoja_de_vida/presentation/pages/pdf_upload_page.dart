@@ -1,6 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../application/pdf_cv_service.dart';
 
 /// Página para cargar el CV deportivo en formato PDF.
 class PdfUploadPage extends StatefulWidget {
@@ -11,31 +13,77 @@ class PdfUploadPage extends StatefulWidget {
 }
 
 class _PdfUploadPageState extends State<PdfUploadPage> {
-  PlatformFile? _selectedFile;
-  bool _isUploading = false;
-  bool _uploadDone = false;
+  String?  _fileName;
+  int?     _fileSize;
+  Uint8List? _fileBytes;
+
+  bool   _isUploading = false;
+  bool   _uploadDone  = false;
+  String? _errorMsg;
+
+  // ── Selección de archivo ──────────────────────────────────────────────────
 
   Future<void> _pickPdf() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-      allowMultiple: false,
+    setState(() { _errorMsg = null; _uploadDone = false; });
+
+    FilePickerResult? result;
+    try {
+      result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false,
+        withData: true,          // ← imprescindible: carga los bytes en web y mobile
+        withReadStream: false,
+      );
+    } catch (e) {
+      setState(() => _errorMsg = 'No se pudo abrir el selector de archivos.');
+      return;
+    }
+
+    if (result == null || result.files.isEmpty) return;
+
+    final file = result.files.first;
+
+    if (file.bytes == null) {
+      setState(() => _errorMsg = 'No se pudieron leer los datos del archivo.');
+      return;
+    }
+
+    setState(() {
+      _fileName  = file.name;
+      _fileSize  = file.size;
+      _fileBytes = file.bytes;
+    });
+  }
+
+  // ── Subida real ──────────────────────────────────────────────────────────
+
+  Future<void> _subirCv() async {
+    if (_fileBytes == null || _fileName == null) return;
+    setState(() { _isUploading = true; _errorMsg = null; });
+
+    final res = await PdfCvService.subirCv(
+      bytes: _fileBytes!,
+      filename: _fileName!,
     );
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        _selectedFile = result.files.first;
-        _uploadDone = false;
-      });
+
+    if (!mounted) return;
+    if (res.success) {
+      setState(() { _isUploading = false; _uploadDone = true; });
+    } else {
+      setState(() { _isUploading = false; _errorMsg = res.message; });
     }
   }
 
-  Future<void> _simularSubida() async {
-    if (_selectedFile == null) return;
-    setState(() => _isUploading = true);
-    // Simulación de subida — conectar al backend real aquí
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) setState(() { _isUploading = false; _uploadDone = true; });
-  }
+  void _resetFile() => setState(() {
+        _fileName   = null;
+        _fileSize   = null;
+        _fileBytes  = null;
+        _uploadDone = false;
+        _errorMsg   = null;
+      });
+
+  // ── UI ───────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -47,69 +95,109 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            _buildDropZone(),
-            const SizedBox(height: 24),
-            if (_selectedFile != null) _buildFileInfo(),
-            if (_uploadDone) _buildSuccessBanner(),
-            const Spacer(),
-            _buildUploadButton(),
-            const SizedBox(height: 16),
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const SizedBox(height: 8),
+              _DropZone(
+                hasFile: _fileBytes != null,
+                uploadDone: _uploadDone,
+                onTap: _uploadDone ? null : _pickPdf,
+              ),
+              const SizedBox(height: 20),
+              if (_fileBytes != null && !_uploadDone)
+                _FileInfoCard(
+                  name: _fileName!,
+                  sizeBytes: _fileSize ?? _fileBytes!.length,
+                  onRemove: _resetFile,
+                ),
+              if (_uploadDone) _SuccessBanner(fileName: _fileName!),
+              if (_errorMsg != null) _ErrorBanner(message: _errorMsg!),
+              const Spacer(),
+              _UploadButton(
+                enabled: _fileBytes != null && !_isUploading && !_uploadDone,
+                isLoading: _isUploading,
+                isDone: _uploadDone,
+                onPressed: _subirCv,
+              ),
+              if (_uploadDone) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.upload_file_rounded),
+                    label: const Text('Subir otro CV'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                    onPressed: _resetFile,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildDropZone() {
+// ── Subwidgets ────────────────────────────────────────────────────────────────
+
+class _DropZone extends StatelessWidget {
+  final bool hasFile;
+  final bool uploadDone;
+  final VoidCallback? onTap;
+
+  const _DropZone({
+    required this.hasFile,
+    required this.uploadDone,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = uploadDone
+        ? AppColors.success
+        : hasFile
+            ? const Color(0xFFEF4444)
+            : AppColors.textMuted;
+
     return GestureDetector(
-      onTap: _pickPdf,
+      onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 250),
         width: double.infinity,
-        height: 200,
+        height: 195,
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: _selectedFile != null
-                ? const Color(0xFFEF4444)
-                : AppColors.border,
-            width: 1.5,
-            style: BorderStyle.solid,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.55), width: 1.8),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              _selectedFile != null
-                  ? Icons.picture_as_pdf_rounded
-                  : Icons.upload_file_rounded,
-              size: 52,
-              color: _selectedFile != null
-                  ? const Color(0xFFEF4444)
-                  : AppColors.textMuted,
-            ),
+            _IconBubble(icon: _icon, color: color),
             const SizedBox(height: 14),
             Text(
-              _selectedFile != null ? 'Archivo seleccionado' : 'Toca para seleccionar un PDF',
+              _label,
               style: TextStyle(
-                color: _selectedFile != null
-                    ? AppColors.textPrimary
-                    : AppColors.textSecondary,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+                  color: hasFile ? AppColors.textPrimary : AppColors.textSecondary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'Solo archivos .pdf',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+            Text(
+              uploadDone ? '' : 'Solo archivos .pdf',
+              style:
+                  const TextStyle(color: AppColors.textMuted, fontSize: 12),
             ),
           ],
         ),
@@ -117,50 +205,113 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
     );
   }
 
-  Widget _buildFileInfo() {
-    final kb = ((_selectedFile!.size ?? 0) / 1024).toStringAsFixed(1);
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.description_rounded,
-              color: Color(0xFFEF4444), size: 28),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_selectedFile!.name,
-                    style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600),
-                    overflow: TextOverflow.ellipsis),
-                Text('$kb KB',
-                    style: const TextStyle(
-                        color: AppColors.textSecondary, fontSize: 12)),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
-            onPressed: () => setState(() {
-              _selectedFile = null;
-              _uploadDone = false;
-            }),
-          ),
-        ],
-      ),
-    );
+  IconData get _icon {
+    if (uploadDone) return Icons.check_circle_outline_rounded;
+    if (hasFile) return Icons.picture_as_pdf_rounded;
+    return Icons.upload_file_rounded;
   }
 
-  Widget _buildSuccessBanner() => Container(
-        margin: const EdgeInsets.only(top: 16),
+  String get _label {
+    if (uploadDone) return 'CV subido correctamente';
+    if (hasFile) return 'Archivo listo para subir';
+    return 'Toca para seleccionar un PDF';
+  }
+}
+
+class _IconBubble extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  const _IconBubble({required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(colors: [
+            color.withValues(alpha: 0.18),
+            color.withValues(alpha: 0.04),
+          ]),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
+        ),
+        child: Icon(icon, color: color, size: 34),
+      );
+}
+
+class _FileInfoCard extends StatelessWidget {
+  final String name;
+  final int sizeBytes;
+  final VoidCallback onRemove;
+
+  const _FileInfoCard({
+    required this.name,
+    required this.sizeBytes,
+    required this.onRemove,
+  });
+
+  String get _sizeLabel {
+    if (sizeBytes >= 1024 * 1024) {
+      return '${(sizeBytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+    return '${(sizeBytes / 1024).toStringAsFixed(1)} KB';
+  }
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.picture_as_pdf_rounded,
+                  color: Color(0xFFEF4444), size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name,
+                      style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 2),
+                  Text(_sizeLabel,
+                      style: const TextStyle(
+                          color: AppColors.textSecondary, fontSize: 12)),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close_rounded,
+                  color: AppColors.textMuted, size: 20),
+              onPressed: onRemove,
+            ),
+          ],
+        ),
+      );
+}
+
+class _SuccessBanner extends StatelessWidget {
+  final String fileName;
+  const _SuccessBanner({required this.fileName});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.only(top: 4),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: AppColors.success.withValues(alpha: 0.1),
@@ -169,41 +320,105 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
         ),
         child: Row(
           children: [
-            Icon(Icons.check_circle_rounded, color: AppColors.success, size: 20),
+            const Icon(Icons.check_circle_rounded,
+                color: AppColors.success, size: 22),
             const SizedBox(width: 10),
-            const Expanded(
-              child: Text(
-                'CV subido correctamente',
-                style: TextStyle(color: AppColors.success, fontWeight: FontWeight.w600),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('¡CV subido correctamente!',
+                      style: TextStyle(
+                          color: AppColors.success,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14)),
+                  const SizedBox(height: 2),
+                  Text(fileName,
+                      style: const TextStyle(
+                          color: AppColors.textSecondary, fontSize: 12),
+                      overflow: TextOverflow.ellipsis),
+                ],
               ),
             ),
           ],
         ),
       );
+}
 
-  Widget _buildUploadButton() => SizedBox(
+class _ErrorBanner extends StatelessWidget {
+  final String message;
+  const _ErrorBanner({required this.message});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.only(top: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.danger.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.danger.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                color: AppColors.danger, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(message,
+                  style: const TextStyle(
+                      color: AppColors.danger, fontSize: 13)),
+            ),
+          ],
+        ),
+      );
+}
+
+class _UploadButton extends StatelessWidget {
+  final bool enabled;
+  final bool isLoading;
+  final bool isDone;
+  final VoidCallback onPressed;
+
+  const _UploadButton({
+    required this.enabled,
+    required this.isLoading,
+    required this.isDone,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
-          onPressed: _selectedFile != null && !_isUploading && !_uploadDone
-              ? _simularSubida
-              : null,
-          icon: _isUploading
+          onPressed: enabled ? onPressed : null,
+          icon: isLoading
               ? const SizedBox(
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(
-                      color: Colors.white, strokeWidth: 2))
-              : const Icon(Icons.cloud_upload_rounded),
-          label: Text(_isUploading
+                      color: Colors.white, strokeWidth: 2.5))
+              : Icon(isDone
+                  ? Icons.check_rounded
+                  : Icons.cloud_upload_rounded),
+          label: Text(isLoading
               ? 'Subiendo...'
-              : (_uploadDone ? 'Subido ✓' : 'Subir CV')),
+              : isDone
+                  ? 'Subido ✓'
+                  : 'Subir CV'),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFEF4444),
             foregroundColor: Colors.white,
+            disabledBackgroundColor:
+                const Color(0xFFEF4444).withValues(alpha: 0.35),
+            disabledForegroundColor: Colors.white54,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
+            textStyle: const TextStyle(
+                fontSize: 15, fontWeight: FontWeight.w700),
           ),
         ),
       );
 }
+
+
