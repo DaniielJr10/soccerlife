@@ -1,6 +1,5 @@
 const Estadistica = require('../models/Estadistica');
 const Partido = require('../models/Partido');
-const Entrenamiento = require('../models/Entrenamiento');
 
 const normalizarNumero = (value) => {
   const n = Number(value);
@@ -67,7 +66,7 @@ const calcularRachas = (partidosOrdenados) => {
 
 /**
  * Recalcula y persiste las estadísticas acumuladas del usuario.
- * Fuente de verdad: Partidos (finalizados) + Entrenamientos (completados).
+ * Fuente de verdad: Partidos (finalizados).
  */
 const recalcularEstadisticasUsuario = async (usuarioId) => {
   // Partidos que impactan estadísticas: finalizados y activos
@@ -76,13 +75,6 @@ const recalcularEstadisticasUsuario = async (usuarioId) => {
     activo: true,
     estado: 'finalizado',
   }).sort({ fecha: 1, createdAt: 1 });
-
-  // Entrenamientos que impactan estadísticas: completados y activos
-  const entrenamientos = await Entrenamiento.find({
-    usuarioId,
-    activo: true,
-    estado: 'completado',
-  });
 
   let estadistica = await Estadistica.findOne({ usuarioId });
   if (!estadistica) {
@@ -96,7 +88,6 @@ const recalcularEstadisticasUsuario = async (usuarioId) => {
   estadistica.tarjetas = { amarillas: 0, rojas: 0 };
   estadistica.minutosJugados = 0;
   estadistica.valoracionPromedio = 0;
-  estadistica.entrenamientos = { completados: 0, horasTotales: 0 };
   estadistica.rachaActual = { tipo: 'ninguna', cantidad: 0 };
   estadistica.mejorRacha = { victorias: 0, sinPerder: 0 };
 
@@ -134,12 +125,6 @@ const recalcularEstadisticasUsuario = async (usuarioId) => {
   if (conteoValoraciones > 0) {
     estadistica.valoracionPromedio = Number((sumaValoraciones / conteoValoraciones).toFixed(2));
   }
-
-  // Entrenamientos
-  estadistica.entrenamientos.completados = entrenamientos.length;
-  estadistica.entrenamientos.horasTotales = Number(
-    (entrenamientos.reduce((acc, e) => acc + normalizarNumero(e.duracion) / 60, 0)).toFixed(2)
-  );
 
   // Rachas
   const { rachaActual, mejorRacha } = calcularRachas(partidos);

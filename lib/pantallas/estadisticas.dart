@@ -33,7 +33,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
     'tarjetas_rojas': 0,
     'minutos_jugados': 0,
     'rating_promedio': 0.0,
-    'entrenamientos': 0,
   };
 
   @override
@@ -56,7 +55,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
       final partidos = (stats['partidos'] as Map?)?.cast<String, dynamic>() ?? {};
       final goles = (stats['goles'] as Map?)?.cast<String, dynamic>() ?? {};
       final tarjetas = (stats['tarjetas'] as Map?)?.cast<String, dynamic>() ?? {};
-      final entrenamientos = (stats['entrenamientos'] as Map?)?.cast<String, dynamic>() ?? {};
 
       setState(() {
         _estadisticasTemporada = {
@@ -70,7 +68,6 @@ class _EstadisticasPageState extends State<EstadisticasPage>
           'tarjetas_rojas': tarjetas['rojas'] ?? 0,
           'minutos_jugados': stats['minutosJugados'] ?? 0,
           'rating_promedio': (stats['valoracionPromedio'] ?? 0).toDouble(),
-          'entrenamientos': entrenamientos['completados'] ?? 0,
         };
         _cargando = false;
       });
@@ -200,7 +197,7 @@ class _EstadisticasPageState extends State<EstadisticasPage>
             children: [
               Expanded(child: _buildMiniCard('Asistencias', '${_estadisticasTemporada['asistencias']}')),
               const SizedBox(width: 10),
-              Expanded(child: _buildMiniCard('Entrenamientos', '${_estadisticasTemporada['entrenamientos'] ?? 12}')),
+              Expanded(child: _buildMiniCard('Rating', '${_estadisticasTemporada['rating_promedio'] ?? 0.0}')),
             ],
           ),
         ],

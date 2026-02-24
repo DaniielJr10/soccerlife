@@ -93,20 +93,6 @@ const estadisticaSchema = new mongoose.Schema({
     max: 10
   },
   
-  // Entrenamientos
-  entrenamientos: {
-    completados: {
-      type: Number,
-      default: 0,
-      min: 0
-    },
-    horasTotales: {
-      type: Number,
-      default: 0,
-      min: 0
-    }
-  },
-  
   // Racha actual
   rachaActual: {
     tipo: {

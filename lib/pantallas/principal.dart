@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'partidos/partidosjugados.dart';
 import 'partidos/partidosfuturos.dart';
-import 'entrenamientos/anteriores.dart';
-import 'entrenamientos/proximos.dart';
 import 'perfil.dart';
 import 'estadisticas.dart';
 import '../models/usuario_model.dart';
@@ -22,22 +20,6 @@ class PartidoProximo {
     required this.equipoRival,
     required this.lugar,
     required this.hora,
-  });
-}
-
-/// Clase que representa un entrenamiento próximo
-/// Incluye el tipo de entrenamiento, objetivos específicos y ubicación
-class EntrenamientoProximo {
-  final DateTime fecha;
-  final String tipo;
-  final String objetivos;
-  final String ubicacion;
-
-  EntrenamientoProximo({
-    required this.fecha,
-    required this.tipo,
-    required this.objetivos,
-    required this.ubicacion,
   });
 }
 
@@ -62,7 +44,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     'partidos': 0,
     'goles': 0,
     'asistencias': 0,
-    'entrenamientos': 0,
   };
 
   bool _cargando = true;
@@ -73,14 +54,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     equipoRival: 'Sin partido aún',
     lugar: '- -',
     hora: const TimeOfDay(hour: 0, minute: 0),
-  );
-
-  // Información del próximo entrenamiento programado
-  final EntrenamientoProximo _proximoEntrenamiento = EntrenamientoProximo(
-    fecha: DateTime.now().add(const Duration(days: 1)),
-    tipo: 'Sin entrenamiento',
-    objetivos: '- -',
-    ubicacion: '- -',
   );
 
   @override
@@ -98,18 +71,15 @@ class _PrincipalPageState extends State<PrincipalPage> {
       'partidos': 0,
       'goles': 0,
       'asistencias': 0,
-      'entrenamientos': 0,
     };
     if (resultado['success'] == true && resultado['estadisticas'] != null) {
       final s = resultado['estadisticas'] as Map<String, dynamic>;
       final partidos = (s['partidos'] as Map?)?.cast<String, dynamic>() ?? {};
       final goles = (s['goles'] as Map?)?.cast<String, dynamic>() ?? {};
-      final entrenos = (s['entrenamientos'] as Map?)?.cast<String, dynamic>() ?? {};
       stats = {
         'partidos': (partidos['jugados'] ?? 0) as int,
         'goles': (goles['total'] ?? 0) as int,
         'asistencias': (s['asistencias'] ?? 0) as int,
-        'entrenamientos': (entrenos['completados'] ?? 0) as int,
       };
     }
     if (!mounted) return;
@@ -142,10 +112,8 @@ class _PrincipalPageState extends State<PrincipalPage> {
       case 1:
         return const PartidosJugadosPage();
       case 2:
-        return const EntrenamientosAnterioresPage();
-      case 3:
         return const EstadisticasPage();
-      case 4:
+      case 3:
         return PerfilPage(onPerfilActualizado: _actualizarPerfil);
       default:
         return _buildHomeTab();
@@ -300,14 +268,13 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Sección que muestra los próximos eventos del jugador
-  /// Incluye tanto partidos como entrenamientos en tarjetas interactivas
+  /// Sección que muestra el próximo partido del jugador
   Widget _buildProximosEventos() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Próximos Eventos',
+          'Próximo Partido',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -316,13 +283,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _buildProximoPartidoCard()),
-            const SizedBox(width: 12),
-            Expanded(child: _buildProximoEntrenamientoCard()),
-          ],
-        ),
+        _buildProximoPartidoCard(),
       ],
     );
   }
@@ -441,120 +402,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
     );
   }
 
-  /// Tarjeta del próximo entrenamiento con navegación a entrenamientos próximos
-  /// Muestra tipo, ubicación, fecha y objetivos de la sesión
-  Widget _buildProximoEntrenamientoCard() {
-    return GestureDetector(
-      // Al tocar la tarjeta, navega a la página de entrenamientos próximos
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const EntrenamientosProximosPage()),
-        );
-      },
-      child: Container(
-        height: 140,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFF00f5ff),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1a1a2e),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.fitness_center,
-                    color: Color(0xFF00f5ff),
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    'Próximo Entrenamiento',
-                    style: TextStyle(
-                      color: Color(0xFF1a1a2e),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    _proximoEntrenamiento.tipo,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Color(0xFF1a1a2e),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    _proximoEntrenamiento.ubicacion,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 11,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 12,
-                        color: Colors.grey[500],
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          '${_formatearFecha(_proximoEntrenamiento.fecha)} • ${_proximoEntrenamiento.objetivos}',
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 10,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   /// Función que formatea las fechas de manera intuitiva para el usuario
   /// Convierte las fechas en texto amigable (Hoy, Mañana, etc.)
   String _formatearFecha(DateTime fecha) {
@@ -618,11 +465,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
               value: '${_statsResumen['asistencias'] ?? 0}',
               icon: Icons.handshake,
             ),
-            _buildPremiumStatCard(
-              title: 'Entrenamientos',
-              value: '${_statsResumen['entrenamientos'] ?? 0}',
-              icon: Icons.fitness_center,
-            ),
           ],
         ),
       ],
@@ -643,7 +485,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias' || title == 'Entrenamientos')
+          color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias')
               ? const Color(0xFF00f5ff)
               : const Color(0xFF0065F8).withValues(alpha: 0.3),
           width: 1,
@@ -665,13 +507,13 @@ class _PrincipalPageState extends State<PrincipalPage> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias' || title == 'Entrenamientos')
+                color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias')
                     ? const Color(0xFF1a1a2e)
                     : const Color(0xFF0065F8).withValues(alpha: 0.08),
               ),
               child: Icon(
                 icon,
-                color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias' || title == 'Entrenamientos')
+                color: (title == 'Partidos' || title == 'Goles' || title == 'Asistencias')
                     ? const Color(0xFF00f5ff)
                     : const Color(0xFF0065F8),
                 size: 20,
@@ -754,11 +596,6 @@ class _PrincipalPageState extends State<PrincipalPage> {
             icon: Icon(Icons.sports_soccer_outlined),
             activeIcon: Icon(Icons.sports_soccer),
             label: 'Partidos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center_outlined),
-            activeIcon: Icon(Icons.fitness_center),
-            label: 'Entrenamientos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics_outlined),

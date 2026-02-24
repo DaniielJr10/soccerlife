@@ -89,41 +89,6 @@ const logrosIniciales = [
     rareza: 'Legendario'
   },
   
-  // Logros de Entrenamientos
-  {
-    logroId: 'primer_entrenamiento',
-    titulo: 'Dedicación',
-    descripcion: 'Completa tu primer entrenamiento',
-    icono: '💪',
-    color: '#32CD32',
-    categoria: 'entrenamientos',
-    requisito: { tipo: 'entrenamientos', cantidad: 1 },
-    puntos: 10,
-    rareza: 'Común'
-  },
-  {
-    logroId: 'veinte_entrenamientos',
-    titulo: 'Disciplinado',
-    descripcion: 'Completa 20 entrenamientos',
-    icono: '🎯',
-    color: '#4169E1',
-    categoria: 'entrenamientos',
-    requisito: { tipo: 'entrenamientos', cantidad: 20 },
-    puntos: 40,
-    rareza: 'Raro'
-  },
-  {
-    logroId: 'cien_entrenamientos',
-    titulo: 'Máquina de Entrenamiento',
-    descripcion: 'Completa 100 entrenamientos',
-    icono: '🏋️',
-    color: '#8B008B',
-    categoria: 'entrenamientos',
-    requisito: { tipo: 'entrenamientos', cantidad: 100 },
-    puntos: 100,
-    rareza: 'Épico'
-  },
-  
   // Logros de Victorias
   {
     logroId: 'primera_victoria',

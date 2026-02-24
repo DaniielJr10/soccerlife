@@ -52,10 +52,6 @@ async function actualizarValidador() {
             valoracionPromedio: {
               bsonType: 'number',
               description: 'Valoración promedio'
-            },
-            entrenamientos: {
-              bsonType: 'object',
-              description: 'Estadísticas de entrenamientos'
             }
           }
         }

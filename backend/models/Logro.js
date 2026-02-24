@@ -40,7 +40,7 @@ const logroSchema = new mongoose.Schema({
   // Categoría del logro
   categoria: {
     type: String,
-    enum: ['partidos', 'goles', 'entrenamientos', 'racha', 'especial'],
+    enum: ['partidos', 'goles', 'racha', 'especial'],
     required: true
   },
   
@@ -49,7 +49,7 @@ const logroSchema = new mongoose.Schema({
     tipo: {
       type: String,
       enum: ['partidos_jugados', 'goles', 'asistencias', 'victorias', 
-             'entrenamientos', 'racha_victorias', 'valoracion', 'especial'],
+             'racha_victorias', 'valoracion', 'especial'],
       required: true
     },
     cantidad: {

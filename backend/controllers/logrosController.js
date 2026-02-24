@@ -129,9 +129,6 @@ const verificarLogros = async (req, res) => {
         case 'victorias':
           progresoActual = estadisticas.partidos.ganados;
           break;
-        case 'entrenamientos':
-          progresoActual = estadisticas.entrenamientos.completados;
-          break;
         case 'racha_victorias':
           if (estadisticas.rachaActual.tipo === 'victorias') {
             progresoActual = estadisticas.rachaActual.cantidad;

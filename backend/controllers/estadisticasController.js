@@ -51,7 +51,6 @@ const actualizarEstadisticas = async (req, res) => {
       'tarjetas',
       'minutosJugados',
       'valoracionPromedio',
-      'entrenamientos',
       'rachaActual',
       'mejorRacha'
     ];
@@ -125,7 +124,6 @@ const resetearEstadisticas = async (req, res) => {
     estadistica.tarjetas = { amarillas: 0, rojas: 0 };
     estadistica.minutosJugados = 0;
     estadistica.valoracionPromedio = 0;
-    estadistica.entrenamientos = { completados: 0, horasTotales: 0 };
     estadistica.rachaActual = { tipo: 'ninguna', cantidad: 0 };
     estadistica.mejorRacha = {
       victorias: mejorRachaVictorias,
