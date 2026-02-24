@@ -21,8 +21,8 @@ const actualizarPartido = async (req, res) => {
     
     // Actualizar solo campos permitidos
     const camposPermitidos = [
-      'equipoRival', 'fecha', 'hora', 'lugar', 
-      'tipo', 'notas', 'estado'
+      'equipoRival', 'fecha', 'hora', 'lugar',
+      'tipo', 'competicion', 'notas', 'estado'
     ];
     
     camposPermitidos.forEach(campo => {
@@ -64,9 +64,18 @@ const registrarResultado = async (req, res) => {
       golesVisitante,
       goles,
       asistencias,
+      remates,
+      rematesAlArco,
+      pasesCompletados,
+      pasesFallidos,
+      regatesExitosos,
+      regatesFallidos,
+      faltasCometidas,
+      faltasRecibidas,
       tarjetasAmarillas,
       tarjetasRojas,
       minutosJugados,
+      posicion,
       valoracion
     } = req.body;
     
@@ -88,8 +97,17 @@ const registrarResultado = async (req, res) => {
     
     // Actualizar estadísticas personales
     partido.estadisticasPersonales = {
+      posicion: posicion || '',
       goles: goles || 0,
       asistencias: asistencias || 0,
+      remates: remates || 0,
+      rematesAlArco: rematesAlArco || 0,
+      pasesCompletados: pasesCompletados || 0,
+      pasesFallidos: pasesFallidos || 0,
+      regatesExitosos: regatesExitosos || 0,
+      regatesFallidos: regatesFallidos || 0,
+      faltasCometidas: faltasCometidas || 0,
+      faltasRecibidas: faltasRecibidas || 0,
       tarjetasAmarillas: tarjetasAmarillas || 0,
       tarjetasRojas: tarjetasRojas || 0,
       minutosJugados: minutosJugados || 0,

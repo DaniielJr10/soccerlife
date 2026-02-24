@@ -14,6 +14,7 @@ const crearPartido = async (req, res) => {
       hora,
       lugar,
       tipo,
+      competicion,
       notas
     } = req.body;
     
@@ -32,6 +33,7 @@ const crearPartido = async (req, res) => {
       hora,
       lugar,
       tipo: tipo || 'Amistoso',
+      competicion: competicion || '',
       estado: 'programado',
       notas
     });

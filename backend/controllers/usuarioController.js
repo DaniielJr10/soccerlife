@@ -92,10 +92,52 @@ const eliminarUsuario = async (req, res) => {
   }
 };
 
+// Obtener perfil del usuario autenticado (fuente de verdad: MongoDB)
+const obtenerMiPerfil = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuarioId).select('-password');
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.json({ success: true, usuario });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener perfil', error: error.message });
+  }
+};
+
+// Actualizar perfil del usuario autenticado → persiste en MongoDB
+const actualizarMiPerfil = async (req, res) => {
+  try {
+    const camposPermitidos = ['nombre', 'posicion', 'club', 'edad', 'estatura', 'peso', 'telefono', 'numeroJugador'];
+    const actualizaciones = {};
+    camposPermitidos.forEach(campo => {
+      if (req.body[campo] !== undefined && req.body[campo] !== '') {
+        actualizaciones[campo] = req.body[campo];
+      }
+    });
+
+    const usuario = await Usuario.findByIdAndUpdate(
+      req.usuarioId,
+      actualizaciones,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    console.log(`✅ Perfil actualizado en MongoDB para: ${usuario.email}`);
+    res.json({ success: true, message: 'Perfil actualizado correctamente', usuario });
+  } catch (error) {
+    res.status(400).json({ message: 'Error al actualizar perfil', error: error.message });
+  }
+};
+
 module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   crearUsuario,
   actualizarUsuario,
-  eliminarUsuario
+  eliminarUsuario,
+  obtenerMiPerfil,
+  actualizarMiPerfil
 };

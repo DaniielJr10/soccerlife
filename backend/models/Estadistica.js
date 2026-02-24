@@ -63,7 +63,31 @@ const estadisticaSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
-  
+
+  // Estadísticas de remates
+  remates: {
+    total: { type: Number, default: 0, min: 0 },
+    alArco: { type: Number, default: 0, min: 0 }
+  },
+
+  // Estadísticas de pases
+  pases: {
+    completados: { type: Number, default: 0, min: 0 },
+    fallidos: { type: Number, default: 0, min: 0 }
+  },
+
+  // Estadísticas de regates
+  regates: {
+    exitosos: { type: Number, default: 0, min: 0 },
+    fallidos: { type: Number, default: 0, min: 0 }
+  },
+
+  // Estadísticas de faltas
+  faltas: {
+    cometidas: { type: Number, default: 0, min: 0 },
+    recibidas: { type: Number, default: 0, min: 0 }
+  },
+
   // Estadísticas disciplinarias
   tarjetas: {
     amarillas: {

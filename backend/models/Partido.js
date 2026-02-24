@@ -64,14 +64,66 @@ const partidoSchema = new mongoose.Schema({
     }
   },
   
+  // Competición (Liga, Copa, Amistoso, etc.)
+  competicion: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
   // Estadísticas personales del jugador en este partido
   estadisticasPersonales: {
+    posicion: {
+      type: String,
+      trim: true,
+      default: ''
+    },
     goles: {
       type: Number,
       min: 0,
       default: 0
     },
     asistencias: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    remates: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    rematesAlArco: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    pasesCompletados: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    pasesFallidos: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    regatesExitosos: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    regatesFallidos: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    faltasCometidas: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    faltasRecibidas: {
       type: Number,
       min: 0,
       default: 0

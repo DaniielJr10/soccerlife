@@ -1,0 +1,296 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_loading.dart';
+import '../../../../models/usuario_model.dart';
+import '../../../../services/storage_service.dart';
+import '../../../matches/application/providers/match_provider.dart';
+import '../../../matches/presentation/pages/match_detail_page.dart';
+import '../../../statistics/application/providers/statistics_provider.dart';
+import '../widgets/dashboard_header.dart';
+import '../widgets/quick_stats_widget.dart';
+import '../widgets/recent_match_item.dart';
+
+/// Página principal del dashboard — resumen ejecutivo del rendimiento.
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  UsuarioModel _usuario = UsuarioModel.vacio();
+  bool _cargandoUsuario = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+  }
+
+  Future<void> _loadUser() async {
+    final u = await StorageService.obtenerUsuarioModel();
+    if (mounted) setState(() { _usuario = u; _cargandoUsuario = false; });
+  }
+
+  void _loadData() {
+    context.read<StatisticsProvider>().load();
+    context.read<MatchProvider>().loadPlayed();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        backgroundColor: AppColors.card,
+        onRefresh: () async => _loadData(),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            _buildAppBar(),
+            SliverToBoxAdapter(
+              child: DashboardHeader(
+                usuario: _usuario,
+                cargando: _cargandoUsuario,
+              ),
+            ),
+            SliverToBoxAdapter(child: _buildStats()),
+            SliverToBoxAdapter(child: _buildPerformanceBar()),
+            SliverToBoxAdapter(child: _buildRecentMatches()),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return SliverAppBar(
+      pinned: true,
+      expandedHeight: 0,
+      backgroundColor: AppColors.surface,
+      title: Row(
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: const BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.sports_soccer,
+              color: AppColors.textOnPrimary,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 10),
+          const Text(
+            'SoccerLife',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        _buildSeasonBadge(),
+        const SizedBox(width: 12),
+      ],
+    );
+  }
+
+  Widget _buildSeasonBadge() {
+    final year = DateTime.now().year;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.primary.withOpacity(0.4)),
+      ),
+      child: Text(
+        'Temporada $year',
+        style: const TextStyle(
+          color: AppColors.primary,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStats() {
+    return Consumer<StatisticsProvider>(
+      builder: (_, provider, __) {
+        if (provider.isLoading) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: AppLoading(),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 16),
+          child: QuickStatsWidget(stats: provider.stats),
+        );
+      },
+    );
+  }
+
+  Widget _buildPerformanceBar() {
+    return Consumer<StatisticsProvider>(
+      builder: (_, provider, __) {
+        if (provider.isLoading || provider.stats.partidosJugados == 0) {
+          return const SizedBox.shrink();
+        }
+        final stats = provider.stats;
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Rendimiento por partido',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                _PerformanceRow(
+                  label: 'Victorias',
+                  value: stats.porcentajeVictorias,
+                  color: AppColors.success,
+                  detail: '${stats.partidosGanados}/${stats.partidosJugados}',
+                ),
+                const SizedBox(height: 10),
+                _PerformanceRow(
+                  label: 'Precisión remates',
+                  value: stats.precisionRemates,
+                  color: AppColors.secondary,
+                  detail: '${stats.rematesAlArco}/${stats.remates}',
+                ),
+                const SizedBox(height: 10),
+                _PerformanceRow(
+                  label: 'Precisión pases',
+                  value: stats.precisionPases,
+                  color: AppColors.primary,
+                  detail: '${stats.pasesCompletados}/${stats.pasesCompletados + stats.pasesFallidos}',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRecentMatches() {
+    return Consumer<MatchProvider>(
+      builder: (_, provider, __) {
+        final recientes = provider.played.take(5).toList();
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Últimos partidos',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (provider.isLoading)
+                const AppLoading()
+              else if (recientes.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Center(
+                    child: Text(
+                      'Aún no tienes partidos registrados',
+                      style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                    ),
+                  ),
+                )
+              else
+                ...recientes.map(
+                  (m) => RecentMatchItem(
+                    match: m,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MatchDetailPage(match: m),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PerformanceRow extends StatelessWidget {
+  final String label;
+  final double value;
+  final Color color;
+  final String detail;
+
+  const _PerformanceRow({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.detail,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = value.clamp(0, 100) / 100;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label,
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+            Text(
+              '${value.toStringAsFixed(1)}%  ($detail)',
+              style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: pct.toDouble(),
+            backgroundColor: color.withOpacity(0.12),
+            valueColor: AlwaysStoppedAnimation(color),
+            minHeight: 6,
+          ),
+        ),
+      ],
+    );
+  }
+}

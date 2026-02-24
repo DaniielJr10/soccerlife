@@ -5,9 +5,12 @@ const {
   obtenerUsuarioPorId,
   crearUsuario,
   actualizarUsuario,
-  eliminarUsuario
+  eliminarUsuario,
+  obtenerMiPerfil,
+  actualizarMiPerfil
 } = require('../controllers/usuarioController');
 const { loginUsuario } = require('../controllers/loginController');
+const { verificarToken } = require('../middleware/auth');
 const {
   solicitarRecuperacionEmail,
   verificarCodigoRecuperacion,
@@ -16,6 +19,12 @@ const {
 
 // GET /api/usuarios - Obtener todos los usuarios
 router.get('/', obtenerUsuarios);
+
+// GET /api/usuarios/mi-perfil - Perfil del usuario autenticado (MongoDB)
+router.get('/mi-perfil', verificarToken, obtenerMiPerfil);
+
+// PUT /api/usuarios/mi-perfil - Actualizar perfil autenticado en MongoDB
+router.put('/mi-perfil', verificarToken, actualizarMiPerfil);
 
 // GET /api/usuarios/:id - Obtener un usuario por ID
 router.get('/:id', obtenerUsuarioPorId);

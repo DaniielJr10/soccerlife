@@ -85,6 +85,10 @@ const recalcularEstadisticasUsuario = async (usuarioId) => {
   estadistica.partidos = { jugados: 0, ganados: 0, empatados: 0, perdidos: 0 };
   estadistica.goles = { total: 0, porPartido: 0 };
   estadistica.asistencias = 0;
+  estadistica.remates = { total: 0, alArco: 0 };
+  estadistica.pases = { completados: 0, fallidos: 0 };
+  estadistica.regates = { exitosos: 0, fallidos: 0 };
+  estadistica.faltas = { cometidas: 0, recibidas: 0 };
   estadistica.tarjetas = { amarillas: 0, rojas: 0 };
   estadistica.minutosJugados = 0;
   estadistica.valoracionPromedio = 0;
@@ -105,6 +109,14 @@ const recalcularEstadisticasUsuario = async (usuarioId) => {
 
     estadistica.goles.total += normalizarNumero(partido?.estadisticasPersonales?.goles);
     estadistica.asistencias += normalizarNumero(partido?.estadisticasPersonales?.asistencias);
+    estadistica.remates.total += normalizarNumero(partido?.estadisticasPersonales?.remates);
+    estadistica.remates.alArco += normalizarNumero(partido?.estadisticasPersonales?.rematesAlArco);
+    estadistica.pases.completados += normalizarNumero(partido?.estadisticasPersonales?.pasesCompletados);
+    estadistica.pases.fallidos += normalizarNumero(partido?.estadisticasPersonales?.pasesFallidos);
+    estadistica.regates.exitosos += normalizarNumero(partido?.estadisticasPersonales?.regatesExitosos);
+    estadistica.regates.fallidos += normalizarNumero(partido?.estadisticasPersonales?.regatesFallidos);
+    estadistica.faltas.cometidas += normalizarNumero(partido?.estadisticasPersonales?.faltasCometidas);
+    estadistica.faltas.recibidas += normalizarNumero(partido?.estadisticasPersonales?.faltasRecibidas);
     estadistica.tarjetas.amarillas += normalizarNumero(partido?.estadisticasPersonales?.tarjetasAmarillas);
     estadistica.tarjetas.rojas += normalizarNumero(partido?.estadisticasPersonales?.tarjetasRojas);
     estadistica.minutosJugados += normalizarNumero(partido?.estadisticasPersonales?.minutosJugados);
