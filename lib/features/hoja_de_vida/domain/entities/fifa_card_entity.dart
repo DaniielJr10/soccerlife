@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 /// Entidad de dominio: Carta FIFA personalizada del jugador.
 class FifaCardEntity {
   final String nombre;
@@ -17,6 +19,9 @@ class FifaCardEntity {
   final String club;
   final String nacionalidad;
 
+  /// Bytes de la foto del jugador — compatible con web y mobile.
+  final Uint8List? imageBytes;
+
   const FifaCardEntity({
     required this.nombre,
     required this.posicion,
@@ -30,6 +35,7 @@ class FifaCardEntity {
     this.contacto = '',
     this.club = '',
     this.nacionalidad = '',
+    this.imageBytes,
   });
 
   /// Valores iniciales para un jugador nuevo.
@@ -61,6 +67,7 @@ class FifaCardEntity {
     String? contacto,
     String? club,
     String? nacionalidad,
+    Uint8List? imageBytes,
   }) =>
       FifaCardEntity(
         nombre: nombre ?? this.nombre,
@@ -75,5 +82,6 @@ class FifaCardEntity {
         contacto: contacto ?? this.contacto,
         club: club ?? this.club,
         nacionalidad: nacionalidad ?? this.nacionalidad,
+        imageBytes: imageBytes ?? this.imageBytes,
       );
 }

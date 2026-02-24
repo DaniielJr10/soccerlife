@@ -1,77 +1,101 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// CustomPainter — fondo geométrico dorado facetado de la Carta FIFA.
+/// CustomPainter — fondo premium estilo carta FIFA:
+/// navy oscuro con destellos dorados / cristales y partículas.
 class FifaGeometricPainter extends CustomPainter {
   const FifaGeometricPainter();
 
-  static const _facets = [
-    Color(0xFFFFD700),
-    Color(0xFFFFF176),
-    Color(0xFFDAA520),
-    Color(0xFFB8860B),
-    Color(0xFFF0C040),
-    Color(0xFFFFE566),
-    Color(0xFF9C6F00),
-    Color(0xFFFFED8A),
-  ];
-
   @override
   void paint(Canvas canvas, Size size) {
-    final cx = size.width * 0.62;
-    final cy = size.height * 0.42;
-    final r = size.width * 0.70;
-    final center = Offset(cx, cy);
+    _drawNabyGradient(canvas, size);
+    _drawGoldShards(canvas, size);
+    _drawGlowLines(canvas, size);
+    _drawParticles(canvas, size);
+  }
 
-    final outer = _radial(cx, cy, r, 6, -15);
-    final inner = _radial(cx, cy, r * 0.36, 6, 15);
-
-    for (var i = 0; i < 6; i++) {
-      _tri(canvas, center, outer[i], inner[i],
-          _facets[i % _facets.length]);
-      _tri(canvas, inner[i], outer[i], outer[(i + 1) % 6],
-          _facets[(i + 2) % _facets.length]);
-      _tri(canvas, center, inner[i], inner[(i + 1) % 6],
-          _facets[(i + 4) % _facets.length]);
-    }
-
-    // Brillo central
-    canvas.drawCircle(
-      center,
-      r * 0.18,
+  void _drawNabyGradient(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    canvas.drawRect(
+      rect,
       Paint()
-        ..shader = RadialGradient(
+        ..shader = const RadialGradient(
+          center: Alignment(0.3, -0.4),
+          radius: 1.1,
           colors: [
-            Colors.white.withValues(alpha: 0.85),
-            const Color(0xFFFFD700).withValues(alpha: 0.5),
-            Colors.transparent,
+            Color(0xFF1A2E6E),
+            Color(0xFF0D1B45),
+            Color(0xFF060E28),
           ],
-          stops: const [0.0, 0.45, 1.0],
-        ).createShader(Rect.fromCircle(center: center, radius: r * 0.18)),
+        ).createShader(rect),
     );
   }
 
-  void _tri(Canvas canvas, Offset a, Offset b, Offset c, Color col) {
-    final path = Path()
-      ..moveTo(a.dx, a.dy)
-      ..lineTo(b.dx, b.dy)
-      ..lineTo(c.dx, c.dy)
-      ..close();
-    canvas.drawPath(path, Paint()..color = col);
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = const Color(0xFFFFD700).withValues(alpha: 0.2)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.6,
-    );
+  void _drawGoldShards(Canvas canvas, Size size) {
+    final shards = [
+      // [x1, y1, x2, y2, x3, y3, opacity]
+      [0.55, -0.05, 0.95, 0.35, 0.75, 0.05, 0.55],
+      [0.65, 0.10, 1.05, 0.50, 0.85, 0.08, 0.45],
+      [0.40, -0.02, 0.90, 0.28, 0.70, 0.22, 0.38],
+      [0.72, 0.32, 1.10, 0.65, 0.95, 0.28, 0.42],
+      [0.50, 0.40, 0.80, 0.75, 0.62, 0.55, 0.30],
+      [0.30, 0.60, 0.65, 0.92, 0.48, 0.72, 0.25],
+    ];
+
+    for (final s in shards) {
+      final path = Path()
+        ..moveTo(s[0] * size.width, s[1] * size.height)
+        ..lineTo(s[2] * size.width, s[3] * size.height)
+        ..lineTo(s[4] * size.width, s[5] * size.height)
+        ..close();
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = const Color(0xFFFFD700).withValues(alpha: s[6])
+          ..style = PaintingStyle.fill,
+      );
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = const Color(0xFFFFED8A).withValues(alpha: 0.5)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.7,
+      );
+    }
   }
 
-  List<Offset> _radial(double cx, double cy, double r, int n, double deg) =>
-      List.generate(n, (i) {
-        final a = (360 / n * i + deg) * math.pi / 180;
-        return Offset(cx + r * math.cos(a), cy + r * math.sin(a));
-      });
+  void _drawGlowLines(Canvas canvas, Size size) {
+    final lines = [
+      [0.60, 0.0, 1.0, 0.55, 2.5, 0.35],
+      [0.45, 0.0, 0.95, 0.42, 1.5, 0.25],
+      [0.70, 0.15, 1.02, 0.70, 3.0, 0.20],
+    ];
+    for (final l in lines) {
+      canvas.drawLine(
+        Offset(l[0] * size.width, l[1] * size.height),
+        Offset(l[2] * size.width, l[3] * size.height),
+        Paint()
+          ..color = const Color(0xFFFFD700).withValues(alpha: l[5])
+          ..strokeWidth = l[4]
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+  }
+
+  void _drawParticles(Canvas canvas, Size size) {
+    final rng = math.Random(42);
+    final paint = Paint()..style = PaintingStyle.fill;
+    for (var i = 0; i < 22; i++) {
+      final x = rng.nextDouble() * size.width;
+      final y = rng.nextDouble() * size.height * 0.75;
+      final r = rng.nextDouble() * 1.8 + 0.4;
+      final a = rng.nextDouble() * 0.5 + 0.1;
+      paint.color = (i % 3 == 0)
+          ? const Color(0xFFFFD700).withValues(alpha: a)
+          : const Color(0xFF7BA7FF).withValues(alpha: a * 0.6);
+      canvas.drawCircle(Offset(x, y), r, paint);
+    }
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;

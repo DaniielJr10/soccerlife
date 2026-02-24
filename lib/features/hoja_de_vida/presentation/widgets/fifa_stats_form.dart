@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/fifa_card_entity.dart';
 
@@ -20,6 +21,7 @@ class FifaStatsForm extends StatefulWidget {
 
 class _FifaStatsFormState extends State<FifaStatsForm> {
   late FifaCardEntity _data;
+  final _picker = ImagePicker();
 
   final _posiciones = ['POR', 'DFC', 'DC', 'LI', 'LD', 'MCD', 'MC', 'MCO',
     'MP', 'EXI', 'EXD', 'SD', 'DEL'];
@@ -35,12 +37,74 @@ class _FifaStatsFormState extends State<FifaStatsForm> {
     widget.onChanged(updated);
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final picked = await _picker.pickImage(
+      source: source,
+      imageQuality: 90,
+      maxWidth: 800,
+    );
+    if (picked != null) {
+      final bytes = await picked.readAsBytes();
+      _emit(_data.copyWith(imageBytes: bytes));
+    }
+  }
+
+  void _showImageSource() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.photo_camera_rounded,
+                  color: Color(0xFFFFD700)),
+              title: const Text('Tomar foto',
+                  style: TextStyle(color: AppColors.textPrimary)),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded,
+                  color: Color(0xFFFFD700)),
+              title: const Text('Galería',
+                  style: TextStyle(color: AppColors.textPrimary)),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
       physics: const BouncingScrollPhysics(),
       children: [
+        _sectionTitle('Foto del jugador'),
+        _buildPhotoSelector(),
+        const SizedBox(height: 20),
         _sectionTitle('Información básica'),
         _textField(
           label: 'Nombre del jugador',
@@ -94,6 +158,86 @@ class _FifaStatsFormState extends State<FifaStatsForm> {
           ),
         ),
       );
+
+  Widget _buildPhotoSelector() {
+    final hasPhoto = _data.imageBytes != null;
+    return GestureDetector(
+      onTap: _showImageSource,
+      child: Container(
+        height: 160,
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: hasPhoto
+                ? const Color(0xFFFFD700).withValues(alpha: 0.5)
+                : AppColors.border,
+            width: 1.5,
+          ),
+        ),
+        child: hasPhoto
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.memory(
+                      _data.imageBytes!,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 8, right: 8,
+                    child: GestureDetector(
+                      onTap: _showImageSource,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.55),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.edit_rounded,
+                            color: Color(0xFFFFD700), size: 18),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 60, height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFFFD700).withValues(alpha: 0.2),
+                          const Color(0xFFFFD700).withValues(alpha: 0.05),
+                        ],
+                      ),
+                      border: Border.all(
+                        color: const Color(0xFFFFD700).withValues(alpha: 0.4),
+                      ),
+                    ),
+                    child: const Icon(Icons.add_a_photo_rounded,
+                        color: Color(0xFFFFD700), size: 26),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text('Añadir foto del jugador',
+                      style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  const Text('Cámara o galería',
+                      style: TextStyle(
+                          color: AppColors.textMuted, fontSize: 11)),
+                ],
+              ),
+      ),
+    );
+  }
 
   Widget _textField({
     required String label,
