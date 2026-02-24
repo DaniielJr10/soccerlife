@@ -3,6 +3,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../models/usuario_model.dart';
 import '../../../../services/profile_service.dart';
 import '../../../../services/storage_service.dart';
+import '../../../hoja_de_vida/presentation/pages/hoja_de_vida_page.dart';
 import 'edit_profile_page.dart';
 
 /// Página de perfil del jugador.
@@ -127,6 +128,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildInfoCard(),
                   const SizedBox(height: 16),
                   _buildEditButton(),
+                  const SizedBox(height: 12),
+                  _buildCvButton(),
                   const SizedBox(height: 16),
                   _buildAccountCard(),
                 ],
@@ -221,6 +224,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
           onPressed: _editarPerfil,
+        ),
+      );
+
+  Widget _buildCvButton() => SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.style_rounded),
+          label: const Text('CV Deportivo'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFFD700),
+            foregroundColor: const Color(0xFF2C1A00),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+            textStyle: const TextStyle(
+                fontSize: 15, fontWeight: FontWeight.w800),
+            elevation: 0,
+          ),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HojaDeVidaPage()),
+          ),
         ),
       );
 
