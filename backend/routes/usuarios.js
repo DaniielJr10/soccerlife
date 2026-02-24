@@ -7,7 +7,15 @@ const {
   actualizarUsuario,
   eliminarUsuario,
   obtenerMiPerfil,
-  actualizarMiPerfil
+  actualizarMiPerfil,
+  // Carta FIFA
+  obtenerCartaFifa,
+  guardarCartaFifa,
+  eliminarCartaFifa,
+  // CV PDF
+  obtenerInfoCv,
+  guardarCv,
+  eliminarCv,
 } = require('../controllers/usuarioController');
 const { loginUsuario } = require('../controllers/loginController');
 const { verificarToken } = require('../middleware/auth');
@@ -17,37 +25,42 @@ const {
   cambiarPasswordRecuperacion
 } = require('../controllers/recuperarController');
 
-// GET /api/usuarios - Obtener todos los usuarios
-router.get('/', obtenerUsuarios);
-
-// GET /api/usuarios/mi-perfil - Perfil del usuario autenticado (MongoDB)
+// ── Perfil ────────────────────────────────────────────────────────────────────
+// GET /api/usuarios/mi-perfil
 router.get('/mi-perfil', verificarToken, obtenerMiPerfil);
-
-// PUT /api/usuarios/mi-perfil - Actualizar perfil autenticado en MongoDB
+// PUT /api/usuarios/mi-perfil
 router.put('/mi-perfil', verificarToken, actualizarMiPerfil);
 
-// GET /api/usuarios/:id - Obtener un usuario por ID
-router.get('/:id', obtenerUsuarioPorId);
+// ── Carta FIFA ────────────────────────────────────────────────────────────────
+// GET  /api/usuarios/carta-fifa
+router.get('/carta-fifa', verificarToken, obtenerCartaFifa);
+// PUT  /api/usuarios/carta-fifa  (crea o actualiza)
+router.put('/carta-fifa', verificarToken, guardarCartaFifa);
+// DELETE /api/usuarios/carta-fifa
+router.delete('/carta-fifa', verificarToken, eliminarCartaFifa);
 
-// POST /api/usuarios - Crear un nuevo usuario
-router.post('/', crearUsuario);
+// ── CV en PDF ─────────────────────────────────────────────────────────────────
+// GET  /api/usuarios/cv  (devuelve info: existe + nombre, NO los bytes)
+router.get('/cv', verificarToken, obtenerInfoCv);
+// POST /api/usuarios/cv  (guarda/reemplaza el PDF)
+router.post('/cv', verificarToken, guardarCv);
+// DELETE /api/usuarios/cv
+router.delete('/cv', verificarToken, eliminarCv);
 
-// POST /api/usuarios/login - Login de usuario
+// ── Auth ──────────────────────────────────────────────────────────────────────
+// POST /api/usuarios/login
 router.post('/login', loginUsuario);
-
-// POST /api/usuarios/recuperar-password/email - Solicitar recuperación por email
+// Recuperación de contraseña
 router.post('/recuperar-password/email', solicitarRecuperacionEmail);
-
-// POST /api/usuarios/verificar-codigo-recuperacion - Verificar código de recuperación
 router.post('/verificar-codigo-recuperacion', verificarCodigoRecuperacion);
-
-// POST /api/usuarios/cambiar-password-recuperacion - Cambiar contraseña con token
 router.post('/cambiar-password-recuperacion', cambiarPasswordRecuperacion);
 
-// PUT /api/usuarios/:id - Actualizar un usuario
+// ── CRUD general ──────────────────────────────────────────────────────────────
+router.get('/', obtenerUsuarios);
+router.get('/:id', obtenerUsuarioPorId);
+router.post('/', crearUsuario);
 router.put('/:id', actualizarUsuario);
-
-// DELETE /api/usuarios/:id - Eliminar un usuario
 router.delete('/:id', eliminarUsuario);
 
 module.exports = router;
+

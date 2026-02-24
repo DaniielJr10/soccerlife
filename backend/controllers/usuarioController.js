@@ -132,6 +132,100 @@ const actualizarMiPerfil = async (req, res) => {
   }
 };
 
+// ── Carta FIFA ────────────────────────────────────────────────────────────────
+
+// GET /usuarios/carta-fifa — devuelve la carta del usuario autenticado
+const obtenerCartaFifa = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuarioId).select('cartaFifa');
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json({ success: true, cartaFifa: usuario.cartaFifa ?? null });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener carta FIFA', error: error.message });
+  }
+};
+
+// PUT /usuarios/carta-fifa — guarda/actualiza la carta (crea si no existía)
+const guardarCartaFifa = async (req, res) => {
+  try {
+    const { nombre, posicion, overall, ritmo, tiro, pase, regate, defensa,
+            fisico, contacto, club, nacionalidad, imagenBase64 } = req.body;
+
+    const usuario = await Usuario.findByIdAndUpdate(
+      req.usuarioId,
+      {
+        cartaFifa: {
+          nombre, posicion, overall, ritmo, tiro, pase,
+          regate, defensa, fisico, contacto, club,
+          nacionalidad, imagenBase64,
+        },
+      },
+      { new: true, runValidators: true }
+    ).select('cartaFifa');
+
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
+    console.log(`🃏 Carta FIFA guardada para usuario ${req.usuarioId}`);
+    res.json({ success: true, message: 'Carta FIFA guardada', cartaFifa: usuario.cartaFifa });
+  } catch (error) {
+    res.status(400).json({ message: 'Error al guardar carta FIFA', error: error.message });
+  }
+};
+
+// DELETE /usuarios/carta-fifa — elimina la carta del usuario
+const eliminarCartaFifa = async (req, res) => {
+  try {
+    await Usuario.findByIdAndUpdate(req.usuarioId, { $unset: { cartaFifa: '' } });
+    console.log(`🗑️ Carta FIFA eliminada para usuario ${req.usuarioId}`);
+    res.json({ success: true, message: 'Carta FIFA eliminada correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar carta FIFA', error: error.message });
+  }
+};
+
+// ── CV en PDF ─────────────────────────────────────────────────────────────────
+
+// GET /usuarios/cv — devuelve si el CV existe y su nombre (no los bytes)
+const obtenerInfoCv = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuarioId).select('cvNombre');
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json({
+      success: true,
+      existe: !!usuario.cvNombre,
+      cvNombre: usuario.cvNombre ?? null,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener info del CV', error: error.message });
+  }
+};
+
+// POST /usuarios/cv — guarda el PDF (base64) del usuario
+const guardarCv = async (req, res) => {
+  try {
+    const { cvBase64, cvNombre } = req.body;
+    if (!cvBase64 || !cvNombre) {
+      return res.status(400).json({ message: 'Faltan campos: cvBase64 y cvNombre son requeridos' });
+    }
+
+    await Usuario.findByIdAndUpdate(req.usuarioId, { cvBase64, cvNombre });
+    console.log(`📄 CV guardado para usuario ${req.usuarioId}: ${cvNombre}`);
+    res.json({ success: true, message: 'CV guardado correctamente', cvNombre });
+  } catch (error) {
+    res.status(400).json({ message: 'Error al guardar CV', error: error.message });
+  }
+};
+
+// DELETE /usuarios/cv — elimina el CV del usuario
+const eliminarCv = async (req, res) => {
+  try {
+    await Usuario.findByIdAndUpdate(req.usuarioId, { $unset: { cvBase64: '', cvNombre: '' } });
+    console.log(`🗑️ CV eliminado para usuario ${req.usuarioId}`);
+    res.json({ success: true, message: 'CV eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar CV', error: error.message });
+  }
+};
+
 module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
@@ -139,5 +233,13 @@ module.exports = {
   actualizarUsuario,
   eliminarUsuario,
   obtenerMiPerfil,
-  actualizarMiPerfil
+  actualizarMiPerfil,
+  // Carta FIFA
+  obtenerCartaFifa,
+  guardarCartaFifa,
+  eliminarCartaFifa,
+  // CV PDF
+  obtenerInfoCv,
+  guardarCv,
+  eliminarCv,
 };

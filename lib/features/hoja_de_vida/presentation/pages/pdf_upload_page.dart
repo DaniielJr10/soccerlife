@@ -21,6 +21,68 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
   bool   _uploadDone  = false;
   String? _errorMsg;
 
+  // CV guardado previamente en el servidor
+  bool    _isLoadingInfo     = true;
+  String? _cvExistenteNombre;  // nombre del CV ya subido
+  bool    _isDeleting        = false;
+  @override
+  void initState() {
+    super.initState();
+    _cargarInfoCv();
+  }
+
+  // ── Info del CV existente en servidor ─────────────────────────────────
+
+  Future<void> _cargarInfoCv() async {
+    setState(() => _isLoadingInfo = true);
+    final res = await PdfCvService.obtenerInfoCv();
+    if (!mounted) return;
+    setState(() {
+      _isLoadingInfo = false;
+      _cvExistenteNombre = res.cvNombre;
+    });
+  }
+
+  Future<void> _confirmarEliminarCv() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text('Eliminar CV',
+            style: TextStyle(color: AppColors.textPrimary)),
+        content: const Text(
+            '¿Estás seguro de que quieres eliminar tu CV? Esta acción no se puede deshacer.',
+            style: TextStyle(color: AppColors.textSecondary)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancelar',
+                  style: TextStyle(color: AppColors.textMuted))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Eliminar',
+                  style: TextStyle(color: Color(0xFFEF4444)))),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+
+    setState(() => _isDeleting = true);
+    final res = await PdfCvService.eliminarCv();
+    if (!mounted) return;
+    setState(() {
+      _isDeleting = false;
+      if (res.success) {
+        _cvExistenteNombre = null;
+        _uploadDone = false;
+      }
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(res.message ?? 'Error'),
+      backgroundColor: res.success ? AppColors.success : AppColors.danger,
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
   // ── Selección de archivo ──────────────────────────────────────────────────
 
   Future<void> _pickPdf() async {
@@ -60,7 +122,7 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
 
   Future<void> _subirCv() async {
     if (_fileBytes == null || _fileName == null) return;
-    setState(() { _isUploading = true; _errorMsg = null; });
+    setState(() { _isUploading = true; _errorMsg = null; _uploadDone = false; });
 
     final res = await PdfCvService.subirCv(
       bytes: _fileBytes!,
@@ -69,7 +131,11 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
 
     if (!mounted) return;
     if (res.success) {
-      setState(() { _isUploading = false; _uploadDone = true; });
+      setState(() {
+        _isUploading = false;
+        _uploadDone = true;
+        _cvExistenteNombre = _fileName; // actualiza el nombre del CV en el servidor
+      });
     } else {
       setState(() { _isUploading = false; _errorMsg = res.message; });
     }
@@ -96,11 +162,22 @@ class _PdfUploadPageState extends State<PdfUploadPage> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
+        child: _isLoadingInfo
+            ? const Center(
+                child: CircularProgressIndicator(color: Color(0xFFEF4444)))
+            : Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const SizedBox(height: 8),
+              // Banner: CV ya guardado en el servidor
+              if (_cvExistenteNombre != null && !_uploadDone)
+                _ExistingCvBanner(
+                  nombre: _cvExistenteNombre!,
+                  isDeleting: _isDeleting,
+                  onDelete: _confirmarEliminarCv,
+                ),
+              if (_cvExistenteNombre != null && !_uploadDone)
+                const SizedBox(height: 16),
               _DropZone(
                 hasFile: _fileBytes != null,
                 uploadDone: _uploadDone,
@@ -368,6 +445,74 @@ class _ErrorBanner extends StatelessWidget {
                   style: const TextStyle(
                       color: AppColors.danger, fontSize: 13)),
             ),
+          ],
+        ),
+      );
+}
+
+// Banner que muestra el CV actualmente guardado en el servidor
+class _ExistingCvBanner extends StatelessWidget {
+  final String nombre;
+  final bool isDeleting;
+  final VoidCallback onDelete;
+
+  const _ExistingCvBanner({
+    required this.nombre,
+    required this.isDeleting,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+              color: const Color(0xFFFFD700).withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFD700).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.picture_as_pdf_rounded,
+                  color: Color(0xFFFFD700), size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('CV guardado en el servidor',
+                      style: TextStyle(
+                          color: Color(0xFFFFD700),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 2),
+                  Text(nombre,
+                      style: const TextStyle(
+                          color: AppColors.textPrimary, fontSize: 13),
+                      overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            isDeleting
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Color(0xFFEF4444)))
+                : IconButton(
+                    tooltip: 'Eliminar CV',
+                    icon: const Icon(Icons.delete_outline_rounded,
+                        color: Color(0xFFEF4444), size: 22),
+                    onPressed: onDelete,
+                  ),
           ],
         ),
       );

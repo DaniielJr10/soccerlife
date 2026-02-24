@@ -1,5 +1,22 @@
 const mongoose = require('mongoose');
 
+// Sub-esquema para la Carta FIFA del jugador
+const cartaFifaSchema = new mongoose.Schema({
+  nombre:      { type: String, trim: true },
+  posicion:    { type: String, trim: true },
+  overall:     { type: Number, min: 0, max: 99, default: 75 },
+  ritmo:       { type: Number, min: 0, max: 99, default: 75 },
+  tiro:        { type: Number, min: 0, max: 99, default: 75 },
+  pase:        { type: Number, min: 0, max: 99, default: 75 },
+  regate:      { type: Number, min: 0, max: 99, default: 75 },
+  defensa:     { type: Number, min: 0, max: 99, default: 75 },
+  fisico:      { type: Number, min: 0, max: 99, default: 75 },
+  contacto:    { type: String, trim: true },
+  club:        { type: String, trim: true },
+  nacionalidad:{ type: String, trim: true },
+  imagenBase64:{ type: String },        // foto del jugador en base64
+}, { _id: false });
+
 const usuarioSchema = new mongoose.Schema({
   nombre: {
     type: String,
@@ -54,7 +71,11 @@ const usuarioSchema = new mongoose.Schema({
   activo: {
     type: Boolean,
     default: true
-  }
+  },
+  // ── CV Deportivo ──────────────────────────────────────────────────────────
+  cartaFifa: { type: cartaFifaSchema, default: null },
+  cvNombre:  { type: String, trim: true },     // nombre del archivo PDF
+  cvBase64:  { type: String },                 // PDF codificado en base64
 }, {
   timestamps: true // Agrega createdAt y updatedAt automáticamente
 });
