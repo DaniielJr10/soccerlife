@@ -71,6 +71,19 @@ const partidoSchema = new mongoose.Schema({
     default: ''
   },
 
+  // Torneo asociado (opcional)
+  torneoId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Torneo',
+    default: null
+  },
+
+  torneoNombre: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
   // Estadísticas personales del jugador en este partido
   estadisticasPersonales: {
     posicion: {

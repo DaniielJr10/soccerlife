@@ -3,6 +3,7 @@ import '../../core/theme/app_colors.dart';
 import '../dashboard/presentation/pages/dashboard_page.dart';
 import '../matches/presentation/pages/matches_page.dart';
 import '../statistics/presentation/pages/statistics_page.dart';
+import '../tournaments/presentation/pages/tournaments_page.dart';
 import '../profile/presentation/pages/profile_page.dart';
 
 /// Shell principal de la aplicación con navegación inferior.
@@ -21,14 +22,16 @@ class _MainShellState extends State<MainShell> {
     DashboardPage(),
     MatchesPage(),
     StatisticsPage(),
+    TournamentsPage(),
     ProfilePage(),
   ];
 
   static const List<_NavItem> _navItems = [
-    _NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard'),
-    _NavItem(icon: Icons.sports_soccer_rounded, label: 'Partidos'),
-    _NavItem(icon: Icons.bar_chart_rounded, label: 'Estadísticas'),
-    _NavItem(icon: Icons.person_rounded, label: 'Perfil'),
+    _NavItem(icon: Icons.dashboard_rounded,       label: 'Dashboard'),
+    _NavItem(icon: Icons.sports_soccer_rounded,   label: 'Partidos'),
+    _NavItem(icon: Icons.bar_chart_rounded,       label: 'Estadísticas'),
+    _NavItem(icon: Icons.emoji_events_rounded,    label: 'Torneos'),
+    _NavItem(icon: Icons.person_rounded,          label: 'Perfil'),
   ];
 
   @override

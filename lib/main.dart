@@ -6,6 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'features/matches/application/providers/match_provider.dart';
 import 'features/statistics/application/providers/statistics_provider.dart';
 import 'features/profile_picture/application/profile_picture_provider.dart';
+import 'features/tournaments/application/tournament_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MatchProvider()),
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider(create: (_) => ProfilePictureProvider()),
+        ChangeNotifierProvider(create: (_) => TournamentProvider()),
       ],
       child: MaterialApp(
         title: 'Soccer Life',

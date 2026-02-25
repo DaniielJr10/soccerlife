@@ -11,6 +11,10 @@ class MatchEntity {
   final String estado;         // programado / finalizado / cancelado
   final String? notas;
 
+  // Torneo asociado (opcional)
+  final String? torneoId;
+  final String? torneoNombre;
+
   // Resultado del partido
   final int? golesLocal;
   final int? golesVisitante;
@@ -42,6 +46,8 @@ class MatchEntity {
     this.competicion = '',
     this.estado = 'programado',
     this.notas,
+    this.torneoId,
+    this.torneoNombre,
     this.golesLocal,
     this.golesVisitante,
     this.posicion = '',

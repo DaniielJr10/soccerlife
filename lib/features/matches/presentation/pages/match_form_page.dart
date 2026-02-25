@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../features/tournaments/application/tournament_provider.dart';
+import '../../../../features/tournaments/domain/entities/tournament_entity.dart';
 import '../../application/providers/match_provider.dart';
 import '../../domain/entities/match_entity.dart';
 import '../widgets/stats_form_section.dart';
@@ -31,6 +33,14 @@ class _MatchFormPageState extends State<MatchFormPage> {
   String _tipo             = 'Amistoso';
   double _valoracion       = 5.0;
 
+  // Torneo asociado
+  String? _torneoId;
+  String? _torneoNombre;
+
+  // Lista local de torneos (cargada una sola vez — no usa Consumer para
+  // evitar que rebuilds del provider congelen el formulario)
+  List<TournamentEntity> _torneos = [];
+
   // Estadísticas - contador
   final Map<String, int> _stats = {
     'goles': 0, 'asistencias': 0,
@@ -44,6 +54,29 @@ class _MatchFormPageState extends State<MatchFormPage> {
   bool _guardando = false;
 
   static const _tipos = ['Amistoso', 'Liga', 'Copa', 'Torneo'];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _cargarTorneos());
+  }
+
+  /// Carga torneos una sola vez en estado local.
+  /// Usa los datos ya en caché del provider si están disponibles,
+  /// o lanza load() sin bloquear el formulario.
+  Future<void> _cargarTorneos() async {
+    final provider = context.read<TournamentProvider>();
+    if (provider.items.isNotEmpty) {
+      if (mounted) setState(() => _torneos = provider.items);
+      return;
+    }
+    try {
+      await provider.load();
+      if (mounted) setState(() => _torneos = provider.items);
+    } catch (_) {
+      // Falla silenciosamente: el formulario funciona sin torneos
+    }
+  }
 
   @override
   void dispose() {
@@ -72,6 +105,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             _Row2(left: _buildFecha(), right: _buildTipo()),
             _Row2(left: _buildHora(), right: _buildLugar()),
             _Row2(left: _buildCompeticion(), right: _buildPosicion()),
+            _buildTorneoSelector(),
             const SizedBox(height: 8),
             _SectionTitle(title: 'Resultado'),
             _buildScore(),
@@ -206,6 +240,50 @@ class _MatchFormPageState extends State<MatchFormPage> {
           style: const TextStyle(color: AppColors.textPrimary),
           decoration: const InputDecoration(labelText: 'Posición'),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTorneoSelector() {
+    if (_torneos.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: DropdownButtonFormField<String>(
+        value: _torneoId,
+        dropdownColor: AppColors.card,
+        style: const TextStyle(color: AppColors.textPrimary),
+        decoration: const InputDecoration(
+          labelText: 'Torneo (opcional)',
+          prefixIcon: Icon(Icons.emoji_events_rounded),
+        ),
+        items: [
+          const DropdownMenuItem(
+            value: null,
+            child: Text('Sin torneo',
+                style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ..._torneos.map(
+            (t) => DropdownMenuItem(
+              value: t.id,
+              child: Row(children: [
+                Container(
+                  width: 10, height: 10,
+                  decoration: BoxDecoration(
+                      color: t.color, shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 8),
+                Flexible(child: Text(t.nombre,
+                    overflow: TextOverflow.ellipsis)),
+              ]),
+            ),
+          ),
+        ],
+        onChanged: (v) => setState(() {
+          _torneoId     = v;
+          _torneoNombre = v == null
+              ? null
+              : _torneos.firstWhere((t) => t.id == v).nombre;
+        }),
       ),
     );
   }
@@ -366,6 +444,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
       competicion:      _competicionCtrl.text.trim(),
       estado:           'finalizado',
       notas:            _notasCtrl.text.trim(),
+      torneoId:         _torneoId,
+      torneoNombre:     _torneoNombre,
       golesLocal:       int.tryParse(_golesLocalCtrl.text) ?? 0,
       golesVisitante:   int.tryParse(_golesVisitCtrl.text) ?? 0,
       posicion:         _posicionCtrl.text.trim(),

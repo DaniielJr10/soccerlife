@@ -54,6 +54,8 @@ class MatchRemoteDataSource {
       'lugar': match.lugar,
       'tipo': match.tipo,
       'competicion': match.competicion,
+      if (match.torneoId != null)     'torneoId':     match.torneoId,
+      if (match.torneoNombre != null) 'torneoNombre': match.torneoNombre,
       if (match.notas != null && match.notas!.isNotEmpty) 'notas': match.notas,
     };
     final res = await http.post(
@@ -165,6 +167,8 @@ class MatchRemoteDataSource {
       competicion:      p['competicion']?.toString() ?? '',
       estado:           p['estado']?.toString() ?? 'programado',
       notas:            p['notas']?.toString(),
+      torneoId:         p['torneoId']?.toString(),
+      torneoNombre:     p['torneoNombre']?.toString(),
       golesLocal:       _int(res['golesLocal']),
       golesVisitante:   _int(res['golesVisitante']),
       posicion:         stats['posicion']?.toString() ?? '',
