@@ -6,6 +6,7 @@ import '../../../../models/usuario_model.dart';
 import '../../../../services/storage_service.dart';
 import '../../../matches/application/providers/match_provider.dart';
 import '../../../matches/presentation/pages/match_detail_page.dart';
+import '../../../profile_picture/application/profile_picture_provider.dart';
 import '../../../statistics/application/providers/statistics_provider.dart';
 import '../widgets/dashboard_header.dart';
 import '../widgets/quick_stats_widget.dart';
@@ -38,6 +39,7 @@ class _DashboardPageState extends State<DashboardPage> {
   void _loadData() {
     context.read<StatisticsProvider>().load();
     context.read<MatchProvider>().loadPlayed();
+    context.read<ProfilePictureProvider>().load();
   }
 
   @override
@@ -53,9 +55,12 @@ class _DashboardPageState extends State<DashboardPage> {
           slivers: [
             _buildAppBar(),
             SliverToBoxAdapter(
-              child: DashboardHeader(
-                usuario: _usuario,
-                cargando: _cargandoUsuario,
+              child: Consumer<ProfilePictureProvider>(
+                builder: (_, picProvider, __) => DashboardHeader(
+                  usuario: _usuario,
+                  cargando: _cargandoUsuario,
+                  photoBytes: picProvider.photoBytes,
+                ),
               ),
             ),
             SliverToBoxAdapter(child: _buildStats()),

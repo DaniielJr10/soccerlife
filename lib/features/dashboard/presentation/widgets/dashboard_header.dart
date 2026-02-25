@@ -1,16 +1,20 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../models/usuario_model.dart';
+import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
 
 /// Cabecera del dashboard: saludo, nombre y posición del jugador.
 class DashboardHeader extends StatelessWidget {
   final UsuarioModel usuario;
   final bool cargando;
+  final Uint8List? photoBytes;
 
   const DashboardHeader({
     super.key,
     required this.usuario,
     this.cargando = false,
+    this.photoBytes,
   });
 
   @override
@@ -26,7 +30,7 @@ class DashboardHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _Avatar(usuario: usuario),
+          _Avatar(usuario: usuario, photoBytes: photoBytes),
           const SizedBox(width: 14),
           Expanded(child: _Info(usuario: usuario, cargando: cargando)),
           _RatingBadge(rating: null),
@@ -38,7 +42,8 @@ class DashboardHeader extends StatelessWidget {
 
 class _Avatar extends StatelessWidget {
   final UsuarioModel usuario;
-  const _Avatar({required this.usuario});
+  final Uint8List? photoBytes;
+  const _Avatar({required this.usuario, this.photoBytes});
 
   @override
   Widget build(BuildContext context) {
@@ -46,18 +51,14 @@ class _Avatar extends StatelessWidget {
       width: 52,
       height: 52,
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.primary, width: 2),
       ),
-      child: Center(
-        child: Text(
-          usuario.iniciales,
-          style: const TextStyle(
-            color: AppColors.textOnPrimary,
-            fontWeight: FontWeight.w800,
-            fontSize: 18,
-          ),
+      child: ClipOval(
+        child: ProfileAvatarWidget(
+          nombre: usuario.nombre,
+          imageBytes: photoBytes,
+          radius: 26,
         ),
       ),
     );

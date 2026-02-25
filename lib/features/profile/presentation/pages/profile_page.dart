@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../models/usuario_model.dart';
 import '../../../../services/profile_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../hoja_de_vida/presentation/pages/hoja_de_vida_page.dart';
-import '../../../profile_picture/application/profile_picture_service.dart';
+import '../../../profile_picture/application/profile_picture_provider.dart';
 import '../../../profile_picture/presentation/pages/profile_picture_page.dart';
 import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
 import 'edit_profile_page.dart';
@@ -24,8 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _cargando = true;
   String? _errorMsg;
 
-  // Foto de perfil
-  Uint8List? _photoBytes;
+  // Foto de perfil — se gestiona a través del ProfilePictureProvider
   bool _cargandoFoto = true;
 
   @override
@@ -38,49 +38,44 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() { _cargando = true; _errorMsg = null; });
 
     // Carga perfil y foto en paralelo
-    final results = await Future.wait([
-      ProfileService.obtenerPerfil(),
-      ProfilePictureService.obtenerFoto(),
+    await Future.wait([
+      ProfileService.obtenerPerfil().then((perfilResult) async {
+        if (perfilResult['success'] == true) {
+          final u = perfilResult['usuario'] as Map<String, dynamic>;
+          if (mounted) setState(() => _usuario = UsuarioModel.fromMap(u));
+        } else {
+          final cached = await StorageService.obtenerUsuarioModel();
+          if (mounted) setState(() {
+            _usuario = cached;
+            _errorMsg = 'Sin conexión — mostrando datos locales';
+          });
+        }
+      }),
+      // Delega la carga de la foto al provider compartido
+      if (mounted) context.read<ProfilePictureProvider>().load(),
     ]);
 
-    if (mounted) {
-      // Perfil
-      final perfilResult = results[0] as Map<String, dynamic>;
-      if (perfilResult['success'] == true) {
-        final u = perfilResult['usuario'] as Map<String, dynamic>;
-        _usuario = UsuarioModel.fromMap(u);
-      } else {
-        final cached = await StorageService.obtenerUsuarioModel();
-        _usuario = cached;
-        _errorMsg = 'Sin conexión — mostrando datos locales';
-      }
-
-      // Foto de perfil
-      final fotoResult = results[1] as ProfilePictureResult;
-      if (fotoResult.success) {
-        _photoBytes = fotoResult.entity?.imageBytes;
-      }
-
-      setState(() { _cargando = false; _cargandoFoto = false; });
-    }
+    if (mounted) setState(() { _cargando = false; _cargandoFoto = false; });
   }
 
   Future<void> _abrirFotoPerfil() async {
-    await Navigator.push(
+    final provider = context.read<ProfilePictureProvider>();
+    final newBytes = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(
         builder: (_) => ProfilePicturePage(
           nombre: _usuario.nombre,
-          fotoActual: _photoBytes,
+          fotoActual: provider.photoBytes,
         ),
       ),
     );
-    // Al volver, recarga la foto desde el servidor para reflejar cualquier cambio
+    // ProfilePicturePage devuelve los nuevos bytes (o null si se eliminó).
+    // Actualizamos el provider para que Dashboard y Perfil reflejen el cambio.
     if (mounted) {
-      final res = await ProfilePictureService.obtenerFoto();
-      if (mounted && res.success) {
-        setState(() => _photoBytes = res.entity?.imageBytes);
-      }
+      // ignore: use_build_context_synchronously
+      context.read<ProfilePictureProvider>().setPhoto(
+        newBytes is List<int> ? Uint8List.fromList(newBytes) : newBytes as Uint8List?,
+      );
     }
   }
 
@@ -193,12 +188,13 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
   Widget _buildAvatar() {
+    final photoBytes = context.watch<ProfilePictureProvider>().photoBytes;
     return Center(
       child: Column(
         children: [
           ProfileAvatarWidget(
             nombre: _usuario.nombre,
-            imageBytes: _cargandoFoto ? null : _photoBytes,
+            imageBytes: _cargandoFoto ? null : photoBytes,
             radius: 52,
             showEditBadge: true,
             onTap: _abrirFotoPerfil,
@@ -219,7 +215,7 @@ class _ProfilePageState extends State<ProfilePage> {
           GestureDetector(
             onTap: _abrirFotoPerfil,
             child: Text(
-              _photoBytes != null ? 'Cambiar foto' : 'Añadir foto',
+              photoBytes != null ? 'Cambiar foto' : 'Añadir foto',
               style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 13,
