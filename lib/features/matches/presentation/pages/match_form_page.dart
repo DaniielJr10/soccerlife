@@ -26,11 +26,9 @@ class _MatchFormPageState extends State<MatchFormPage> {
   final _notasCtrl         = TextEditingController();
   final _golesLocalCtrl    = TextEditingController(text: '0');
   final _golesVisitCtrl    = TextEditingController(text: '0');
-  final _posicionCtrl      = TextEditingController();
   final _minutosCtrl       = TextEditingController(text: '90');
 
   DateTime _fecha          = DateTime.now();
-  String _tipo             = 'Amistoso';
   double _valoracion       = 5.0;
 
   // Torneo asociado
@@ -52,8 +50,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
   };
 
   bool _guardando = false;
-
-  static const _tipos = ['Amistoso', 'Liga', 'Copa', 'Torneo'];
 
   @override
   void initState() {
@@ -82,7 +78,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
   void dispose() {
     for (final c in [_rivalCtrl, _lugarCtrl, _competicionCtrl,
         _horaCtrl, _notasCtrl, _golesLocalCtrl, _golesVisitCtrl,
-        _posicionCtrl, _minutosCtrl]) c.dispose();
+        _minutosCtrl]) c.dispose();
     super.dispose();
   }
 
@@ -102,9 +98,9 @@ class _MatchFormPageState extends State<MatchFormPage> {
           children: [
             _SectionTitle(title: 'Información del partido'),
             _buildRival(),
-            _Row2(left: _buildFecha(), right: _buildTipo()),
+            Row(children: [_buildFecha()]),
             _Row2(left: _buildHora(), right: _buildLugar()),
-            _Row2(left: _buildCompeticion(), right: _buildPosicion()),
+            _buildCompeticion(),
             _buildTorneoSelector(),
             const SizedBox(height: 8),
             _SectionTitle(title: 'Resultado'),
@@ -169,24 +165,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
     );
   }
 
-  Widget _buildTipo() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: DropdownButtonFormField<String>(
-          value: _tipo,
-          dropdownColor: AppColors.card,
-          style: const TextStyle(color: AppColors.textPrimary),
-          decoration: const InputDecoration(labelText: 'Tipo'),
-          items: _tipos
-              .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-              .toList(),
-          onChanged: (v) => setState(() => _tipo = v ?? _tipo),
-        ),
-      ),
-    );
-  }
-
   Widget _buildHora() {
     return Expanded(
       child: Padding(
@@ -219,27 +197,12 @@ class _MatchFormPageState extends State<MatchFormPage> {
   }
 
   Widget _buildCompeticion() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 8, bottom: 10),
-        child: TextFormField(
-          controller: _competicionCtrl,
-          style: const TextStyle(color: AppColors.textPrimary),
-          decoration: const InputDecoration(labelText: 'Competición'),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPosicion() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: TextFormField(
-          controller: _posicionCtrl,
-          style: const TextStyle(color: AppColors.textPrimary),
-          decoration: const InputDecoration(labelText: 'Posición'),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TextFormField(
+        controller: _competicionCtrl,
+        style: const TextStyle(color: AppColors.textPrimary),
+        decoration: const InputDecoration(labelText: 'Competición'),
       ),
     );
   }
@@ -440,7 +403,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
       fecha:            _fecha,
       hora:             _horaCtrl.text.trim(),
       lugar:            _lugarCtrl.text.trim(),
-      tipo:             _tipo,
+      tipo:             'partido',
       competicion:      _competicionCtrl.text.trim(),
       estado:           'finalizado',
       notas:            _notasCtrl.text.trim(),
@@ -448,7 +411,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
       torneoNombre:     _torneoNombre,
       golesLocal:       int.tryParse(_golesLocalCtrl.text) ?? 0,
       golesVisitante:   int.tryParse(_golesVisitCtrl.text) ?? 0,
-      posicion:         _posicionCtrl.text.trim(),
+      posicion:         '',
       minutosJugados:   int.tryParse(_minutosCtrl.text) ?? 90,
       valoracion:       _valoracion,
       goles:            _stats['goles'] ?? 0,
