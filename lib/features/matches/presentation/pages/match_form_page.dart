@@ -83,17 +83,19 @@ class _MatchFormPageState extends State<MatchFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Registrar partido'),
-        leading: const BackButton(color: AppColors.textSecondary),
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-          physics: const BouncingScrollPhysics(),
+    return PopScope(
+      canPop: !_guardando,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('Registrar partido'),
+          leading: const BackButton(color: AppColors.textSecondary),
+        ),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+            physics: const ClampingScrollPhysics(),
           children: [
             _SectionTitle(title: 'Información del partido'),
             _buildRival(),
@@ -119,7 +121,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   // ── Campos básicos ──────────────────────────────────────────────────────
