@@ -70,7 +70,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (result['success'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Perfil guardado en MongoDB ✓'),
+          content: Text('Perfil guardado ✓'),
           backgroundColor: AppColors.success,
         ),
       );
@@ -133,7 +133,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             strokeWidth: 2, color: AppColors.background),
                       )
                     : const Icon(Icons.save_rounded),
-                label: Text(_guardando ? 'Guardando...' : 'Guardar en MongoDB'),
+                label: Text(_guardando ? 'Guardando...' : 'Guardar'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.background,
