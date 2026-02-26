@@ -21,90 +21,119 @@ class TournamentCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.08),
+            AppColors.card,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         onTap: onEdit,
         child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Indicador de color
-              Container(
-                width: 5,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              const SizedBox(width: 14),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              Row(
+                children: [
+                  // Icono con color del torneo
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: color.withValues(alpha: 0.4)),
+                    ),
+                    child: Icon(Icons.emoji_events_rounded,
+                        color: color, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            torneo.nombre,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
+                        Text(
+                          torneo.nombre,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
                         ),
-                        _StatusChip(activo: torneo.estaActivo, color: color),
+                        if (torneo.descripcion.isNotEmpty) ...
+                          [
+                            const SizedBox(height: 2),
+                            Text(
+                              torneo.descripcion,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 12),
+                            ),
+                          ],
                       ],
                     ),
-                    if (torneo.descripcion.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        torneo.descripcion,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            color: AppColors.textSecondary, fontSize: 12),
+                  ),
+                  _StatusChip(activo: torneo.estaActivo, color: color),
+                  PopupMenuButton<String>(
+                    color: AppColors.surface,
+                    icon: const Icon(Icons.more_vert_rounded,
+                        color: AppColors.textSecondary, size: 20),
+                    onSelected: (v) {
+                      if (v == 'edit') onEdit?.call();
+                      if (v == 'delete') onDelete?.call();
+                    },
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(children: [
+                          Icon(Icons.edit_rounded,
+                              color: AppColors.primary, size: 18),
+                          SizedBox(width: 8),
+                          Text('Editar',
+                              style:
+                                  TextStyle(color: AppColors.textPrimary)),
+                        ]),
+                      ),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(children: [
+                          Icon(Icons.delete_rounded,
+                              color: AppColors.danger, size: 18),
+                          SizedBox(width: 8),
+                          Text('Eliminar',
+                              style:
+                                  TextStyle(color: AppColors.danger)),
+                        ]),
                       ),
                     ],
-                    const SizedBox(height: 6),
-                    _DateRow(torneo: torneo),
-                  ],
-                ),
-              ),
-              // Acciones
-              PopupMenuButton<String>(
-                color: AppColors.surface,
-                icon: const Icon(Icons.more_vert_rounded,
-                    color: AppColors.textSecondary),
-                onSelected: (v) {
-                  if (v == 'edit') onEdit?.call();
-                  if (v == 'delete') onDelete?.call();
-                },
-                itemBuilder: (_) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(children: [
-                      Icon(Icons.edit_rounded, color: AppColors.primary, size: 18),
-                      SizedBox(width: 8),
-                      Text('Editar', style: TextStyle(color: AppColors.textPrimary)),
-                    ]),
-                  ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Row(children: [
-                      Icon(Icons.delete_rounded, color: AppColors.danger, size: 18),
-                      SizedBox(width: 8),
-                      Text('Eliminar', style: TextStyle(color: AppColors.danger)),
-                    ]),
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              // Barra separadora con gradiente del color del torneo
+              Container(
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withValues(alpha: 0.5),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              _DateRow(torneo: torneo),
             ],
           ),
         ),

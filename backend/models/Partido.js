@@ -32,8 +32,9 @@ const partidoSchema = new mongoose.Schema({
   
   lugar: {
     type: String,
-    required: true,
-    trim: true
+    required: false,
+    trim: true,
+    default: ''
   },
   
   // Tipo de partido

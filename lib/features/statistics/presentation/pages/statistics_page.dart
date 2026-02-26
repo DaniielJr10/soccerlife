@@ -5,6 +5,7 @@ import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading.dart';
 import '../../application/providers/statistics_provider.dart';
 import '../../domain/entities/statistics_entity.dart';
+import '../widgets/radar_chart_widget.dart';
 import '../widgets/stat_progress_row.dart';
 
 /// Página completa de estadísticas acumuladas del jugador.
@@ -93,9 +94,11 @@ class _SummaryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       children: [
         _ResultDistCard(stats: stats),
+        const SizedBox(height: 16),
+        RadarChartWidget(stats: stats),
         const SizedBox(height: 16),
         _StatGroupCard(
           title: 'Contribución ofensiva',
@@ -159,7 +162,7 @@ class _OffensiveTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       children: [
         _StatCard(
           title: 'Remates',
@@ -238,7 +241,7 @@ class _GeneralTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       children: [
         _StatCard(
           title: 'Faltas',

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../achievements/presentation/pages/achievements_page.dart';
 import '../dashboard/presentation/pages/dashboard_page.dart';
 import '../matches/presentation/pages/matches_page.dart';
 import '../statistics/presentation/pages/statistics_page.dart';
 import '../tournaments/presentation/pages/tournaments_page.dart';
 import '../profile/presentation/pages/profile_page.dart';
 
-/// Shell principal de la aplicación con navegación inferior.
-/// Usa [IndexedStack] para conservar el estado de cada pestaña.
+/// Shell principal de la aplicación con navegación inferior y
+/// transiciones animadas entre pestañas.
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -23,6 +24,7 @@ class _MainShellState extends State<MainShell> {
     MatchesPage(),
     StatisticsPage(),
     TournamentsPage(),
+    AchievementsPage(),
     ProfilePage(),
   ];
 
@@ -31,8 +33,13 @@ class _MainShellState extends State<MainShell> {
     _NavItem(icon: Icons.sports_soccer_rounded,   label: 'Partidos'),
     _NavItem(icon: Icons.bar_chart_rounded,       label: 'Estadísticas'),
     _NavItem(icon: Icons.emoji_events_rounded,    label: 'Torneos'),
+    _NavItem(icon: Icons.military_tech_rounded,   label: 'Logros'),
     _NavItem(icon: Icons.person_rounded,          label: 'Perfil'),
   ];
+
+  void _onDestinationSelected(int index) {
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,15 @@ class _MainShellState extends State<MainShell> {
       backgroundColor: AppColors.background,
       body: IndexedStack(
         index: _currentIndex,
-        children: _pages,
+        children: _pages.asMap().entries.map((entry) {
+          final i = entry.key;
+          final page = entry.value;
+          return AnimatedOpacity(
+            opacity: _currentIndex == i ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: page,
+          );
+        }).toList(),
       ),
       bottomNavigationBar: _buildBottomNav(),
     );
@@ -53,23 +68,33 @@ class _MainShellState extends State<MainShell> {
         border: Border(
           top: BorderSide(color: AppColors.border, width: 1),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       child: NavigationBar(
         selectedIndex: _currentIndex,
         backgroundColor: Colors.transparent,
         indicatorColor: AppColors.primary.withValues(alpha: 0.15),
+        animationDuration: const Duration(milliseconds: 300),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final active = states.contains(WidgetState.selected);
           return TextStyle(
-            fontSize: 11,
-            fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+            fontSize: 10,
+            fontWeight: active ? FontWeight.w700 : FontWeight.w400,
             color: active ? AppColors.primary : AppColors.textSecondary,
           );
         }),
-        onDestinationSelected: (i) => setState(() => _currentIndex = i),
-        destinations: _navItems
-            .map((n) => NavigationDestination(icon: Icon(n.icon), label: n.label))
-            .toList(),
+        onDestinationSelected: _onDestinationSelected,
+        destinations: _navItems.map((n) => NavigationDestination(
+            icon: Icon(n.icon, size: 22),
+            selectedIcon: Icon(n.icon, size: 22, color: AppColors.primary),
+            label: n.label,
+          )).toList(),
       ),
     );
   }

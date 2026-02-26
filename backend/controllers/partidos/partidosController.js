@@ -19,9 +19,9 @@ const crearPartido = async (req, res) => {
     } = req.body;
     
     // Validaciones
-    if (!equipoRival || !fecha || !hora || !lugar) {
+    if (!equipoRival || !fecha || !hora) {
       return res.status(400).json({ 
-        message: 'Faltan campos obligatorios: equipoRival, fecha, hora, lugar' 
+        message: 'Faltan campos obligatorios: equipoRival, fecha, hora' 
       });
     }
     

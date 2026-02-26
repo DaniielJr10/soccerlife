@@ -55,11 +55,14 @@ class _DashboardPageState extends State<DashboardPage> {
           slivers: [
             _buildAppBar(),
             SliverToBoxAdapter(
-              child: Consumer<ProfilePictureProvider>(
-                builder: (_, picProvider, __) => DashboardHeader(
+              child: Consumer2<ProfilePictureProvider, StatisticsProvider>(
+                builder: (_, picProvider, statsProvider, __) => DashboardHeader(
                   usuario: _usuario,
                   cargando: _cargandoUsuario,
                   photoBytes: picProvider.photoBytes,
+                  rating: statsProvider.stats.valoracionPromedio > 0
+                      ? statsProvider.stats.valoracionPromedio
+                      : null,
                 ),
               ),
             ),

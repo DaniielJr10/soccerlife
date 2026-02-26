@@ -21,7 +21,7 @@ class MatchDetailPage extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        physics: const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         children: [
           _buildScoreCard(resultado, resultColor),
           const SizedBox(height: 16),
