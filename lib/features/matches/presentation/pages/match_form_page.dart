@@ -21,7 +21,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
   // Campos básicos
   final _rivalCtrl         = TextEditingController();
   final _lugarCtrl         = TextEditingController();
-  final _competicionCtrl   = TextEditingController();
   final _horaCtrl          = TextEditingController(text: '15:00');
   final _notasCtrl         = TextEditingController();
   final _golesLocalCtrl    = TextEditingController(text: '0');
@@ -76,7 +75,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
 
   @override
   void dispose() {
-    for (final c in [_rivalCtrl, _lugarCtrl, _competicionCtrl,
+    for (final c in [_rivalCtrl, _lugarCtrl,
         _horaCtrl, _notasCtrl, _golesLocalCtrl, _golesVisitCtrl,
         _minutosCtrl]) c.dispose();
     super.dispose();
@@ -101,7 +100,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
             Row(children: [_buildFecha()]),
             _Row2(left: _buildHora(), right: _buildLugar()),
             _buildCompeticion(),
-            _buildTorneoSelector(),
             const SizedBox(height: 8),
             _SectionTitle(title: 'Resultado'),
             _buildScore(),
@@ -199,44 +197,38 @@ class _MatchFormPageState extends State<MatchFormPage> {
   Widget _buildCompeticion() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: TextFormField(
-        controller: _competicionCtrl,
-        style: const TextStyle(color: AppColors.textPrimary),
-        decoration: const InputDecoration(labelText: 'Competición'),
-      ),
-    );
-  }
-
-  Widget _buildTorneoSelector() {
-    if (_torneos.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField<String?>(
         value: _torneoId,
         dropdownColor: AppColors.card,
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
-          labelText: 'Torneo (opcional)',
+          labelText: 'Competición',
           prefixIcon: Icon(Icons.emoji_events_rounded),
         ),
         items: [
-          const DropdownMenuItem(
+          const DropdownMenuItem<String?>(
             value: null,
-            child: Text('Sin torneo',
-                style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Amistoso'),
           ),
           ..._torneos.map(
-            (t) => DropdownMenuItem(
+            (t) => DropdownMenuItem<String?>(
               value: t.id,
               child: Row(children: [
                 Container(
-                  width: 10, height: 10,
+                  width: 10,
+                  height: 10,
                   decoration: BoxDecoration(
-                      color: t.color, shape: BoxShape.circle),
+                    color: t.color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 const SizedBox(width: 8),
-                Flexible(child: Text(t.nombre,
-                    overflow: TextOverflow.ellipsis)),
+                Flexible(
+                  child: Text(
+                    t.nombre,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ]),
             ),
           ),
@@ -404,7 +396,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
       hora:             _horaCtrl.text.trim(),
       lugar:            _lugarCtrl.text.trim(),
       tipo:             'partido',
-      competicion:      _competicionCtrl.text.trim(),
+      competicion:      _torneoId == null ? 'Amistoso' : (_torneoNombre ?? ''),
       estado:           'finalizado',
       notas:            _notasCtrl.text.trim(),
       torneoId:         _torneoId,
