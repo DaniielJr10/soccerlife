@@ -20,7 +20,7 @@ class MatchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final resultado  = match.resultado;
-    final badgeColor = _resultColor(resultado);
+    final badgeColor = _resultColor(resultado); // usa la función de nivel superior
 
     return GestureDetector(
       onTap: onTap,
@@ -48,12 +48,15 @@ class MatchCard extends StatelessWidget {
     );
   }
 
-  static Color _resultColor(String? r) {
-    if (r == 'V') return AppColors.success;
-    if (r == 'D') return AppColors.danger;
-    if (r == 'E') return AppColors.warning;
-    return AppColors.textMuted;
-  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+
+Color _resultColor(String? r) {
+  if (r == 'V') return AppColors.success;
+  if (r == 'D') return AppColors.danger;
+  if (r == 'E') return AppColors.warning;
+  return AppColors.textMuted;
 }
 
 // ── Sub-widgets ─────────────────────────────────────────────────────────────
@@ -199,9 +202,9 @@ class _Metrics extends StatelessWidget {
           if (match.golesLocal != null)
             Text(
               '${match.golesLocal}–${match.golesVisitante}',
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
+              style: TextStyle(
+                color: _resultColor(match.resultado),
+                fontWeight: FontWeight.w800,
                 fontSize: 15,
               ),
             ),
