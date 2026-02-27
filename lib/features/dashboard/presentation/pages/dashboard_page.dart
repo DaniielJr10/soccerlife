@@ -67,7 +67,6 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             SliverToBoxAdapter(child: _buildStats()),
-            SliverToBoxAdapter(child: _buildPerformanceBar()),
             SliverToBoxAdapter(child: _buildRecentMatches()),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
           ],
@@ -136,9 +135,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildStats() {
-    return Consumer<StatisticsProvider>(
-      builder: (_, provider, __) {
-        if (provider.isLoading) {
+    return Consumer2<StatisticsProvider, MatchProvider>(
+      builder: (_, statsProvider, matchProvider, __) {
+        if (statsProvider.isLoading && matchProvider.isLoading) {
           return const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: AppLoading(),
@@ -146,62 +145,9 @@ class _DashboardPageState extends State<DashboardPage> {
         }
         return Padding(
           padding: const EdgeInsets.only(top: 4, bottom: 16),
-          child: QuickStatsWidget(stats: provider.stats),
-        );
-      },
-    );
-  }
-
-  Widget _buildPerformanceBar() {
-    return Consumer<StatisticsProvider>(
-      builder: (_, provider, __) {
-        if (provider.isLoading || provider.stats.partidosJugados == 0) {
-          return const SizedBox.shrink();
-        }
-        final stats = provider.stats;
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Rendimiento por partido',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                _PerformanceRow(
-                  label: 'Victorias',
-                  value: stats.porcentajeVictorias,
-                  color: AppColors.success,
-                  detail: '${stats.partidosGanados}/${stats.partidosJugados}',
-                ),
-                const SizedBox(height: 10),
-                _PerformanceRow(
-                  label: 'Precisión remates',
-                  value: stats.precisionRemates,
-                  color: AppColors.secondary,
-                  detail: '${stats.rematesAlArco}/${stats.remates}',
-                ),
-                const SizedBox(height: 10),
-                _PerformanceRow(
-                  label: 'Precisión pases',
-                  value: stats.precisionPases,
-                  color: AppColors.primary,
-                  detail: '${stats.pasesCompletados}/${stats.pasesCompletados + stats.pasesFallidos}',
-                ),
-              ],
-            ),
+          child: QuickStatsWidget(
+            stats: statsProvider.stats,
+            partidosCount: matchProvider.played.length,
           ),
         );
       },
@@ -258,47 +204,4 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-class _PerformanceRow extends StatelessWidget {
-  final String label;
-  final double value;
-  final Color color;
-  final String detail;
 
-  const _PerformanceRow({
-    required this.label,
-    required this.value,
-    required this.color,
-    required this.detail,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final pct = value.clamp(0, 100) / 100;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label,
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-            Text(
-              '${value.toStringAsFixed(1)}%  ($detail)',
-              style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: pct.toDouble(),
-            backgroundColor: color.withOpacity(0.12),
-            valueColor: AlwaysStoppedAnimation(color),
-            minHeight: 6,
-          ),
-        ),
-      ],
-    );
-  }
-}

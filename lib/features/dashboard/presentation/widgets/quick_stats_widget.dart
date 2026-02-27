@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../statistics/domain/entities/statistics_entity.dart';
 
-/// Fila de 4 métricas clave que aparece justo debajo del header.
+/// Fila de 3 métricas clave que aparece justo debajo del header.
 class QuickStatsWidget extends StatelessWidget {
   final StatisticsEntity stats;
+  final int partidosCount;
 
-  const QuickStatsWidget({super.key, required this.stats});
+  const QuickStatsWidget({
+    super.key,
+    required this.stats,
+    required this.partidosCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,7 @@ class QuickStatsWidget extends StatelessWidget {
       child: Row(
         children: [
           _QuickStat(
-            value: stats.partidosJugados.toString(),
+            value: partidosCount.toString(),
             label: 'Partidos',
             icon: Icons.sports_soccer_rounded,
             color: AppColors.primary,
@@ -33,15 +38,6 @@ class QuickStatsWidget extends StatelessWidget {
             label: 'Asistencias',
             icon: Icons.sports_handball_rounded,
             color: AppColors.success,
-          ),
-          const SizedBox(width: 10),
-          _QuickStat(
-            value: stats.valoracionPromedio > 0
-                ? stats.valoracionPromedio.toStringAsFixed(1)
-                : '—',
-            label: 'Rating',
-            icon: Icons.star_rounded,
-            color: AppColors.warning,
           ),
         ],
       ),
