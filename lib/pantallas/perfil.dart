@@ -29,6 +29,9 @@ class _PerfilPageState extends State<PerfilPage>
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
 
+  // Preferencias de notificaciones
+  bool _notificacionesActivas = true;
+
   // Información del usuario cargada desde el almacenamiento local
   UsuarioModel _usuario = UsuarioModel.vacio();
 
@@ -52,6 +55,7 @@ class _PerfilPageState extends State<PerfilPage>
   /// Carga los datos del usuario desde el almacenamiento local
   Future<void> _cargarDatosUsuario() async {
     final usuario = await StorageService.obtenerUsuarioModel();
+    final notif = await StorageService.obtener('notificaciones_activas');
 
     // 1. Intentar cargar foto desde caché local
     File? foto;
@@ -67,6 +71,7 @@ class _PerfilPageState extends State<PerfilPage>
       setState(() {
         _usuario = usuario;
         _profileImage = foto;
+        _notificacionesActivas = notif != 'false';
       });
     }
   }
@@ -582,92 +587,122 @@ class _PerfilPageState extends State<PerfilPage>
   }
 
   /// Sección de configuraciones y opciones de la cuenta
-  /// Lista todas las funcionalidades disponibles organizadas en categorías
   Widget _buildSettingsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── Sección Configuración ──────────────────────────────────────────
         const Text(
           'Configuración',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2C3E50),
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
         ),
-        const SizedBox(height: 16),
-        
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
+        const SizedBox(height: 12),
+        _buildSettingsCard([
+          _buildSettingsItem(
+            icon: Icons.edit,
+            title: 'Editar Perfil',
+            subtitle: 'Actualiza tu información personal',
+            onTap: () => _editProfile(context),
+            color: const Color(0xFF3498DB),
           ),
-          child: Column(
-            children: [
-              _buildSettingsItem(
-                icon: Icons.edit,
-                title: 'Editar Perfil',
-                subtitle: 'Actualiza tu información personal',
-                onTap: () => _editProfile(context),
-                color: const Color(0xFF3498DB),
-              ),
-              _buildDivider(),
-              _buildSettingsItem(
-                icon: Icons.notifications,
-                title: 'Notificaciones',
-                subtitle: 'Configurar alertas y recordatorios',
-                onTap: () => _openNotificationSettings(context),
-                color: const Color(0xFFF39C12),
-              ),
-              _buildDivider(),
-              _buildSettingsItem(
-                icon: Icons.privacy_tip,
-                title: 'Privacidad',
-                subtitle: 'Controla quién ve tu información',
-                onTap: () => _openPrivacySettings(context),
-                color: const Color(0xFF9B59B6),
-              ),
-              _buildDivider(),
-              _buildSettingsItem(
-                icon: Icons.help,
-                title: 'Ayuda y Soporte',
-                subtitle: 'Preguntas frecuentes y contacto',
-                onTap: () => _openHelp(context),
-                color: const Color(0xFF2ECC71),
-              ),
-              _buildDivider(),
-              _buildSettingsItem(
-                icon: Icons.info,
-                title: 'Acerca de',
-                subtitle: 'Información de la aplicación',
-                onTap: () => _showAboutDialog(context),
-                color: const Color(0xFF34495E),
-              ),
-              _buildDivider(),
-              _buildSettingsItem(
-                icon: Icons.logout,
-                title: 'Cerrar Sesión',
-                subtitle: 'Salir de tu cuenta actual',
-                onTap: () => _confirmLogout(context),
-                color: const Color(0xFFE74C3C),
-                isDestructive: true,
-              ),
-            ],
+          _buildDivider(),
+          _buildSettingsItem(
+            icon: Icons.lock_outline,
+            title: 'Cambiar Contraseña',
+            subtitle: 'Actualiza tu contraseña de acceso',
+            onTap: _mostrarCambiarPassword,
+            color: const Color(0xFF8E44AD),
           ),
+          _buildDivider(),
+          _buildSettingsItem(
+            icon: Icons.notifications_outlined,
+            title: 'Notificaciones',
+            subtitle: _notificacionesActivas ? 'Activadas' : 'Desactivadas',
+            onTap: _toggleNotificaciones,
+            color: const Color(0xFFF39C12),
+            trailing: Switch(
+              value: _notificacionesActivas,
+              onChanged: (_) => _toggleNotificaciones(),
+              activeColor: const Color(0xFF00f5ff),
+            ),
+          ),
+        ]),
+
+        const SizedBox(height: 24),
+
+        // ── Sección Soporte ────────────────────────────────────────────────
+        const Text(
+          'Soporte',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
         ),
+        const SizedBox(height: 12),
+        _buildSettingsCard([
+          _buildSettingsItem(
+            icon: Icons.help_outline,
+            title: 'Ayuda y Soporte',
+            subtitle: 'Preguntas frecuentes y contacto',
+            onTap: _mostrarAyuda,
+            color: const Color(0xFF2ECC71),
+          ),
+          _buildDivider(),
+          _buildSettingsItem(
+            icon: Icons.info_outline,
+            title: 'Acerca de',
+            subtitle: 'Soccer Life · Versión 1.0.0',
+            onTap: () => _showAboutDialog(context),
+            color: const Color(0xFF34495E),
+          ),
+        ]),
+
+        const SizedBox(height: 24),
+
+        // ── Sección Cuenta ─────────────────────────────────────────────────
+        const Text(
+          'Cuenta',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
+        ),
+        const SizedBox(height: 12),
+        _buildSettingsCard([
+          _buildSettingsItem(
+            icon: Icons.logout,
+            title: 'Cerrar Sesión',
+            subtitle: 'Salir de tu cuenta actual',
+            onTap: () => _confirmLogout(context),
+            color: const Color(0xFFE74C3C),
+            isDestructive: true,
+          ),
+          _buildDivider(),
+          _buildSettingsItem(
+            icon: Icons.delete_forever_outlined,
+            title: 'Borrar Cuenta',
+            subtitle: 'Eliminar permanentemente tu cuenta',
+            onTap: _confirmarBorrarCuenta,
+            color: const Color(0xFFC0392B),
+            isDestructive: true,
+          ),
+        ]),
       ],
     );
   }
 
+  Widget _buildSettingsCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(children: children),
+    );
+  }
+
   /// Construye cada elemento individual de configuración
-  /// Incluye ícono, título, descripción y acción específica
   Widget _buildSettingsItem({
     required IconData icon,
     required String title,
@@ -675,6 +710,7 @@ class _PerfilPageState extends State<PerfilPage>
     required VoidCallback onTap,
     required Color color,
     bool isDestructive = false,
+    Widget? trailing,
   }) {
     return InkWell(
       onTap: onTap,
@@ -683,7 +719,6 @@ class _PerfilPageState extends State<PerfilPage>
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // Ícono con fondo de color temático para cada opción
             Container(
               width: 45,
               height: 45,
@@ -691,15 +726,9 @@ class _PerfilPageState extends State<PerfilPage>
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(width: 16),
-            
-            // Contenido de texto del elemento de configuración
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -713,22 +742,132 @@ class _PerfilPageState extends State<PerfilPage>
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
-                  ),
+                  Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
                 ],
               ),
             ),
-            
-            // Flecha indicadora de que el elemento es clickeable
-            Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.grey[400],
-              size: 16,
+            trailing ?? Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Divider(height: 1, color: Colors.grey[200]),
+    );
+  }
+
+  // ── Acciones de configuración ─────────────────────────────────────────────
+
+  void _toggleNotificaciones() async {
+    final nuevo = !_notificacionesActivas;
+    setState(() => _notificacionesActivas = nuevo);
+    await StorageService.guardar('notificaciones_activas', nuevo.toString());
+  }
+
+  void _mostrarCambiarPassword() {
+    final actCtrl = TextEditingController();
+    final nuevaCtrl = TextEditingController();
+    final confCtrl = TextEditingController();
+    bool cargando = false;
+    bool verAct = false, verNueva = false, verConf = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlg) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(children: [
+            Icon(Icons.lock_outline, color: Color(0xFF8E44AD)),
+            SizedBox(width: 8),
+            Text('Cambiar Contraseña'),
+          ]),
+          content: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              TextField(
+                controller: actCtrl,
+                obscureText: !verAct,
+                decoration: InputDecoration(
+                  labelText: 'Contraseña actual',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(verAct ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setDlg(() => verAct = !verAct),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nuevaCtrl,
+                obscureText: !verNueva,
+                decoration: InputDecoration(
+                  labelText: 'Nueva contraseña',
+                  border: const OutlineInputBorder(),
+                  helperText: 'Mínimo 6 caracteres',
+                  suffixIcon: IconButton(
+                    icon: Icon(verNueva ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setDlg(() => verNueva = !verNueva),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: confCtrl,
+                obscureText: !verConf,
+                decoration: InputDecoration(
+                  labelText: 'Confirmar nueva contraseña',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(verConf ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setDlg(() => verConf = !verConf),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+          actions: [
+            TextButton(
+              onPressed: cargando ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: cargando
+                  ? null
+                  : () async {
+                      if (actCtrl.text.isEmpty || nuevaCtrl.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Completa todos los campos'), backgroundColor: Colors.orange),
+                        );
+                        return;
+                      }
+                      if (nuevaCtrl.text != confCtrl.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Las contraseñas no coinciden'), backgroundColor: Colors.orange),
+                        );
+                        return;
+                      }
+                      setDlg(() => cargando = true);
+                      final res = await AuthService.cambiarPassword(
+                        actual: actCtrl.text.trim(),
+                        nueva: nuevaCtrl.text.trim(),
+                      );
+                      setDlg(() => cargando = false);
+                      if (!ctx.mounted) return;
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(res['success'] ? '¡Contraseña actualizada!' : (res['message'] ?? 'Error')),
+                          backgroundColor: res['success'] ? const Color(0xFF2ECC71) : Colors.red,
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8E44AD), foregroundColor: Colors.white),
+              child: cargando
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Guardar'),
             ),
           ],
         ),
@@ -736,22 +875,152 @@ class _PerfilPageState extends State<PerfilPage>
     );
   }
 
-  /// Crea un divisor sutil entre elementos de configuración
-  Widget _buildDivider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Divider(
-        height: 1,
-        color: Colors.grey[200],
+  void _mostrarAyuda() {
+    final faqs = [
+      {'q': '¿Cómo registro un partido?', 'a': 'Ve a la pantalla "Partidos" y toca el botón "+" para registrar un nuevo partido con sus estadísticas.'},
+      {'q': '¿Cómo se calculan mis estadísticas?', 'a': 'Las estadísticas se recalculan automáticamente cada vez que registras, editas o eliminas un partido.'},
+      {'q': '¿Puedo usar la app en otro dispositivo?', 'a': 'Sí. Tus datos se sincronizan con el servidor. Solo inicia sesión con tu cuenta y todo estará disponible.'},
+      {'q': '¿Cómo cambio mi foto de perfil?', 'a': 'Toca tu avatar en la pantalla de Perfil, selecciona "Elegir de galería" y elige tu foto.'},
+      {'q': '¿Qué pasa si elimino mi cuenta?', 'a': 'Tu cuenta quedará inactiva y no podrás acceder. Para reactivarla, contacta al soporte.'},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.95,
+        minChildSize: 0.4,
+        builder: (_, ctrl) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Row(children: [
+                Icon(Icons.help_outline, color: Color(0xFF2ECC71), size: 28),
+                SizedBox(width: 10),
+                Text('Ayuda y Soporte', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              ]),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView(controller: ctrl, padding: const EdgeInsets.all(16), children: [
+                ...faqs.map((f) => ExpansionTile(
+                  title: Text(f['q']!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  iconColor: const Color(0xFF2ECC71),
+                  collapsedIconColor: Colors.grey,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Text(f['a']!, style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+                    ),
+                  ],
+                )),
+                const Divider(height: 32),
+                const Text('¿Necesitas más ayuda?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 8),
+                const Text('Contáctanos en:', style: TextStyle(color: Colors.grey)),
+                const SizedBox(height: 6),
+                Row(children: [
+                  const Icon(Icons.email_outlined, color: Color(0xFF2ECC71), size: 20),
+                  const SizedBox(width: 8),
+                  const Text('soporte@soccerlife.app', style: TextStyle(color: Color(0xFF2ECC71), fontWeight: FontWeight.w500)),
+                ]),
+                const SizedBox(height: 20),
+              ]),
+            ),
+          ]),
+        ),
       ),
     );
   }
 
-  
+  void _confirmarBorrarCuenta() {
+    final passCtrl = TextEditingController();
+    bool cargando = false;
 
-  /// Funciones de manejo de acciones - Actualmente muestran placeholders
-  /// En una implementación completa, estas navegarían a pantallas específicas
-  
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlg) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(children: [
+            Icon(Icons.delete_forever, color: Color(0xFFC0392B)),
+            SizedBox(width: 8),
+            Text('Borrar Cuenta', style: TextStyle(color: Color(0xFFC0392B))),
+          ]),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text(
+              '⚠️ Esta acción es irreversible. Se eliminarán todos tus datos.\n\nEscribe tu contraseña para confirmar:',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passCtrl,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Contraseña',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock_outline),
+              ),
+            ),
+          ]),
+          actions: [
+            TextButton(
+              onPressed: cargando ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: cargando
+                  ? null
+                  : () async {
+                      if (passCtrl.text.isEmpty) return;
+                      setDlg(() => cargando = true);
+                      // Verificar contraseña haciendo login
+                      final email = _usuario.email;
+                      final loginRes = await AuthService.login(email: email, password: passCtrl.text.trim());
+                      if (!loginRes['success']) {
+                        setDlg(() => cargando = false);
+                        if (!ctx.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Contraseña incorrecta'), backgroundColor: Colors.red),
+                        );
+                        return;
+                      }
+                      final res = await AuthService.eliminarCuenta();
+                      setDlg(() => cargando = false);
+                      if (!ctx.mounted) return;
+                      Navigator.pop(ctx);
+                      if (res['success']) {
+                        if (mounted) {
+                          Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(res['message'] ?? 'Error'), backgroundColor: Colors.red),
+                        );
+                      }
+                    },
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC0392B), foregroundColor: Colors.white),
+              child: cargando
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Borrar cuenta'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  /// Funciones de manejo de acciones
   void _editProfile(BuildContext context) async {
     final initialData = {
       'nombre': _usuario.nombre,
@@ -837,33 +1106,6 @@ class _PerfilPageState extends State<PerfilPage>
     }
   }
 
-  void _openNotificationSettings(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Configuración de notificaciones en desarrollo'),
-        backgroundColor: Color(0xFFF39C12),
-      ),
-    );
-  }
-
-  void _openPrivacySettings(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Configuración de privacidad en desarrollo'),
-        backgroundColor: Color(0xFF9B59B6),
-      ),
-    );
-  }
-
-  void _openHelp(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Ayuda y soporte en desarrollo'),
-        backgroundColor: Color(0xFF2ECC71),
-      ),
-    );
-  }
-
   /// Muestra el diálogo "Acerca de" con información de la aplicación
   void _showAboutDialog(BuildContext context) {
     showAboutDialog(
@@ -921,11 +1163,10 @@ class _PerfilPageState extends State<PerfilPage>
   }
 
   /// Ejecuta el logout y navega de vuelta al login
-  /// Elimina todo el historial de navegación para seguridad
-  void _performLogout(BuildContext context) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/login',
-      (route) => false,
-    );
+  void _performLogout(BuildContext context) async {
+    await AuthService.logout();
+    if (mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+    }
   }
 }

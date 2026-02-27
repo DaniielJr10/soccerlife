@@ -1,6 +1,29 @@
 const Usuario = require('../models/Usuario');
 const Estadistica = require('../models/Estadistica');
 
+// POST /usuarios/cambiar-password — cambia la contraseña del usuario autenticado
+const cambiarPassword = async (req, res) => {
+  try {
+    const { passwordActual, passwordNueva } = req.body;
+    if (!passwordActual || !passwordNueva) {
+      return res.status(400).json({ message: 'Se requieren passwordActual y passwordNueva' });
+    }
+    if (passwordNueva.length < 6) {
+      return res.status(400).json({ message: 'La nueva contraseña debe tener al menos 6 caracteres' });
+    }
+    const usuario = await Usuario.findById(req.usuarioId).select('password');
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
+    if (usuario.password !== passwordActual) {
+      return res.status(401).json({ message: 'La contraseña actual es incorrecta' });
+    }
+    await Usuario.findByIdAndUpdate(req.usuarioId, { password: passwordNueva });
+    console.log(`🔑 Contraseña cambiada para usuario ${req.usuarioId}`);
+    res.json({ success: true, message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al cambiar contraseña', error: error.message });
+  }
+};
+
 // Obtener todos los usuarios
 const obtenerUsuarios = async (req, res) => {
   try {
@@ -293,4 +316,5 @@ module.exports = {
   obtenerFotoPerfil,
   guardarFotoPerfil,
   eliminarFotoPerfil,
+  cambiarPassword,
 };

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../models/usuario_model.dart';
+import '../../../../services/auth_service.dart';
 import '../../../../services/profile_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../hoja_de_vida/presentation/pages/hoja_de_vida_page.dart';
@@ -24,6 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   UsuarioModel _usuario = UsuarioModel.vacio();
   bool _cargando = true;
   String? _errorMsg;
+  bool _notificacionesActivas = true;
 
   // Foto de perfil — se gestiona a través del ProfilePictureProvider
   bool _cargandoFoto = true;
@@ -36,6 +38,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _cargar() async {
     setState(() { _cargando = true; _errorMsg = null; });
+    final notif = await StorageService.obtener('notificaciones_activas');
+    if (mounted) setState(() => _notificacionesActivas = notif != 'false');
 
     // Carga perfil y foto en paralelo
     await Future.wait([
@@ -160,7 +164,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 12),
                   _buildCvButton(),
                   const SizedBox(height: 16),
+                  _buildConfigCard(),
+                  const SizedBox(height: 12),
+                  _buildSupportCard(),
+                  const SizedBox(height: 12),
                   _buildAccountCard(),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -287,20 +296,350 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
 
-  Widget _buildAccountCard() {
+  Widget _buildConfigCard() {
     return _card(
-      title: 'Cuenta',
+      title: 'CONFIGURACIÓN',
       children: [
+        _actionTile(
+          icon: Icons.lock_outline,
+          label: 'Cambiar Contraseña',
+          color: const Color(0xFF8E44AD),
+          onTap: _mostrarCambiarPassword,
+        ),
+        _divider(),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: Icon(Icons.logout, color: AppColors.danger),
-          title: Text('Cerrar sesión',
-              style:
-                  TextStyle(color: AppColors.danger, fontWeight: FontWeight.w600)),
-          onTap: _cerrarSesion,
+          leading: Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF39C12).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.notifications_outlined, color: Color(0xFFF39C12), size: 20),
+          ),
+          title: const Text('Notificaciones', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
+          subtitle: Text(_notificacionesActivas ? 'Activadas' : 'Desactivadas',
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          trailing: Switch(
+            value: _notificacionesActivas,
+            onChanged: (_) => _toggleNotificaciones(),
+            activeColor: AppColors.primary,
+          ),
+          onTap: _toggleNotificaciones,
         ),
       ],
     );
+  }
+
+  Widget _buildSupportCard() {
+    return _card(
+      title: 'SOPORTE',
+      children: [
+        _actionTile(
+          icon: Icons.help_outline,
+          label: 'Ayuda y Soporte',
+          color: const Color(0xFF2ECC71),
+          onTap: _mostrarAyuda,
+        ),
+        _divider(),
+        _actionTile(
+          icon: Icons.info_outline,
+          label: 'Acerca de',
+          sublabel: 'Soccer Life · v1.0.0',
+          color: const Color(0xFF3498DB),
+          onTap: () => showAboutDialog(
+            context: context,
+            applicationName: 'Soccer Life',
+            applicationVersion: '1.0.0',
+            applicationIcon: const Icon(Icons.sports_soccer, size: 48, color: AppColors.primary),
+            children: [const Text('Aplicación para gestionar tu carrera futbolística.\n\nDesarrollada con Flutter.')],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAccountCard() {
+    return _card(
+      title: 'CUENTA',
+      children: [
+        _actionTile(
+          icon: Icons.logout,
+          label: 'Cerrar Sesión',
+          color: AppColors.danger,
+          onTap: _cerrarSesion,
+          destructive: true,
+        ),
+        _divider(),
+        _actionTile(
+          icon: Icons.delete_forever_outlined,
+          label: 'Borrar Cuenta',
+          sublabel: 'Eliminar permanentemente tu cuenta',
+          color: const Color(0xFFC0392B),
+          onTap: _confirmarBorrarCuenta,
+          destructive: true,
+        ),
+      ],
+    );
+  }
+
+  Widget _actionTile({
+    required IconData icon,
+    required String label,
+    String? sublabel,
+    required Color color,
+    required VoidCallback onTap,
+    bool destructive = false,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      onTap: onTap,
+      leading: Container(
+        width: 36, height: 36,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+      title: Text(label, style: TextStyle(
+        color: destructive ? color : AppColors.textPrimary,
+        fontWeight: FontWeight.w600, fontSize: 15,
+      )),
+      subtitle: sublabel != null
+          ? Text(sublabel, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))
+          : null,
+      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 18),
+    );
+  }
+
+  Widget _divider() => const Divider(height: 1, color: AppColors.border);
+
+  // ── Acciones ───────────────────────────────────────────────────────────────
+
+  void _toggleNotificaciones() async {
+    final nuevo = !_notificacionesActivas;
+    setState(() => _notificacionesActivas = nuevo);
+    await StorageService.guardar('notificaciones_activas', nuevo.toString());
+  }
+
+  void _mostrarCambiarPassword() {
+    final actCtrl = TextEditingController();
+    final nuevaCtrl = TextEditingController();
+    final confCtrl = TextEditingController();
+    bool cargando = false;
+    bool verAct = false, verNueva = false, verConf = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlg) => AlertDialog(
+          backgroundColor: AppColors.card,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(children: [
+            Icon(Icons.lock_outline, color: Color(0xFF8E44AD)),
+            SizedBox(width: 8),
+            Text('Cambiar Contraseña', style: TextStyle(color: AppColors.textPrimary)),
+          ]),
+          content: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              _passField(ctrl: actCtrl, label: 'Contraseña actual', ver: verAct,
+                  onVer: () => setDlg(() => verAct = !verAct)),
+              const SizedBox(height: 12),
+              _passField(ctrl: nuevaCtrl, label: 'Nueva contraseña', ver: verNueva,
+                  helper: 'Mínimo 6 caracteres',
+                  onVer: () => setDlg(() => verNueva = !verNueva)),
+              const SizedBox(height: 12),
+              _passField(ctrl: confCtrl, label: 'Confirmar nueva contraseña', ver: verConf,
+                  onVer: () => setDlg(() => verConf = !verConf)),
+            ]),
+          ),
+          actions: [
+            TextButton(onPressed: cargando ? null : () => Navigator.pop(ctx),
+                child: const Text('Cancelar')),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8E44AD), foregroundColor: Colors.white),
+              onPressed: cargando ? null : () async {
+                if (actCtrl.text.isEmpty || nuevaCtrl.text.isEmpty) {
+                  _snack('Completa todos los campos', Colors.orange); return;
+                }
+                if (nuevaCtrl.text != confCtrl.text) {
+                  _snack('Las contraseñas no coinciden', Colors.orange); return;
+                }
+                setDlg(() => cargando = true);
+                final res = await AuthService.cambiarPassword(
+                    actual: actCtrl.text.trim(), nueva: nuevaCtrl.text.trim());
+                setDlg(() => cargando = false);
+                if (!ctx.mounted) return;
+                Navigator.pop(ctx);
+                _snack(res['success'] ? '¡Contraseña actualizada!' : (res['message'] ?? 'Error'),
+                    res['success'] ? const Color(0xFF2ECC71) : Colors.red);
+              },
+              child: cargando
+                  ? const SizedBox(width: 16, height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Guardar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _passField({required TextEditingController ctrl, required String label,
+      required bool ver, String? helper, required VoidCallback onVer}) {
+    return TextField(
+      controller: ctrl,
+      obscureText: !ver,
+      style: const TextStyle(color: AppColors.textPrimary),
+      decoration: InputDecoration(
+        labelText: label,
+        helperText: helper,
+        border: const OutlineInputBorder(),
+        suffixIcon: IconButton(
+          icon: Icon(ver ? Icons.visibility_off : Icons.visibility,
+              color: AppColors.textSecondary),
+          onPressed: onVer,
+        ),
+      ),
+    );
+  }
+
+  void _mostrarAyuda() {
+    final faqs = [
+      {'q': '¿Cómo registro un partido?', 'a': 'Ve a la pantalla "Partidos" y toca el botón "+" para registrar uno nuevo.'},
+      {'q': '¿Cómo se calculan mis estadísticas?', 'a': 'Se recalculan automáticamente cada vez que registras, editas o eliminas un partido.'},
+      {'q': '¿Puedo usar la app en otro dispositivo?', 'a': 'Sí. Tus datos se sincronizan en el servidor. Solo inicia sesión y todo estará disponible.'},
+      {'q': '¿Cómo cambio mi foto de perfil?', 'a': 'Toca tu avatar o el enlace "Cambiar foto" en la pantalla de Perfil.'},
+      {'q': '¿Qué pasa si elimino mi cuenta?', 'a': 'Quedará inactiva y no podrás acceder. Para reactivarla contacta a soporte.'},
+    ];
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.7, maxChildSize: 0.95, minChildSize: 0.4,
+        builder: (_, ctrl) => Container(
+          decoration: const BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4,
+                decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(children: [
+                Icon(Icons.help_outline, color: Color(0xFF2ECC71), size: 26),
+                SizedBox(width: 10),
+                Text('Ayuda y Soporte', style: TextStyle(
+                    color: AppColors.textPrimary, fontSize: 19, fontWeight: FontWeight.bold)),
+              ]),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView(controller: ctrl, padding: const EdgeInsets.all(16), children: [
+                ...faqs.map((f) => ExpansionTile(
+                  iconColor: const Color(0xFF2ECC71),
+                  collapsedIconColor: AppColors.textSecondary,
+                  title: Text(f['q']!, style: const TextStyle(
+                      color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 14)),
+                  children: [Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: Text(f['a']!, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                  )],
+                )),
+                const Divider(height: 32, color: AppColors.border),
+                const Text('¿Necesitas más ayuda?',
+                    style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
+                const SizedBox(height: 8),
+                const Row(children: [
+                  Icon(Icons.email_outlined, color: Color(0xFF2ECC71), size: 18),
+                  SizedBox(width: 8),
+                  Text('soporte@soccerlife.app',
+                      style: TextStyle(color: Color(0xFF2ECC71), fontWeight: FontWeight.w500)),
+                ]),
+                const SizedBox(height: 20),
+              ]),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  void _confirmarBorrarCuenta() {
+    final passCtrl = TextEditingController();
+    bool cargando = false;
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlg) => AlertDialog(
+          backgroundColor: AppColors.card,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(children: [
+            Icon(Icons.delete_forever, color: Color(0xFFC0392B)),
+            SizedBox(width: 8),
+            Text('Borrar Cuenta', style: TextStyle(color: Color(0xFFC0392B))),
+          ]),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text(
+              '⚠️ Esta acción es irreversible.\nEscribe tu contraseña para confirmar:',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passCtrl, obscureText: true,
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: const InputDecoration(
+                labelText: 'Contraseña', border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock_outline),
+              ),
+            ),
+          ]),
+          actions: [
+            TextButton(onPressed: cargando ? null : () => Navigator.pop(ctx),
+                child: const Text('Cancelar')),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFC0392B), foregroundColor: Colors.white),
+              onPressed: cargando ? null : () async {
+                if (passCtrl.text.isEmpty) return;
+                setDlg(() => cargando = true);
+                final loginRes = await AuthService.login(
+                    email: _usuario.email, password: passCtrl.text.trim());
+                if (!loginRes['success']) {
+                  setDlg(() => cargando = false);
+                  _snack('Contraseña incorrecta', Colors.red); return;
+                }
+                final res = await AuthService.eliminarCuenta();
+                setDlg(() => cargando = false);
+                if (!ctx.mounted) return;
+                Navigator.pop(ctx);
+                if (res['success'] && mounted) {
+                  Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+                } else {
+                  _snack(res['message'] ?? 'Error al borrar cuenta', Colors.red);
+                }
+              },
+              child: cargando
+                  ? const SizedBox(width: 16, height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Borrar cuenta'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _snack(String msg, Color color) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg), backgroundColor: color));
   }
 
   Widget _card({required String title, required List<Widget> children}) {

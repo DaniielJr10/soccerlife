@@ -20,6 +20,8 @@ const {
   obtenerFotoPerfil,
   guardarFotoPerfil,
   eliminarFotoPerfil,
+  // Contraseña
+  cambiarPassword,
 } = require('../controllers/usuarioController');
 const { loginUsuario } = require('../controllers/loginController');
 const { verificarToken } = require('../middleware/auth');
@@ -58,6 +60,9 @@ router.post('/login', loginUsuario);
 router.post('/recuperar-password/email', solicitarRecuperacionEmail);
 router.post('/verificar-codigo-recuperacion', verificarCodigoRecuperacion);
 router.post('/cambiar-password-recuperacion', cambiarPasswordRecuperacion);
+
+// POST /api/usuarios/cambiar-password (autenticado)
+router.post('/cambiar-password', verificarToken, cambiarPassword);
 
 // ── Foto de perfil ──────────────────────────────────────────────────────────
 // GET  /api/usuarios/foto-perfil

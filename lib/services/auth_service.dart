@@ -215,6 +215,48 @@ class AuthService {
     };
   }
 
+  // ── Contraseña y cuenta ───────────────────────────────────────────────────
+
+  /// Cambia la contraseña del usuario autenticado
+  static Future<Map<String, dynamic>> cambiarPassword({
+    required String actual,
+    required String nueva,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/usuarios/cambiar-password');
+      final headers = await obtenerHeadersAutenticados();
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: json.encode({'passwordActual': actual, 'passwordNueva': nueva}),
+      );
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200) return {'success': true};
+      return {'success': false, 'message': data['message'] ?? 'Error al cambiar contraseña'};
+    } catch (e) {
+      return {'success': false, 'message': 'Error de conexión: $e'};
+    }
+  }
+
+  /// Elimina la cuenta del usuario (soft delete) y limpia sesión local
+  static Future<Map<String, dynamic>> eliminarCuenta() async {
+    try {
+      final userId = await StorageService.obtenerUserId();
+      if (userId == null) return {'success': false, 'message': 'No se encontró el usuario'};
+      final url = Uri.parse('$baseUrl/usuarios/$userId');
+      final headers = await obtenerHeadersAutenticados();
+      final response = await http.delete(url, headers: headers);
+      if (response.statusCode == 200) {
+        await StorageService.limpiarDatos();
+        return {'success': true};
+      }
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      return {'success': false, 'message': data['message'] ?? 'Error al eliminar cuenta'};
+    } catch (e) {
+      return {'success': false, 'message': 'Error de conexión: $e'};
+    }
+  }
+
   // ── Foto de perfil ────────────────────────────────────────────────────────
 
   /// Subir o reemplazar la foto de perfil en el servidor (base64 con prefijo data:image)
