@@ -239,6 +239,12 @@ class _MatchFormPageState extends State<MatchFormPage> {
           labelText: 'Competición',
           prefixIcon: Icon(Icons.emoji_events_rounded),
         ),
+        selectedItemBuilder: (context) => [
+          const Text('Amistoso', overflow: TextOverflow.ellipsis),
+          ..._torneos.map(
+            (t) => Text(t.nombre, overflow: TextOverflow.ellipsis),
+          ),
+        ],
         items: [
           const DropdownMenuItem<String?>(
             value: null,
