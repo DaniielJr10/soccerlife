@@ -15,6 +15,7 @@ class StorageService {
   static const String _keyUserEdad = 'user_edad';
   static const String _keyUserEstatura = 'user_estatura';
   static const String _keyUserPeso = 'user_peso';
+  static const String _keyFotoPerfil = 'user_foto_perfil';
 
   /// Guardar token de autenticación
   static Future<bool> guardarToken(String token) async {
@@ -201,10 +202,42 @@ class StorageService {
       await prefs.remove(_keyUserEdad);
       await prefs.remove(_keyUserEstatura);
       await prefs.remove(_keyUserPeso);
+      await prefs.remove(_keyFotoPerfil);
       return true;
     } catch (e) {
       print('Error limpiando datos: $e');
       return false;
+    }
+  }
+
+  /// Guardar ruta de la foto de perfil
+  static Future<bool> guardarFotoPerfil(String path) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return await prefs.setString(_keyFotoPerfil, path);
+    } catch (e) {
+      print('Error guardando foto perfil: \$e');
+      return false;
+    }
+  }
+
+  /// Obtener ruta de la foto de perfil
+  static Future<String?> obtenerFotoPerfil() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_keyFotoPerfil);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Eliminar ruta de la foto de perfil
+  static Future<void> eliminarFotoPerfil() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_keyFotoPerfil);
+    } catch (e) {
+      print('Error eliminando foto perfil: \$e');
     }
   }
 

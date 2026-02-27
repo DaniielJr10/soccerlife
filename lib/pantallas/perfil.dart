@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
 import 'dart:io';
 import 'editarperfil.dart';
 import '../models/usuario_model.dart';
@@ -50,10 +52,43 @@ class _PerfilPageState extends State<PerfilPage>
   /// Carga los datos del usuario desde el almacenamiento local
   Future<void> _cargarDatosUsuario() async {
     final usuario = await StorageService.obtenerUsuarioModel();
+
+    // 1. Intentar cargar foto desde caché local
+    File? foto;
+    final cachedPath = await StorageService.obtenerFotoPerfil();
+    if (cachedPath != null && File(cachedPath).existsSync()) {
+      foto = File(cachedPath);
+    } else {
+      // 2. Si no hay caché, bajar del servidor
+      foto = await _descargarYCacharFoto();
+    }
+
     if (mounted) {
       setState(() {
         _usuario = usuario;
+        _profileImage = foto;
       });
+    }
+  }
+
+  /// Descarga la foto desde MongoDB, la guarda como archivo y devuelve el File.
+  Future<File?> _descargarYCacharFoto() async {
+    try {
+      final base64str = await AuthService.obtenerFotoPerfilServidor();
+      if (base64str == null) return null;
+
+      // Extraer datos puros (quitar prefijo data:image/...;base64,)
+      final commaIdx = base64str.indexOf(',');
+      final pureBase64 = commaIdx >= 0 ? base64str.substring(commaIdx + 1) : base64str;
+      final bytes = base64Decode(pureBase64);
+
+      final appDir = await getApplicationDocumentsDirectory();
+      final path = '${appDir.path}/profile_cached.jpg';
+      final file = await File(path).writeAsBytes(bytes);
+      await StorageService.guardarFotoPerfil(file.path);
+      return file;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -73,13 +108,42 @@ class _PerfilPageState extends State<PerfilPage>
         maxHeight: 512,
         imageQuality: 85,
       );
-      
-      if (image != null) {
-        setState(() {
-          _profileImage = File(image.path);
-        });
-        
-        // Mostrar mensaje de confirmación
+
+      if (image == null) return;
+
+      // Leer bytes y convertir a base64 con prefijo
+      final bytes = await File(image.path).readAsBytes();
+      final base64str = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+
+      // Subir al servidor
+      final resultado = await AuthService.subirFotoPerfil(base64str);
+
+      if (!resultado['success']) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(resultado['message'] ?? 'Error al subir la foto'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      // Guardar localmente como caché
+      final appDir = await getApplicationDocumentsDirectory();
+      // Eliminar caché anterior
+      final oldPath = await StorageService.obtenerFotoPerfil();
+      if (oldPath != null) {
+        final old = File(oldPath);
+        if (old.existsSync()) old.deleteSync();
+      }
+      final newFile = await File(image.path).copy('${appDir.path}/profile_cached.jpg');
+      await StorageService.guardarFotoPerfil(newFile.path);
+
+      setState(() => _profileImage = newFile);
+
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Foto de perfil actualizada'),
@@ -89,13 +153,14 @@ class _PerfilPageState extends State<PerfilPage>
         );
       }
     } catch (e) {
-      // Manejar errores
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error al seleccionar imagen'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al seleccionar imagen'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -156,17 +221,26 @@ class _PerfilPageState extends State<PerfilPage>
                   child: const Icon(Icons.delete, color: Colors.red),
                 ),
                 title: const Text('Eliminar foto'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  setState(() {
-                    _profileImage = null;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Foto de perfil eliminada'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  // Eliminar en servidor
+                  await AuthService.eliminarFotoPerfilServidor();
+                  // Eliminar caché local
+                  final path = await StorageService.obtenerFotoPerfil();
+                  if (path != null) {
+                    final f = File(path);
+                    if (f.existsSync()) f.deleteSync();
+                    await StorageService.eliminarFotoPerfil();
+                  }
+                  setState(() => _profileImage = null);
+                  if (mounted) {
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Foto de perfil eliminada'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
               ),
             const SizedBox(height: 20),

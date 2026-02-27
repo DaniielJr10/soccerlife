@@ -214,4 +214,56 @@ class AuthService {
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
+
+  // ── Foto de perfil ────────────────────────────────────────────────────────
+
+  /// Subir o reemplazar la foto de perfil en el servidor (base64 con prefijo data:image)
+  static Future<Map<String, dynamic>> subirFotoPerfil(String fotoBase64) async {
+    try {
+      final url = Uri.parse('$baseUrl/usuarios/foto-perfil');
+      final headers = await obtenerHeadersAutenticados();
+      final response = await http.put(
+        url,
+        headers: headers,
+        body: json.encode({'fotoBase64': fotoBase64}),
+      );
+      if (response.statusCode == 200) {
+        return {'success': true};
+      }
+      final err = json.decode(response.body);
+      return {'success': false, 'message': err['message'] ?? 'Error al subir foto'};
+    } catch (e) {
+      return {'success': false, 'message': 'Error de conexión: $e'};
+    }
+  }
+
+  /// Obtener la foto de perfil desde el servidor (string base64 con prefijo o null)
+  static Future<String?> obtenerFotoPerfilServidor() async {
+    try {
+      final url = Uri.parse('$baseUrl/usuarios/foto-perfil');
+      final headers = await obtenerHeadersAutenticados();
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        if (data['existe'] == true) {
+          return data['fotoPerfil'] as String?;
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Eliminar la foto de perfil del servidor
+  static Future<bool> eliminarFotoPerfilServidor() async {
+    try {
+      final url = Uri.parse('$baseUrl/usuarios/foto-perfil');
+      final headers = await obtenerHeadersAutenticados();
+      final response = await http.delete(url, headers: headers);
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }
