@@ -120,12 +120,19 @@ class _TagRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Si hay nombre de competición/torneo, mostrarlo directamente.
+    // Si no, mostrar el tipo (Amistoso, Liga, etc.).
+    final competicionLabel = match.competicion.isNotEmpty
+        ? match.competicion
+        : match.tipo;
+    final competicionColor = match.competicion.isNotEmpty
+        ? AppColors.primary
+        : AppColors.secondary;
+
     return Wrap(
       spacing: 4,
       children: [
-        _Tag(label: match.tipo, color: AppColors.secondary),
-        if (match.competicion.isNotEmpty)
-          _Tag(label: match.competicion, color: AppColors.primary),
+        _Tag(label: competicionLabel, color: competicionColor),
         if (match.posicion.isNotEmpty)
           _Tag(label: match.posicion, color: AppColors.info),
       ],
