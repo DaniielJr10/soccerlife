@@ -253,10 +253,7 @@ class _Info extends StatelessWidget {
   const _Info({required this.usuario, required this.cargando});
 
   String _saludo() {
-    final h = DateTime.now().hour;
-    if (h < 12) return 'Buenos días';
-    if (h < 18) return 'Buenas tardes';
-    return 'Buenas noches';
+    return 'Hola';
   }
 
   @override
