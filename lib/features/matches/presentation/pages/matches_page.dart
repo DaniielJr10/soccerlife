@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading.dart';
+import '../../../statistics/application/providers/statistics_provider.dart';
 import '../../../tournaments/application/tournament_provider.dart';
 import '../../../tournaments/domain/entities/tournament_entity.dart';
 import '../../application/providers/match_provider.dart';
@@ -59,6 +60,11 @@ class _MatchesPageState extends State<MatchesPage> {
     }
   }
 
+  Future<void> _reloadAll() => Future.wait([
+        context.read<MatchProvider>().loadPlayed(),
+        context.read<StatisticsProvider>().load(),
+      ]);
+
   /// Etiqueta del filtro de resultado activo (cadena simple para pasar a widgets).
   String _resultadoLabelActual() {
     switch (_filtroActivo) {
@@ -79,7 +85,7 @@ class _MatchesPageState extends State<MatchesPage> {
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             color: AppColors.textSecondary,
-            onPressed: () => context.read<MatchProvider>().loadPlayed(),
+            onPressed: _reloadAll,
           ),
         ],
       ),
@@ -293,7 +299,7 @@ class _MatchesPageState extends State<MatchesPage> {
     return RefreshIndicator(
       color: AppColors.primary,
       backgroundColor: AppColors.card,
-      onRefresh: provider.loadPlayed,
+      onRefresh: () async => _reloadAll(),
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
         physics: const BouncingScrollPhysics(),
@@ -320,7 +326,7 @@ class _MatchesPageState extends State<MatchesPage> {
       MaterialPageRoute(builder: (_) => const MatchFormPage()),
     );
     if (saved == true && mounted) {
-      context.read<MatchProvider>().loadPlayed();
+      _reloadAll();
     }
   }
 
@@ -330,7 +336,7 @@ class _MatchesPageState extends State<MatchesPage> {
       MaterialPageRoute(builder: (_) => MatchFormPage(match: match)),
     );
     if (saved == true && mounted) {
-      context.read<MatchProvider>().loadPlayed();
+      _reloadAll();
     }
   }
 
@@ -354,7 +360,9 @@ class _MatchesPageState extends State<MatchesPage> {
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () {
               Navigator.pop(context);
-              provider.deleteMatch(id);
+              provider.deleteMatch(id).then((_) {
+                if (mounted) context.read<StatisticsProvider>().load();
+              });
             },
             child: const Text('Eliminar'),
           ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading.dart';
+import '../../../matches/application/providers/match_provider.dart';
 import '../../application/providers/statistics_provider.dart';
 import '../../domain/entities/statistics_entity.dart';
 import '../widgets/radar_chart_widget.dart';
@@ -24,8 +25,11 @@ class _StatisticsPageState extends State<StatisticsPage>
   void initState() {
     super.initState();
     _tabs = TabController(length: 3, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.read<StatisticsProvider>().load());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StatisticsProvider>().load();
+      final mp = context.read<MatchProvider>();
+      if (mp.played.isEmpty) mp.loadPlayed();
+    });
   }
 
   @override
@@ -55,12 +59,15 @@ class _StatisticsPageState extends State<StatisticsPage>
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             color: AppColors.textSecondary,
-            onPressed: () => context.read<StatisticsProvider>().load(),
+            onPressed: () {
+              context.read<StatisticsProvider>().load();
+              context.read<MatchProvider>().loadPlayed();
+            },
           ),
         ],
       ),
-      body: Consumer<StatisticsProvider>(
-        builder: (_, provider, __) {
+      body: Consumer2<StatisticsProvider, MatchProvider>(
+        builder: (_, provider, matchProvider, __) {
           if (provider.isLoading) {
             return const AppLoading(message: 'Cargando estadísticas...');
           }
@@ -70,12 +77,13 @@ class _StatisticsPageState extends State<StatisticsPage>
               onRetry: provider.load,
             );
           }
+          final partidosCount = matchProvider.played.length;
           return TabBarView(
             controller: _tabs,
             children: [
-              _SummaryTab(stats: provider.stats),
+              _SummaryTab(stats: provider.stats, partidosCount: partidosCount),
               _OffensiveTab(stats: provider.stats),
-              _GeneralTab(stats: provider.stats),
+              _GeneralTab(stats: provider.stats, partidosCount: partidosCount),
             ],
           );
         },
@@ -88,7 +96,8 @@ class _StatisticsPageState extends State<StatisticsPage>
 
 class _SummaryTab extends StatelessWidget {
   final StatisticsEntity stats;
-  const _SummaryTab({required this.stats});
+  final int partidosCount;
+  const _SummaryTab({required this.stats, required this.partidosCount});
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +105,7 @@ class _SummaryTab extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       physics: const ClampingScrollPhysics(),
       children: [
-        _ResultDistCard(stats: stats),
+        _ResultDistCard(stats: stats, partidosCount: partidosCount),
         const SizedBox(height: 16),
         RadarChartWidget(stats: stats),
         const SizedBox(height: 16),
@@ -113,8 +122,8 @@ class _SummaryTab extends StatelessWidget {
             _BigStat(
               value: stats.asistencias.toString(),
               label: 'Asistencias',
-              sub: stats.partidosJugados > 0
-                  ? '${(stats.asistencias / stats.partidosJugados).toStringAsFixed(2)} por partido'
+              sub: partidosCount > 0
+                  ? '${(stats.asistencias / partidosCount).toStringAsFixed(2)} por partido'
                   : '—',
               color: AppColors.secondary,
               icon: Icons.sports_handball_rounded,
@@ -128,8 +137,8 @@ class _SummaryTab extends StatelessWidget {
             _BigStat(
               value: stats.minutosFormateados,
               label: 'Total',
-              sub: stats.partidosJugados > 0
-                  ? '${(stats.minutosJugados / stats.partidosJugados).toStringAsFixed(0)} min/partido'
+              sub: partidosCount > 0
+                  ? '${(stats.minutosJugados / partidosCount).toStringAsFixed(0)} min/partido'
                   : '—',
               color: AppColors.info,
               icon: Icons.timer_rounded,
@@ -235,7 +244,8 @@ class _OffensiveTab extends StatelessWidget {
 
 class _GeneralTab extends StatelessWidget {
   final StatisticsEntity stats;
-  const _GeneralTab({required this.stats});
+  final int partidosCount;
+  const _GeneralTab({required this.stats, required this.partidosCount});
 
   @override
   Widget build(BuildContext context) {
@@ -274,20 +284,20 @@ class _GeneralTab extends StatelessWidget {
               label: 'Tarjetas amarillas',
               value: stats.tarjetasAmarillas.toString(),
               progress: stats.tarjetasAmarillas /
-                  (stats.partidosJugados == 0 ? 1 : stats.partidosJugados),
+                  (partidosCount == 0 ? 1 : partidosCount),
               color: AppColors.cardYellow,
             ),
             StatProgressRow(
               label: 'Tarjetas rojas',
               value: stats.tarjetasRojas.toString(),
               progress: stats.tarjetasRojas /
-                  (stats.partidosJugados == 0 ? 1 : stats.partidosJugados),
+                  (partidosCount == 0 ? 1 : partidosCount),
               color: AppColors.cardRed,
             ),
           ],
         ),
         const SizedBox(height: 16),
-        _AllTimeCard(stats: stats),
+        _AllTimeCard(stats: stats, partidosCount: partidosCount),
       ],
     );
   }
@@ -297,7 +307,8 @@ class _GeneralTab extends StatelessWidget {
 
 class _ResultDistCard extends StatelessWidget {
   final StatisticsEntity stats;
-  const _ResultDistCard({required this.stats});
+  final int partidosCount;
+  const _ResultDistCard({required this.stats, required this.partidosCount});
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +330,7 @@ class _ResultDistCard extends StatelessWidget {
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 15)),
-              Text('${stats.partidosJugados} partidos',
+              Text('$partidosCount partidos',
                   style: const TextStyle(
                       color: AppColors.textMuted, fontSize: 12)),
             ],
@@ -353,7 +364,7 @@ class _ResultDistCard extends StatelessWidget {
                     flex: stats.partidosPerdidos,
                     child: Container(color: AppColors.danger),
                   ),
-                  if (stats.partidosJugados == 0)
+                  if (partidosCount == 0)
                     Flexible(
                       flex: 1,
                       child: Container(color: AppColors.border),
@@ -594,12 +605,13 @@ class _StatCard extends StatelessWidget {
 
 class _AllTimeCard extends StatelessWidget {
   final StatisticsEntity stats;
-  const _AllTimeCard({required this.stats});
+  final int partidosCount;
+  const _AllTimeCard({required this.stats, required this.partidosCount});
 
   @override
   Widget build(BuildContext context) {
     final rows = [
-      ('Partidos jugados', stats.partidosJugados.toString()),
+      ('Partidos jugados', partidosCount.toString()),
       ('Goles totales',    stats.goles.toString()),
       ('Asistencias',      stats.asistencias.toString()),
       ('Remates',          stats.remates.toString()),
