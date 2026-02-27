@@ -7,9 +7,12 @@ import '../../application/providers/match_provider.dart';
 import '../../domain/entities/match_entity.dart';
 import '../widgets/stats_form_section.dart';
 
-/// Formulario para registrar un partido jugado con todas sus estadísticas.
+/// Formulario para registrar o editar un partido jugado con todas sus estadísticas.
 class MatchFormPage extends StatefulWidget {
-  const MatchFormPage({super.key});
+  /// Si se pasa [match], el formulario entra en modo edición.
+  final MatchEntity? match;
+
+  const MatchFormPage({super.key, this.match});
 
   @override
   State<MatchFormPage> createState() => _MatchFormPageState();
@@ -49,17 +52,45 @@ class _MatchFormPageState extends State<MatchFormPage> {
 
   bool _guardando = false;
 
+  bool get _esEdicion => widget.match != null;
+
   @override
   void initState() {
     super.initState();
+    _preFill();
     WidgetsBinding.instance.addPostFrameCallback((_) => _cargarTorneos());
+  }
+
+  /// Precarga los campos cuando estamos editando un partido existente.
+  void _preFill() {
+    final m = widget.match;
+    if (m == null) return;
+    _rivalCtrl.text       = m.rival;
+    _lugarCtrl.text       = m.lugar;
+    _horaCtrl.text        = m.hora;
+    _notasCtrl.text       = m.notas ?? '';
+    _golesLocalCtrl.text  = (m.golesLocal ?? 0).toString();
+    _golesVisitCtrl.text  = (m.golesVisitante ?? 0).toString();
+    _minutosCtrl.text     = m.minutosJugados.toString();
+    _fecha                = m.fecha;
+    _valoracion           = m.valoracion ?? 5.0;
+    _torneoId             = m.torneoId;
+    _torneoNombre         = m.torneoNombre;
+    _stats['goles']              = m.goles;
+    _stats['asistencias']        = m.asistencias;
+    _stats['remates']            = m.remates;
+    _stats['regatesExitosos']    = m.regatesExitosos;
+    _stats['regatesFallidos']    = m.regatesFallidos;
+    _stats['faltasCometidas']    = m.faltasCometidas;
+    _stats['faltasRecibidas']    = m.faltasRecibidas;
+    _stats['tarjetasAmarillas']  = m.tarjetasAmarillas;
+    _stats['tarjetasRojas']      = m.tarjetasRojas;
   }
 
   /// Carga torneos una sola vez en estado local.
   /// Usa los datos ya en caché del provider si están disponibles,
   /// o lanza load() sin bloquear el formulario.
-  Future<void> _cargarTorneos() async {
-    final provider = context.read<TournamentProvider>();
+  Future<void> _cargarTorneos() async {    final provider = context.read<TournamentProvider>();
     if (provider.items.isNotEmpty) {
       if (mounted) setState(() => _torneos = provider.items);
       return;
@@ -87,7 +118,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text('Registrar partido'),
+          title: Text(_esEdicion ? 'Editar partido' : 'Registrar partido'),
           leading: const BackButton(color: AppColors.textSecondary),
         ),
         body: Form(
@@ -382,7 +413,10 @@ class _MatchFormPageState extends State<MatchFormPage> {
               child:
                   CircularProgressIndicator(color: AppColors.textOnPrimary, strokeWidth: 2),
             )
-          : const Text('Guardar partido', style: TextStyle(fontSize: 16)),
+          : Text(
+              _esEdicion ? 'Guardar cambios' : 'Guardar partido',
+              style: const TextStyle(fontSize: 16),
+            ),
     );
   }
 
@@ -393,6 +427,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
     setState(() => _guardando = true);
 
     final match = MatchEntity(
+      id:               _esEdicion ? widget.match!.id : null,
       rival:            _rivalCtrl.text.trim(),
       fecha:            _fecha,
       hora:             _horaCtrl.text.trim(),
@@ -422,7 +457,13 @@ class _MatchFormPageState extends State<MatchFormPage> {
       tarjetasRojas:    _stats['tarjetasRojas'] ?? 0,
     );
 
-    final ok = await context.read<MatchProvider>().registerPlayed(match);
+    final bool ok;
+    if (_esEdicion) {
+      ok = await context.read<MatchProvider>().updateMatch(match);
+    } else {
+      ok = await context.read<MatchProvider>().registerPlayed(match);
+    }
+
     if (!mounted) return;
     setState(() => _guardando = false);
 

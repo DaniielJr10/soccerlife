@@ -22,6 +22,10 @@ class MatchRepositoryImpl implements MatchRepository {
       _dataSource.update(match);
 
   @override
+  Future<MatchEntity> updateFullMatch(MatchEntity match) =>
+      _dataSource.updateFull(match);
+
+  @override
   Future<void> deleteMatch(String id) => _dataSource.delete(id);
 
   @override

@@ -3,6 +3,7 @@ import '../../domain/entities/match_entity.dart';
 import '../../domain/usecases/register_match_usecase.dart';
 import '../../domain/usecases/get_matches_usecase.dart';
 import '../../domain/usecases/delete_match_usecase.dart';
+import '../../domain/usecases/update_match_usecase.dart';
 import '../../infrastructure/datasources/match_remote_datasource.dart';
 import '../../infrastructure/repositories/match_repository_impl.dart';
 
@@ -11,17 +12,30 @@ enum MatchStatus { idle, loading, success, error }
 /// Estado y lógica de la feature de Partidos.
 class MatchProvider extends ChangeNotifier {
   // ── Dependencias ──────────────────────────────────────────────────────────
-  late final RegisterMatchUseCase _register;
-  late final GetMatchesUseCase _getMatches;
-  late final DeleteMatchUseCase _delete;
+  final RegisterMatchUseCase _register;
+  final GetMatchesUseCase _getMatches;
+  final DeleteMatchUseCase _delete;
+  final UpdateMatchUseCase _update;
 
-  MatchProvider() {
-    final ds   = MatchRemoteDataSource();
-    final repo = MatchRepositoryImpl(ds);
-    _register   = RegisterMatchUseCase(repo);
-    _getMatches = GetMatchesUseCase(repo);
-    _delete     = DeleteMatchUseCase(repo);
+  factory MatchProvider() {
+    final repo = MatchRepositoryImpl(MatchRemoteDataSource());
+    return MatchProvider._internal(
+      register:   RegisterMatchUseCase(repo),
+      getMatches: GetMatchesUseCase(repo),
+      delete:     DeleteMatchUseCase(repo),
+      update:     UpdateMatchUseCase(repo),
+    );
   }
+
+  MatchProvider._internal({
+    required RegisterMatchUseCase register,
+    required GetMatchesUseCase getMatches,
+    required DeleteMatchUseCase delete,
+    required UpdateMatchUseCase update,
+  })  : _register   = register,
+        _getMatches = getMatches,
+        _delete     = delete,
+        _update     = update;
 
   // ── Estado ────────────────────────────────────────────────────────────────
   List<MatchEntity> _played   = [];
@@ -92,6 +106,20 @@ class MatchProvider extends ChangeNotifier {
     try {
       final saved = await _register.callScheduled(match);
       _upcoming.add(saved);
+      _setSuccess();
+      return true;
+    } catch (e) {
+      _setError(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateMatch(MatchEntity match) async {
+    _setLoading();
+    try {
+      final updated = await _update.call(match);
+      final idx = _played.indexWhere((m) => m.id == match.id);
+      if (idx != -1) _played[idx] = updated;
       _setSuccess();
       return true;
     } catch (e) {

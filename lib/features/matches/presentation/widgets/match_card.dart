@@ -6,12 +6,14 @@ import '../../domain/entities/match_entity.dart';
 class MatchCard extends StatelessWidget {
   final MatchEntity match;
   final VoidCallback? onTap;
+  final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
   const MatchCard({
     super.key,
     required this.match,
     this.onTap,
+    this.onEdit,
     this.onDelete,
   });
 
@@ -36,6 +38,8 @@ class MatchCard extends StatelessWidget {
             const SizedBox(width: 14),
             Expanded(child: _MatchInfo(match: match)),
             _Metrics(match: match),
+            if (onEdit != null)
+              _EditButton(onEdit: onEdit!),
             if (onDelete != null)
               _DeleteButton(onDelete: onDelete!),
           ],
@@ -212,6 +216,21 @@ class _Metrics extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _EditButton extends StatelessWidget {
+  final VoidCallback onEdit;
+  const _EditButton({required this.onEdit});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.edit_outlined, size: 20),
+      color: AppColors.primary,
+      onPressed: onEdit,
+      visualDensity: VisualDensity.compact,
     );
   }
 }

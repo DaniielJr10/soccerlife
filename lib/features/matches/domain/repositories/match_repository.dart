@@ -11,6 +11,9 @@ abstract class MatchRepository {
   /// Actualiza datos básicos de un partido.
   Future<MatchEntity> updateMatch(MatchEntity match);
 
+  /// Actualiza info básica + estadísticas de un partido finalizado.
+  Future<MatchEntity> updateFullMatch(MatchEntity match);
+
   /// Elimina (soft-delete) un partido por ID.
   Future<void> deleteMatch(String id);
 

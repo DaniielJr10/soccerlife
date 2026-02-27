@@ -122,6 +122,61 @@ class MatchRemoteDataSource {
     return _fromJson(data['partido'] as Map<String, dynamic>);
   }
 
+  /// Actualiza info básica + estadísticas de un partido ya finalizado.
+  /// Llama a PUT /:id y luego a PUT /:id/resultado en secuencia.
+  Future<MatchEntity> updateFull(MatchEntity match) async {
+    if (match.id == null) throw Exception('ID de partido requerido');
+    final headers = await AuthService.obtenerHeadersAutenticados();
+
+    // 1. Datos básicos
+    final bodyBasic = {
+      'equipoRival': match.rival,
+      'fecha':       match.fecha.toIso8601String(),
+      'hora':        match.hora,
+      'lugar':       match.lugar,
+      'tipo':        match.tipo,
+      'competicion': match.competicion,
+      if (match.torneoId != null)     'torneoId':     match.torneoId,
+      if (match.torneoNombre != null) 'torneoNombre': match.torneoNombre,
+      if (match.notas != null)        'notas':        match.notas,
+    };
+    final r1 = await http.put(
+      Uri.parse('$_base/${match.id}'),
+      headers: headers,
+      body: json.encode(bodyBasic),
+    );
+    _assertOk(r1);
+
+    // 2. Resultado + estadísticas
+    final bodyResult = {
+      'golesLocal':        match.golesLocal ?? 0,
+      'golesVisitante':    match.golesVisitante ?? 0,
+      'posicion':          match.posicion,
+      'goles':             match.goles,
+      'asistencias':       match.asistencias,
+      'remates':           match.remates,
+      'rematesAlArco':     match.rematesAlArco,
+      'pasesCompletados':  match.pasesCompletados,
+      'pasesFallidos':     match.pasesFallidos,
+      'regatesExitosos':   match.regatesExitosos,
+      'regatesFallidos':   match.regatesFallidos,
+      'faltasCometidas':   match.faltasCometidas,
+      'faltasRecibidas':   match.faltasRecibidas,
+      'tarjetasAmarillas': match.tarjetasAmarillas,
+      'tarjetasRojas':     match.tarjetasRojas,
+      'minutosJugados':    match.minutosJugados,
+      if (match.valoracion != null) 'valoracion': match.valoracion,
+    };
+    final r2 = await http.put(
+      Uri.parse('$_base/${match.id}/resultado'),
+      headers: headers,
+      body: json.encode(bodyResult),
+    );
+    _assertOk(r2);
+    final data = json.decode(r2.body) as Map<String, dynamic>;
+    return _fromJson(data['partido'] as Map<String, dynamic>);
+  }
+
   Future<void> delete(String id) async {
     final headers = await AuthService.obtenerHeadersAutenticados();
     final res = await http.delete(Uri.parse('$_base/$id'), headers: headers);

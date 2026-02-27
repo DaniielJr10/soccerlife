@@ -97,6 +97,7 @@ class _MatchesPageState extends State<MatchesPage> {
               context,
               MaterialPageRoute(builder: (_) => MatchDetailPage(match: match)),
             ),
+            onEdit: () => _openEditForm(match),
             onDelete: () => _confirmDelete(provider, match.id!),
           );
         },
@@ -108,6 +109,16 @@ class _MatchesPageState extends State<MatchesPage> {
     final saved = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => const MatchFormPage()),
+    );
+    if (saved == true && mounted) {
+      context.read<MatchProvider>().loadPlayed();
+    }
+  }
+
+  void _openEditForm(match) async {
+    final saved = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => MatchFormPage(match: match)),
     );
     if (saved == true && mounted) {
       context.read<MatchProvider>().loadPlayed();
