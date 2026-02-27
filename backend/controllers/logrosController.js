@@ -39,14 +39,15 @@ const obtenerLogrosUsuario = async (req, res) => {
     // Combinar información
     const logrosConProgreso = logrosDisponibles.map(logro => {
       const logroUsuario = logrosUsuario.find(ul => ul.logroId === logro.logroId);
-      
+      const requerido = logro.requisito?.cantidad ?? 0;
+
       return {
         ...logro.toObject(),
         desbloqueado: logroUsuario?.desbloqueado || false,
         fechaDesbloqueo: logroUsuario?.fechaDesbloqueo || null,
         progreso: logroUsuario?.progreso || {
           actual: 0,
-          requerido: logro.requisito.cantidad
+          requerido
         },
         visto: logroUsuario?.visto || false
       };
@@ -104,7 +105,7 @@ const verificarLogros = async (req, res) => {
           logroId: logro.logroId,
           progreso: {
             actual: 0,
-            requerido: logro.requisito.cantidad
+            requerido: logro.requisito?.cantidad ?? 1
           },
           desbloqueado: false
         });
@@ -115,8 +116,9 @@ const verificarLogros = async (req, res) => {
       
       // Calcular progreso según el tipo de requisito
       let progresoActual = 0;
+      const tipoRequisito = logro.requisito?.tipo;
       
-      switch (logro.requisito.tipo) {
+      switch (tipoRequisito) {
         case 'partidos_jugados':
           progresoActual = estadisticas.partidos.jugados;
           break;

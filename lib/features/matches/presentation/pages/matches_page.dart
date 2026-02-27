@@ -5,11 +5,12 @@ import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading.dart';
 import '../../application/providers/match_provider.dart';
+import '../../domain/entities/match_entity.dart';
 import '../widgets/match_card.dart';
 import 'match_detail_page.dart';
 import 'match_form_page.dart';
 
-/// Listado de partidos jugados con opción de registro.
+/// Listado de partidos jugados con opción de registro y filtros.
 class MatchesPage extends StatefulWidget {
   const MatchesPage({super.key});
 
@@ -17,13 +18,31 @@ class MatchesPage extends StatefulWidget {
   State<MatchesPage> createState() => _MatchesPageState();
 }
 
+// Opciones de filtro
+enum _Filtro { todos, victoria, empate, derrota }
+
 class _MatchesPageState extends State<MatchesPage> {
+  _Filtro _filtroActivo = _Filtro.todos;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MatchProvider>().loadPlayed();
     });
+  }
+
+  List<MatchEntity> _aplicarFiltro(List<MatchEntity> partidos) {
+    switch (_filtroActivo) {
+      case _Filtro.victoria:
+        return partidos.where((m) => m.resultado == 'V').toList();
+      case _Filtro.empate:
+        return partidos.where((m) => m.resultado == 'E').toList();
+      case _Filtro.derrota:
+        return partidos.where((m) => m.resultado == 'D').toList();
+      case _Filtro.todos:
+        return partidos;
+    }
   }
 
   @override
@@ -74,13 +93,91 @@ class _MatchesPageState extends State<MatchesPage> {
               ),
             );
           }
-          return _buildList(provider);
+
+          final filtrados = _aplicarFiltro(provider.played);
+          return Column(
+            children: [
+              _buildFilterBar(provider.played),
+              Expanded(child: _buildList(provider, filtrados)),
+            ],
+          );
         },
       ),
     );
   }
 
-  Widget _buildList(MatchProvider provider) {
+  Widget _buildFilterBar(List<MatchEntity> todos) {
+    // Contadores por resultado
+    int wins   = todos.where((m) => m.resultado == 'V').length;
+    int draws  = todos.where((m) => m.resultado == 'E').length;
+    int losses = todos.where((m) => m.resultado == 'D').length;
+
+    return Container(
+      color: AppColors.surface,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          children: [
+            _FilterChip(
+              label: 'Todos',
+              count: todos.length,
+              color: AppColors.textSecondary,
+              selected: _filtroActivo == _Filtro.todos,
+              onTap: () => setState(() => _filtroActivo = _Filtro.todos),
+            ),
+            const SizedBox(width: 8),
+            _FilterChip(
+              label: 'Victorias',
+              count: wins,
+              color: AppColors.success,
+              selected: _filtroActivo == _Filtro.victoria,
+              onTap: () => setState(() => _filtroActivo = _Filtro.victoria),
+            ),
+            const SizedBox(width: 8),
+            _FilterChip(
+              label: 'Empates',
+              count: draws,
+              color: AppColors.warning,
+              selected: _filtroActivo == _Filtro.empate,
+              onTap: () => setState(() => _filtroActivo = _Filtro.empate),
+            ),
+            const SizedBox(width: 8),
+            _FilterChip(
+              label: 'Derrotas',
+              count: losses,
+              color: AppColors.danger,
+              selected: _filtroActivo == _Filtro.derrota,
+              onTap: () => setState(() => _filtroActivo = _Filtro.derrota),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildList(MatchProvider provider, List<MatchEntity> filtrados) {
+    if (filtrados.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.sports_soccer_rounded,
+                size: 48, color: AppColors.textMuted),
+            const SizedBox(height: 12),
+            Text(
+              'Sin partidos con este filtro',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return RefreshIndicator(
       color: AppColors.primary,
       backgroundColor: AppColors.card,
@@ -88,9 +185,9 @@ class _MatchesPageState extends State<MatchesPage> {
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
         physics: const BouncingScrollPhysics(),
-        itemCount: provider.played.length,
+        itemCount: filtrados.length,
         itemBuilder: (_, i) {
-          final match = provider.played[i];
+          final match = filtrados[i];
           return MatchCard(
             match: match,
             onTap: () => Navigator.push(
@@ -150,6 +247,72 @@ class _MatchesPageState extends State<MatchesPage> {
             child: const Text('Eliminar'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Chip de filtro ────────────────────────────────────────────────────────────
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final int count;
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _FilterChip({
+    required this.label,
+    required this.count,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: selected ? color.withValues(alpha: 0.12) : AppColors.surfaceAlt,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected ? color : AppColors.border,
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: selected ? color : AppColors.textSecondary,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+              decoration: BoxDecoration(
+                color: selected ? color : AppColors.border,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  color: selected ? Colors.white : AppColors.textMuted,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
