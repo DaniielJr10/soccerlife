@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../features/tournaments/application/tournament_provider.dart';
@@ -285,13 +286,22 @@ class _MatchFormPageState extends State<MatchFormPage> {
             child: TextFormField(
               controller: _golesLocalCtrl,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,
                 fontSize: 22,
               ),
-              decoration: const InputDecoration(labelText: 'Goles local'),
+              decoration: const InputDecoration(
+                labelText: 'Mis goles',
+                helperText: 'Tu equipo',
+              ),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Requerido';
+                if (int.tryParse(v) == null) return 'Número inválido';
+                return null;
+              },
             ),
           ),
           const Padding(
@@ -309,13 +319,22 @@ class _MatchFormPageState extends State<MatchFormPage> {
             child: TextFormField(
               controller: _golesVisitCtrl,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.danger,
                 fontWeight: FontWeight.w700,
                 fontSize: 22,
               ),
-              decoration: const InputDecoration(labelText: 'Goles rival'),
+              decoration: const InputDecoration(
+                labelText: 'Goles rival',
+                helperText: 'Equipo contrario',
+              ),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Requerido';
+                if (int.tryParse(v) == null) return 'Número inválido';
+                return null;
+              },
             ),
           ),
         ],
@@ -329,12 +348,19 @@ class _MatchFormPageState extends State<MatchFormPage> {
       child: TextFormField(
         controller: _minutosCtrl,
         keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           labelText: 'Minutos jugados',
           prefixIcon: Icon(Icons.timer_rounded),
           suffixText: 'min',
         ),
+        validator: (v) {
+          if (v == null || v.trim().isEmpty) return 'Requerido';
+          final n = int.tryParse(v);
+          if (n == null || n <= 0 || n > 200) return 'Entre 1 y 200 min';
+          return null;
+        },
       ),
     );
   }

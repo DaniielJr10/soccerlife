@@ -11,7 +11,9 @@ class RegisterMatchUseCase {
   /// Para un partido ya jugado: crea el partido y guarda el resultado.
   Future<MatchEntity> callPlayed(MatchEntity match) async {
     final created = await _repository.createMatch(match);
-    return _repository.registerResult(created.copyWith(id: created.id));
+    // Usar los datos originales del formulario (con goles y estadísticas)
+    // + el ID asignado por el servidor tras crear el partido.
+    return _repository.registerResult(match.copyWith(id: created.id));
   }
 
   /// Para un partido programado (futuro): solo crea.
