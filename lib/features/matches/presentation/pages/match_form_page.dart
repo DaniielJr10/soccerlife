@@ -33,7 +33,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
 
   DateTime _fecha          = DateTime.now();
   double _valoracion       = 5.0;
-  String _condicion        = 'local'; // 'local' | 'visitante'
 
   // Torneo asociado
   String? _torneoId;
@@ -75,7 +74,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
     _minutosCtrl.text     = m.minutosJugados.toString();
     _fecha                = m.fecha;
     _valoracion           = m.valoracion ?? 5.0;
-    _condicion            = m.condicion;
     _torneoId             = m.torneoId;
     _torneoNombre         = m.torneoNombre;
     _stats['goles']              = m.goles;
@@ -128,7 +126,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
           children: [
             _SectionTitle(title: 'Información del partido'),
             _buildRival(),
-            _buildCondicion(),
             Row(children: [_buildFecha()]),
             _Row2(left: _buildHora(), right: _buildLugar()),
             _buildCompeticion(),
@@ -156,123 +153,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
   }
 
   // ── Campos básicos ──────────────────────────────────────────────────────
-
-  Widget _buildCondicion() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              'Condición',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(() => _condicion = 'local'),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _condicion == 'local'
-                          ? const Color(0xFF00f5ff).withValues(alpha: 0.15)
-                          : AppColors.surfaceAlt,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _condicion == 'local'
-                            ? const Color(0xFF00f5ff)
-                            : AppColors.border,
-                        width: _condicion == 'local' ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.home_rounded,
-                          color: _condicion == 'local'
-                              ? const Color(0xFF00f5ff)
-                              : AppColors.textMuted,
-                          size: 26,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Local',
-                          style: TextStyle(
-                            color: _condicion == 'local'
-                                ? const Color(0xFF00f5ff)
-                                : AppColors.textSecondary,
-                            fontWeight: _condicion == 'local'
-                                ? FontWeight.w700
-                                : FontWeight.w400,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(() => _condicion = 'visitante'),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _condicion == 'visitante'
-                          ? const Color(0xFF00f5ff).withValues(alpha: 0.15)
-                          : AppColors.surfaceAlt,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _condicion == 'visitante'
-                            ? const Color(0xFF00f5ff)
-                            : AppColors.border,
-                        width: _condicion == 'visitante' ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.flight_takeoff_rounded,
-                          color: _condicion == 'visitante'
-                              ? const Color(0xFF00f5ff)
-                              : AppColors.textMuted,
-                          size: 26,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Visitante',
-                          style: TextStyle(
-                            color: _condicion == 'visitante'
-                                ? const Color(0xFF00f5ff)
-                                : AppColors.textSecondary,
-                            fontWeight: _condicion == 'visitante'
-                                ? FontWeight.w700
-                                : FontWeight.w400,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildRival() {
     return Padding(
@@ -593,7 +473,6 @@ class _MatchFormPageState extends State<MatchFormPage> {
       lugar:            _lugarCtrl.text.trim().isEmpty ? 'Sin especificar' : _lugarCtrl.text.trim(),
       tipo:             _torneoId != null ? 'Torneo' : 'Amistoso',
       competicion:      _torneoId == null ? 'Amistoso' : (_torneoNombre ?? ''),
-      condicion:        _condicion,
       estado:           'finalizado',
       notas:            _notasCtrl.text.trim(),
       torneoId:         _torneoId,
