@@ -162,7 +162,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           labelText: 'Equipo rival *',
-          prefixIcon: Icon(Icons.group_rounded),
+          prefixIcon: Icon(Icons.group_rounded, color: Color(0xFF00f5ff)),
         ),
         validator: (v) =>
             (v == null || v.trim().isEmpty) ? 'Campo obligatorio' : null,
@@ -202,7 +202,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
           style: const TextStyle(color: AppColors.textPrimary),
           decoration: const InputDecoration(
             labelText: 'Hora *',
-            prefixIcon: Icon(Icons.access_time_rounded),
+            prefixIcon: Icon(Icons.access_time_rounded, color: Color(0xFF00f5ff)),
           ),
           validator: (v) =>
               (v == null || v.trim().isEmpty) ? 'Requerida' : null,
@@ -233,7 +233,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           labelText: 'Competición',
-          prefixIcon: Icon(Icons.emoji_events_rounded),
+          prefixIcon: Icon(Icons.emoji_events_rounded, color: Color(0xFF00f5ff)),
         ),
         selectedItemBuilder: (context) => [
           const Text('Amistoso', overflow: TextOverflow.ellipsis),
@@ -354,7 +354,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           labelText: 'Minutos jugados',
-          prefixIcon: Icon(Icons.timer_rounded),
+          prefixIcon: Icon(Icons.timer_rounded, color: Color(0xFF00f5ff)),
           suffixText: 'min',
         ),
         validator: (v) {
@@ -421,7 +421,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
           labelText: 'Notas del partido',
           prefixIcon: Padding(
             padding: EdgeInsets.only(bottom: 48),
-            child: Icon(Icons.notes_rounded),
+            child: Icon(Icons.notes_rounded, color: Color(0xFF00f5ff)),
           ),
         ),
       ),
@@ -597,7 +597,7 @@ class _FieldBox extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(icon, color: AppColors.textSecondary, size: 18),
+      Icon(icon, color: const Color(0xFF00f5ff), size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
