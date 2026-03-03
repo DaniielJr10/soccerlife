@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'login/iniciosesion.dart';
 import 'pantallas/principal.dart';
 import 'core/theme/app_theme.dart';
@@ -28,6 +29,15 @@ class MyApp extends StatelessWidget {
         title: 'Soccer Life',
         theme: AppTheme.dark,
         debugShowCheckedModeBanner: false,
+        locale: const Locale('es'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('es'),
+        ],
         initialRoute: '/login',
         routes: {
           '/login': (context) => const InicioSesionPage(),
