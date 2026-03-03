@@ -1,6 +1,6 @@
 class ApiConfig {
   // Configuración para diferentes entornos
-  static const String _casaIP = '192.168.1.44:3000';
+  static const String _casaIP = '192.168.1.45:3000';
   static const String _localhost = '127.0.0.1:3000';
   
   // URLs para diferentes entornos
@@ -10,8 +10,8 @@ class ApiConfig {
   // URL actual (cambiar según donde estés)
   static String get baseUrl {
     // Puedes cambiar esto manualmente o implementar detección automática
-    return _baseUrlLocal; // Para usar en el mismo computador
-    // return _baseUrlCasa; // Para usar desde otro dispositivo en tu casa
+    return _baseUrlCasa; // Para usar desde dispositivo físico o emulador en la misma red
+    // return _baseUrlLocal; // Solo para usar en el mismo computador (web/desktop)
   }
   
   // Método para cambiar la configuración dinámicamente
