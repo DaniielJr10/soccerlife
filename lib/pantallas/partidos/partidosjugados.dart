@@ -267,16 +267,20 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         gradient: const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
           colors: [
-            Color(0xFF1a1a2e),
-            Color(0xFF16213e),
+            Color(0xFF1565C0),
+            Color(0xFF1E88E5),
+            Color(0xFF42A5F5),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1a1a2e).withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: const Color(0xFF1565C0).withOpacity(0.55),
+            blurRadius: 14,
+            spreadRadius: 1,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -288,14 +292,15 @@ class _PartidosJugadosPageState extends State<PartidosJugadosPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: const Color(0xFF00f5ff), size: 24),
+              Icon(icon, color: Colors.white, size: 24),
               const SizedBox(width: 10),
               Text(
                 text,
                 style: const TextStyle(
-                  color: Color(0xFF00f5ff),
+                  color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],

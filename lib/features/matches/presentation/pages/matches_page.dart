@@ -91,8 +91,8 @@ class _MatchesPageState extends State<MatchesPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openForm,
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textOnPrimary,
+        backgroundColor: const Color(0xFF42A5F5),
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: const Text(
           'Registrar partido',
