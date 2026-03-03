@@ -65,20 +65,20 @@ class AppTheme {
         indicatorColor: Color(0x2642A5F5),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: Color(0xFF42A5F5), size: 22);
+            return const IconThemeData(color: Color(0xFF1565C0), size: 25);
           }
-          return const IconThemeData(color: AppColors.textMuted, size: 22);
+          return const IconThemeData(color: Color(0xFF90CAF9), size: 22);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
-              color: Color(0xFF42A5F5),
+              color: Color(0xFF1565C0),
               fontWeight: FontWeight.w700,
               fontSize: 11,
             );
           }
           return const TextStyle(
-            color: AppColors.textMuted,
+            color: Color(0xFF90CAF9),
             fontSize: 11,
           );
         }),
