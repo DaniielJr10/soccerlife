@@ -10,6 +10,7 @@ class MatchEntity {
   final String competicion;
   final String estado;         // programado / finalizado / cancelado
   final String? notas;
+  final String condicion;      // 'local' | 'visitante'
 
   // Torneo asociado (opcional)
   final String? torneoId;
@@ -46,6 +47,7 @@ class MatchEntity {
     this.competicion = '',
     this.estado = 'programado',
     this.notas,
+    this.condicion = 'local',
     this.torneoId,
     this.torneoNombre,
     this.golesLocal,
