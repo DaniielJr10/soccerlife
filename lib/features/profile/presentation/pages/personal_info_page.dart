@@ -161,50 +161,8 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           children: [
             // Foto
             Center(child: _buildPhotoFrame()),
-            const SizedBox(height: 12),
-            // Nombre
-            Center(
-              child: Text(
-                _usuario.nombre.isNotEmpty ? _usuario.nombre : 'Jugador',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-            // Chip posición
-            if (_usuario.posicion.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _cyan.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: _cyan.withValues(alpha: 0.35)),
-                  ),
-                  child: Text(
-                    _usuario.posicion,
-                    style: const TextStyle(
-                      color: _cyan,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-              ),
-            ],
             const SizedBox(height: 28),
-            // Datos físicos
-            _sectionLabel('DATOS FÍSICOS'),
-            const SizedBox(height: 12),
-            _editando ? _buildFisicosEdit() : _buildFisicosView(),
-            const SizedBox(height: 24),
-            // Info de perfil
+            // Info de perfil (incluye datos físicos)
             _sectionLabel('INFORMACIÓN DE PERFIL'),
             const SizedBox(height: 12),
             _editando ? _buildInfoEdit() : _buildInfoView(),
@@ -288,87 +246,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
 
   // ── Datos físicos – vista ─────────────────────────────────────────────────
 
-  Widget _buildFisicosView() {
-    final hayDatos =
-        _usuario.edad > 0 || _usuario.estatura > 0 || _usuario.peso > 0;
-    if (!hayDatos) return _emptyHint('Sin datos físicos registrados');
-    final items = <_StatItem>[];
-    if (_usuario.edad > 0) {
-      items.add(_StatItem('${_usuario.edad}', 'años', 'Edad'));
-    }
-    if (_usuario.estatura > 0) {
-      items.add(_StatItem(
-          '${_usuario.estatura.toStringAsFixed(0)}', 'cm', 'Estatura'));
-    }
-    if (_usuario.peso > 0) {
-      items.add(_StatItem('${_usuario.peso}', 'kg', 'Peso'));
-    }
-    return Row(
-      children: items.asMap().entries.map((e) {
-        final s = e.value;
-        return Expanded(
-          child: Container(
-            margin:
-                EdgeInsets.only(right: e.key < items.length - 1 ? 10 : 0),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: _cyan.withValues(alpha: 0.2)),
-            ),
-            child: Column(
-              children: [
-                Text(s.valor,
-                    style: const TextStyle(
-                        color: _cyan,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900)),
-                Text(s.unidad,
-                    style: TextStyle(
-                        color: _cyan.withValues(alpha: 0.7),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600)),
-                const SizedBox(height: 3),
-                Text(s.label,
-                    style: const TextStyle(
-                        color: AppColors.textSecondary, fontSize: 11)),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // ── Datos físicos – edición ───────────────────────────────────────────────
-
-  Widget _buildFisicosEdit() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _cyan.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-              child: _editField(_edad, 'Edad', Icons.cake_outlined,
-                  inputType: TextInputType.number)),
-          const SizedBox(width: 10),
-          Expanded(
-              child: _editField(_estatura, 'Estatura (cm)', Icons.height,
-                  inputType: TextInputType.number)),
-          const SizedBox(width: 10),
-          Expanded(
-              child: _editField(
-                  _peso, 'Peso (kg)', Icons.monitor_weight_outlined,
-                  inputType: TextInputType.number)),
-        ],
-      ),
-    );
-  }
-
   // ── Info de perfil – vista ────────────────────────────────────────────────
 
   Widget _buildInfoView() {
@@ -391,7 +268,16 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               _usuario.club.isNotEmpty ? _usuario.club : '—'),
           _div(),
           _infoTile(Icons.sports_soccer_rounded, 'Posición',
-              _usuario.posicion.isNotEmpty ? _usuario.posicion : '—',
+              _usuario.posicion.isNotEmpty ? _usuario.posicion : '—'),
+          _div(),
+          _infoTile(Icons.cake_outlined, 'Edad',
+              _usuario.edad > 0 ? '${_usuario.edad} años' : '—'),
+          _div(),
+          _infoTile(Icons.height, 'Estatura',
+              _usuario.estatura > 0 ? '${_usuario.estatura.toStringAsFixed(0)} cm' : '—'),
+          _div(),
+          _infoTile(Icons.monitor_weight_outlined, 'Peso',
+              _usuario.peso > 0 ? '${_usuario.peso} kg' : '—',
               last: true),
         ],
       ),
@@ -417,6 +303,23 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           _editField(_club, 'Club / Equipo', Icons.shield_rounded),
           const SizedBox(height: 12),
           _posicionDropdown(),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                  child: _editField(_edad, 'Edad', Icons.cake_outlined,
+                      inputType: TextInputType.number)),
+              const SizedBox(width: 10),
+              Expanded(
+                  child: _editField(_estatura, 'Estatura (cm)', Icons.height,
+                      inputType: TextInputType.number)),
+              const SizedBox(width: 10),
+              Expanded(
+                  child: _editField(_peso, 'Peso (kg)',
+                      Icons.monitor_weight_outlined,
+                      inputType: TextInputType.number)),
+            ],
+          ),
         ],
       ),
     );
@@ -481,14 +384,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           fontWeight: FontWeight.w700,
           letterSpacing: 1.4,
         ),
-      );
-
-  Widget _emptyHint(String msg) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        alignment: Alignment.center,
-        child: Text(msg,
-            style: const TextStyle(
-                color: AppColors.textMuted, fontSize: 13)),
       );
 
   Widget _infoTile(IconData icon, String label, String value,
@@ -598,9 +493,4 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
       onChanged: (v) => setState(() => _posicion.text = v ?? ''),
     );
   }
-}
-
-class _StatItem {
-  final String valor, unidad, label;
-  const _StatItem(this.valor, this.unidad, this.label);
 }
