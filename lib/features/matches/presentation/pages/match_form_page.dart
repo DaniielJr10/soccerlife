@@ -45,9 +45,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
   // Estadísticas - contador
   final Map<String, int> _stats = {
     'goles': 0, 'asistencias': 0,
-    'remates': 0,
-    'regatesExitosos': 0, 'regatesFallidos': 0,
-    'faltasCometidas': 0, 'faltasRecibidas': 0,
+    'regatesExitosos': 0,
+    'faltasRecibidas': 0,
     'tarjetasAmarillas': 0, 'tarjetasRojas': 0,
   };
 
@@ -79,10 +78,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
     _torneoNombre         = m.torneoNombre;
     _stats['goles']              = m.goles;
     _stats['asistencias']        = m.asistencias;
-    _stats['remates']            = m.remates;
     _stats['regatesExitosos']    = m.regatesExitosos;
-    _stats['regatesFallidos']    = m.regatesFallidos;
-    _stats['faltasCometidas']    = m.faltasCometidas;
     _stats['faltasRecibidas']    = m.faltasRecibidas;
     _stats['tarjetasAmarillas']  = m.tarjetasAmarillas;
     _stats['tarjetasRojas']      = m.tarjetasRojas;

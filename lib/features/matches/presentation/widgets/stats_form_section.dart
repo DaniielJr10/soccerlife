@@ -16,10 +16,7 @@ class StatsFormSection extends StatelessWidget {
   static const List<_StatField> _fields = [
     _StatField('goles',            'Goles',               Icons.sports_soccer,                AppColors.primary),
     _StatField('asistencias',      'Asistencias',         Icons.sports_handball_rounded,       AppColors.secondary),
-    _StatField('remates',          'Remates totales',     Icons.ads_click_rounded,             AppColors.info),
     _StatField('regatesExitosos',  'Regates exitosos',    Icons.directions_run_rounded,        AppColors.primary),
-    _StatField('regatesFallidos',  'Regates fallidos',    Icons.remove_circle_outline_rounded, AppColors.warning),
-    _StatField('faltasCometidas',  'Faltas cometidas',    Icons.warning_amber_rounded,         AppColors.warning),
     _StatField('faltasRecibidas',  'Faltas recibidas',    Icons.medical_services_rounded,      AppColors.info),
     _StatField('tarjetasAmarillas','Tarjetas amarillas',  Icons.square_rounded,                AppColors.cardYellow),
     _StatField('tarjetasRojas',    'Tarjetas rojas',      Icons.square_rounded,                AppColors.cardRed),
