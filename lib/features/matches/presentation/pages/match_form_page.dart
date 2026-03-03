@@ -433,17 +433,28 @@ class _MatchFormPageState extends State<MatchFormPage> {
       onPressed: _guardando ? null : _save,
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 52),
+        backgroundColor: const Color(0xFF00f5ff),
+        foregroundColor: Colors.black,
+        shadowColor: const Color(0xFF00f5ff).withValues(alpha: 0.4),
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
       ),
       child: _guardando
           ? const SizedBox(
               width: 22,
               height: 22,
               child:
-                  CircularProgressIndicator(color: AppColors.textOnPrimary, strokeWidth: 2),
+                  CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
             )
           : Text(
               _esEdicion ? 'Guardar cambios' : 'Guardar partido',
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.1,
+              ),
             ),
     );
   }

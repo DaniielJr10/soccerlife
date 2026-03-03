@@ -91,8 +91,8 @@ class _MatchesPageState extends State<MatchesPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openForm,
-        backgroundColor: const Color(0xFF42A5F5),
-        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF00f5ff),
+        foregroundColor: Colors.black,
         icon: const Icon(Icons.add_rounded),
         label: const Text(
           'Registrar partido',
@@ -120,6 +120,13 @@ class _MatchesPageState extends State<MatchesPage> {
                 onPressed: _openForm,
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('Registrar partido'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00f5ff),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
               ),
             );
           }
