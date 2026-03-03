@@ -721,125 +721,158 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     void Function()? onTap,
     double? height,
   }) {
-    final isFocused = focusNode != null && (_focusStates[focusNode] ?? false);
-    return SizedBox(
-      height: height ?? 48,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isFocused ? const Color(0xFF00f5ff).withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.3),
-            width: isFocused ? 1.5 : 1,
-          ),
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withValues(alpha: isFocused ? 0.3 : 0.2),
-              Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
-            ],
-          ),
-          boxShadow: isFocused ? [
-            BoxShadow(
-              color: const Color(0xFF00f5ff).withValues(alpha: 0.25),
-              blurRadius: 15,
-            ),
-          ] : null,
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      validator: validator,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      onFieldSubmitted: onFieldSubmitted,
+      readOnly: readOnly,
+      onTap: onTap,
+      style: TextStyle(
+        color: Colors.white.withValues(alpha: 0.85),
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+      ),
+      decoration: InputDecoration(
+        hintText: label,
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 12),
+          child: Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 22),
         ),
-        child: TextFormField(
-          controller: controller,
-          focusNode: focusNode,
-          validator: validator,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          onFieldSubmitted: onFieldSubmitted,
-          readOnly: readOnly,
-          onTap: onTap,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-          decoration: InputDecoration(
-            labelText: label,
-            hintText: hint,
-            prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
-            suffixIcon: suffixIcon,
-            labelStyle: TextStyle(
-              color: isFocused ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w500,
-            ),
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        suffixIcon: suffixIcon,
+        hintStyle: TextStyle(
+          color: Colors.white.withValues(alpha: 0.55),
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.08),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1.2,
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Color(0xFFff6b6b),
+            width: 1.2,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Color(0xFFff6b6b),
+            width: 1.5,
+          ),
+        ),
+        errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
       ),
     );
   }
   
   // Menú desplegable para seleccionar posición
   Widget _buildDropdown() {
-    return SizedBox(
-      height: 60,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
-            width: 1,
-          ),
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withValues(alpha: 0.2),
-              Colors.black.withValues(alpha: 0.15),
+    return DropdownButtonFormField<String>(
+      value: _posicionSeleccionada,
+      onChanged: (value) => setState(() => _posicionSeleccionada = value),
+      validator: (v) => v == null ? 'Selecciona tu posición' : null,
+      items: _posicionesConIcono.map<DropdownMenuItem<String>>((posicion) {
+        return DropdownMenuItem<String>(
+          value: posicion['nombre'] as String,
+          child: Row(
+            children: [
+              Icon(
+                posicion['icono'] as IconData,
+                color: const Color(0xFF00f5ff),
+                size: 22,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                posicion['nombre'] as String,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  letterSpacing: 0.2,
+                ),
+              ),
             ],
           ),
+        );
+      }).toList(),
+      dropdownColor: const Color(0xFF1a1a1a),
+      icon: Icon(
+        Icons.keyboard_arrow_down,
+        color: Colors.white.withValues(alpha: 0.6),
+      ),
+      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      decoration: InputDecoration(
+        hintText: 'Posición',
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 12),
+          child: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.6), size: 22),
         ),
-        child: DropdownButtonFormField<String>(
-          value: _posicionSeleccionada,
-          onChanged: (value) => setState(() => _posicionSeleccionada = value),
-          validator: (v) => v == null ? 'Selecciona tu posición' : null,
-          items: _posicionesConIcono.map<DropdownMenuItem<String>>((posicion) {
-            return DropdownMenuItem<String>(
-              value: posicion['nombre'] as String,
-              child: Row(
-                children: [
-                  Icon(
-                    posicion['icono'] as IconData,
-                    color: const Color(0xFF00f5ff),
-                    size: 22,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    posicion['nombre'] as String,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-          dropdownColor: const Color(0xFF1a1a1a),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: Colors.white.withValues(alpha: 0.7),
-          ),
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-          decoration: InputDecoration(
-            labelText: 'Posición',
-            prefixIcon: Icon(Icons.sports_soccer_outlined, color: Colors.white.withValues(alpha: 0.7)),
-            labelStyle: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w500,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        hintStyle: TextStyle(
+          color: Colors.white.withValues(alpha: 0.55),
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.08),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1.2,
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFff6b6b), width: 1.2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFff6b6b), width: 1.5),
+        ),
+        errorStyle: const TextStyle(color: Color(0xFFff6b6b), fontWeight: FontWeight.w500),
       ),
     );
   }

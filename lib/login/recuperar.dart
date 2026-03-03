@@ -382,59 +382,71 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     required String? Function(String?) validator,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isFocused 
-            ? const Color(0xFF00b4db)
-            : Colors.white.withValues(alpha: 0.3),
-          width: isFocused ? 2 : 1,
-        ),
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withValues(alpha: isFocused ? 0.15 : 0.1),
-            Colors.black.withValues(alpha: isFocused ? 0.25 : 0.15),
-          ],
-        ),
-        boxShadow: isFocused ? [
-          BoxShadow(
-            color: const Color(0xFF00b4db).withValues(alpha: 0.3),
-            blurRadius: 15,
-            spreadRadius: 0,
-          ),
-        ] : null,
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      keyboardType: keyboardType,
+      style: TextStyle(
+        color: Colors.white.withValues(alpha: 0.85),
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
       ),
-      child: TextFormField(
-        controller: controller,
-        focusNode: focusNode,
-        keyboardType: keyboardType,
-        style: const TextStyle(
-          color: Colors.white,
+      decoration: InputDecoration(
+        hintText: label,
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 12),
+          child: Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 22),
+        ),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        hintStyle: TextStyle(
+          color: Colors.white.withValues(alpha: 0.55),
           fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.08),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1.2,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Color(0xFFff6b6b),
+            width: 1.2,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Color(0xFFff6b6b),
+            width: 1.5,
+          ),
+        ),
+        errorStyle: const TextStyle(
+          color: Color(0xFFff6b6b),
           fontWeight: FontWeight.w500,
         ),
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
-          labelStyle: TextStyle(
-            color: isFocused ? const Color(0xFF00b4db) : Colors.white.withValues(alpha: 0.7),
-            fontWeight: FontWeight.w500,
-          ),
-          hintStyle: TextStyle(
-            color: Colors.white.withValues(alpha: 0.5),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          errorStyle: const TextStyle(
-            color: Color(0xFFe74c3c),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        validator: validator,
       ),
+      validator: validator,
     );
   }
 
