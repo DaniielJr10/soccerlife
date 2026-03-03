@@ -10,6 +10,7 @@ import '../../../hoja_de_vida/presentation/pages/hoja_de_vida_page.dart';
 import '../../../profile_picture/application/profile_picture_provider.dart';
 import '../../../profile_picture/presentation/pages/profile_picture_page.dart';
 import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
+import 'change_password_page.dart';
 import 'edit_profile_page.dart';
 
 /// Página de perfil del jugador.
@@ -287,7 +288,10 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Icons.lock_outline,
           label: 'Cambiar Contraseña',
           color: const Color(0xFF8E44AD),
-          onTap: _mostrarCambiarPassword,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+          ),
         ),
         _divider(),
         ListTile(
@@ -406,88 +410,7 @@ class _ProfilePageState extends State<ProfilePage> {
     await StorageService.guardar('notificaciones_activas', nuevo.toString());
   }
 
-  void _mostrarCambiarPassword() {
-    final actCtrl = TextEditingController();
-    final nuevaCtrl = TextEditingController();
-    final confCtrl = TextEditingController();
-    bool cargando = false;
-    bool verAct = false, verNueva = false, verConf = false;
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDlg) => AlertDialog(
-          backgroundColor: AppColors.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Row(children: [
-            Icon(Icons.lock_outline, color: Color(0xFF8E44AD)),
-            SizedBox(width: 8),
-            Text('Cambiar Contraseña', style: TextStyle(color: AppColors.textPrimary)),
-          ]),
-          content: SingleChildScrollView(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              _passField(ctrl: actCtrl, label: 'Contraseña actual', ver: verAct,
-                  onVer: () => setDlg(() => verAct = !verAct)),
-              const SizedBox(height: 12),
-              _passField(ctrl: nuevaCtrl, label: 'Nueva contraseña', ver: verNueva,
-                  helper: 'Mínimo 6 caracteres',
-                  onVer: () => setDlg(() => verNueva = !verNueva)),
-              const SizedBox(height: 12),
-              _passField(ctrl: confCtrl, label: 'Confirmar nueva contraseña', ver: verConf,
-                  onVer: () => setDlg(() => verConf = !verConf)),
-            ]),
-          ),
-          actions: [
-            TextButton(onPressed: cargando ? null : () => Navigator.pop(ctx),
-                child: const Text('Cancelar')),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8E44AD), foregroundColor: Colors.white),
-              onPressed: cargando ? null : () async {
-                if (actCtrl.text.isEmpty || nuevaCtrl.text.isEmpty) {
-                  _snack('Completa todos los campos', Colors.orange); return;
-                }
-                if (nuevaCtrl.text != confCtrl.text) {
-                  _snack('Las contraseñas no coinciden', Colors.orange); return;
-                }
-                setDlg(() => cargando = true);
-                final res = await AuthService.cambiarPassword(
-                    actual: actCtrl.text.trim(), nueva: nuevaCtrl.text.trim());
-                setDlg(() => cargando = false);
-                if (!ctx.mounted) return;
-                Navigator.pop(ctx);
-                _snack(res['success'] ? '¡Contraseña actualizada!' : (res['message'] ?? 'Error'),
-                    res['success'] ? const Color(0xFF2ECC71) : Colors.red);
-              },
-              child: cargando
-                  ? const SizedBox(width: 16, height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Text('Guardar'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _passField({required TextEditingController ctrl, required String label,
-      required bool ver, String? helper, required VoidCallback onVer}) {
-    return TextField(
-      controller: ctrl,
-      obscureText: !ver,
-      style: const TextStyle(color: AppColors.textPrimary),
-      decoration: InputDecoration(
-        labelText: label,
-        helperText: helper,
-        border: const OutlineInputBorder(),
-        suffixIcon: IconButton(
-          icon: Icon(ver ? Icons.visibility_off : Icons.visibility,
-              color: AppColors.textSecondary),
-          onPressed: onVer,
-        ),
-      ),
-    );
-  }
 
   void _mostrarAyuda() {
     final faqs = [
