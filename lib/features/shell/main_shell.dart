@@ -82,8 +82,8 @@ class _MainShellState extends State<MainShell> {
           final active = states.contains(WidgetState.selected);
           return TextStyle(
             fontSize: 10,
-            fontWeight: active ? FontWeight.w700 : FontWeight.w400,
-            color: active ? const Color(0xFF00f5ff) : const Color(0xFF00f5ff).withValues(alpha: 0.5),
+            fontWeight: active ? FontWeight.w900 : FontWeight.w700,
+            color: Colors.black,
           );
         }),
         onDestinationSelected: _onDestinationSelected,
