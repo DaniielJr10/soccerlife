@@ -79,20 +79,20 @@ class _MainShellState extends State<MainShell> {
       child: NavigationBar(
         selectedIndex: _currentIndex,
         backgroundColor: Colors.transparent,
-        indicatorColor: AppColors.primary.withValues(alpha: 0.15),
+        indicatorColor: const Color(0xFF42A5F5).withValues(alpha: 0.15),
         animationDuration: const Duration(milliseconds: 300),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final active = states.contains(WidgetState.selected);
           return TextStyle(
             fontSize: 10,
             fontWeight: active ? FontWeight.w700 : FontWeight.w400,
-            color: active ? AppColors.primary : AppColors.textSecondary,
+            color: active ? const Color(0xFF42A5F5) : AppColors.textSecondary,
           );
         }),
         onDestinationSelected: _onDestinationSelected,
         destinations: _navItems.map((n) => NavigationDestination(
             icon: Icon(n.icon, size: 22),
-            selectedIcon: Icon(n.icon, size: 22, color: AppColors.primary),
+            selectedIcon: Icon(n.icon, size: 22, color: Color(0xFF42A5F5)),
             label: n.label,
           )).toList(),
       ),

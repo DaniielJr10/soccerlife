@@ -62,17 +62,17 @@ class AppTheme {
       // NavigationBar (Material 3)
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surface,
-        indicatorColor: Color(0x1A059669),
+        indicatorColor: Color(0x2642A5F5),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primary, size: 22);
+            return const IconThemeData(color: Color(0xFF42A5F5), size: 22);
           }
           return const IconThemeData(color: AppColors.textMuted, size: 22);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
-              color: AppColors.primary,
+              color: Color(0xFF42A5F5),
               fontWeight: FontWeight.w700,
               fontSize: 11,
             );
