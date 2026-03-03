@@ -135,7 +135,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Mi Perfil'),
+        title: const Text('Mi Perfil',
+            style: TextStyle(fontWeight: FontWeight.w800)),
         centerTitle: true,
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,
@@ -153,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   if (_errorMsg != null) _bannerConexion(),
                   _buildAvatar(),
                   const SizedBox(height: 24),
-                  _buildInfoCard(),
+                  _buildInfoCardButton(),
                   const SizedBox(height: 16),
                   _buildEditButton(),
                   const SizedBox(height: 12),
@@ -221,25 +222,133 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildInfoCard() {
-    return _card(
-      title: 'Información personal',
-      children: [
-        _infoRow(Icons.person_outline, 'Nombre', _usuario.nombre),
-        _infoRow(Icons.email_outlined, 'Email', _usuario.email),
-        if (_usuario.posicion.isNotEmpty)
-          _infoRow(Icons.sports_soccer, 'Posición', _usuario.posicion),
-        if (_usuario.club.isNotEmpty)
-          _infoRow(Icons.shield_outlined, 'Club', _usuario.club),
-        if (_usuario.edad > 0)
-          _infoRow(Icons.cake_outlined, 'Edad', '${_usuario.edad} años'),
-        if (_usuario.estatura > 0)
-          _infoRow(Icons.height, 'Estatura',
-              '${_usuario.estatura.toStringAsFixed(0)} cm'),
-        if (_usuario.peso > 0)
-          _infoRow(Icons.monitor_weight_outlined, 'Peso',
-              '${_usuario.peso} kg'),
-      ],
+  /// Tarjeta-botón que abre la pantalla de información personal
+  Widget _buildInfoCardButton() {
+    return GestureDetector(
+      onTap: _abrirInfoPersonal,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFF00f5ff).withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44, height: 44,
+              decoration: BoxDecoration(
+                color: const Color(0xFF00f5ff).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.person_outline,
+                  color: Color(0xFF00f5ff), size: 24),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Información personal',
+                      style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15)),
+                  SizedBox(height: 2),
+                  Text('Ver nombre, posición, club y más',
+                      style: TextStyle(
+                          color: AppColors.textSecondary, fontSize: 12)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right,
+                color: Color(0xFF00f5ff), size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _abrirInfoPersonal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.55,
+        maxChildSize: 0.92,
+        minChildSize: 0.4,
+        builder: (_, ctrl) => Container(
+          decoration: const BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+              const SizedBox(height: 16),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(children: [
+                  Icon(Icons.person_outline,
+                      color: Color(0xFF00f5ff), size: 26),
+                  SizedBox(width: 10),
+                  Text('Información personal',
+                      style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                ]),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView(
+                  controller: ctrl,
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    _infoRow(Icons.person_outline, 'Nombre', _usuario.nombre),
+                    _infoRow(Icons.email_outlined, 'Email', _usuario.email),
+                    if (_usuario.posicion.isNotEmpty)
+                      _infoRow(Icons.sports_soccer, 'Posición', _usuario.posicion),
+                    if (_usuario.club.isNotEmpty)
+                      _infoRow(Icons.shield_outlined, 'Club', _usuario.club),
+                    if (_usuario.edad > 0)
+                      _infoRow(Icons.cake_outlined, 'Edad', '${_usuario.edad} años'),
+                    if (_usuario.estatura > 0)
+                      _infoRow(Icons.height, 'Estatura',
+                          '${_usuario.estatura.toStringAsFixed(0)} cm'),
+                    if (_usuario.peso > 0)
+                      _infoRow(Icons.monitor_weight_outlined, 'Peso',
+                          '${_usuario.peso} kg'),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.edit_rounded),
+                      label: const Text('Editar información'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF00f5ff),
+                        side: const BorderSide(color: Color(0xFF00f5ff)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _editarPerfil();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -589,7 +698,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.primary, size: 18),
+          Icon(icon, color: const Color(0xFF00f5ff), size: 18),
           const SizedBox(width: 12),
           Text('$label: ',
               style: const TextStyle(

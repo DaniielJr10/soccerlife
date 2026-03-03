@@ -117,8 +117,9 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
+        centerTitle: true,
         title: Text(_modoEdicion ? 'Editar torneo' : 'Nuevo torneo',
-            style: const TextStyle(color: AppColors.textPrimary)),
+            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
         leading: const BackButton(color: AppColors.textSecondary),
       ),
       body: Form(

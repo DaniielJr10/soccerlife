@@ -80,7 +80,9 @@ class _MatchesPageState extends State<MatchesPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Partidos'),
+        centerTitle: true,
+        title: const Text('Partidos',
+            style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),

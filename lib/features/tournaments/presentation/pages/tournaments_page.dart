@@ -66,11 +66,12 @@ class _TournamentsPageState extends State<TournamentsPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
+        centerTitle: true,
         title: const Text('Torneos',
-            style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700)),
+            style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_rounded, color: AppColors.primary),
+            icon: const Icon(Icons.add_rounded, color: Color(0xFF00f5ff)),
             tooltip: 'Nuevo torneo',
             onPressed: () => _openForm(),
           ),
@@ -118,12 +119,12 @@ class _TournamentsPageState extends State<TournamentsPage> {
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary),
+                        backgroundColor: const Color(0xFF00f5ff),
+                        foregroundColor: Colors.black),
                     onPressed: () => _openForm(),
-                    icon: const Icon(Icons.add_rounded,
-                        color: AppColors.textOnPrimary),
+                    icon: const Icon(Icons.add_rounded),
                     label: const Text('Agregar torneo',
-                        style: TextStyle(color: AppColors.textOnPrimary)),
+                        style: TextStyle(fontWeight: FontWeight.w700)),
                   ),
                 ],
               ),

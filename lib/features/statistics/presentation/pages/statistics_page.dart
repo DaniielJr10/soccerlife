@@ -43,7 +43,9 @@ class _StatisticsPageState extends State<StatisticsPage>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Estadísticas'),
+        centerTitle: true,
+        title: const Text('Estadísticas',
+            style: TextStyle(fontWeight: FontWeight.w800)),
         bottom: TabBar(
           controller: _tabs,
           indicatorColor: AppColors.primary,

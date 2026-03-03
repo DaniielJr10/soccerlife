@@ -90,7 +90,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Editar perfil'),
+        title: const Text('Editar perfil',
+            style: TextStyle(fontWeight: FontWeight.w800)),
         centerTitle: true,
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,

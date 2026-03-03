@@ -115,7 +115,9 @@ class _MatchFormPageState extends State<MatchFormPage> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text(_esEdicion ? 'Editar partido' : 'Registrar partido'),
+          centerTitle: true,
+          title: Text(_esEdicion ? 'Editar partido' : 'Registrar partido',
+              style: const TextStyle(fontWeight: FontWeight.w800)),
           leading: const BackButton(color: AppColors.textSecondary),
         ),
         body: Form(
