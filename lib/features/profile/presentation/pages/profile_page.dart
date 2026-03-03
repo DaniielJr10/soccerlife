@@ -13,6 +13,7 @@ import '../../../profile_picture/presentation/pages/profile_picture_page.dart';
 import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
 import 'change_password_page.dart';
 import 'edit_profile_page.dart';
+import 'personal_info_page.dart';
 
 /// Página de perfil del jugador.
 /// Carga datos frescos desde MongoDB; usa caché local como fallback.
@@ -269,87 +270,22 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _abrirInfoPersonal() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.55,
-        maxChildSize: 0.92,
-        minChildSize: 0.4,
-        builder: (_, ctrl) => Container(
-          decoration: const BoxDecoration(
-            color: AppColors.card,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(2)),
-              ),
-              const SizedBox(height: 16),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Row(children: [
-                  Icon(Icons.person_outline,
-                      color: Color(0xFF00f5ff), size: 26),
-                  SizedBox(width: 10),
-                  Text('Información personal',
-                      style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                ]),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView(
-                  controller: ctrl,
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    _infoRow(Icons.person_outline, 'Nombre', _usuario.nombre),
-                    _infoRow(Icons.email_outlined, 'Email', _usuario.email),
-                    if (_usuario.posicion.isNotEmpty)
-                      _infoRow(Icons.sports_soccer, 'Posición', _usuario.posicion),
-                    if (_usuario.club.isNotEmpty)
-                      _infoRow(Icons.shield_outlined, 'Club', _usuario.club),
-                    if (_usuario.edad > 0)
-                      _infoRow(Icons.cake_outlined, 'Edad', '${_usuario.edad} años'),
-                    if (_usuario.estatura > 0)
-                      _infoRow(Icons.height, 'Estatura',
-                          '${_usuario.estatura.toStringAsFixed(0)} cm'),
-                    if (_usuario.peso > 0)
-                      _infoRow(Icons.monitor_weight_outlined, 'Peso',
-                          '${_usuario.peso} kg'),
-                    const SizedBox(height: 8),
-                    OutlinedButton.icon(
-                      icon: const Icon(Icons.edit_rounded),
-                      label: const Text('Editar información'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF00f5ff),
-                        side: const BorderSide(color: Color(0xFF00f5ff)),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _editarPerfil();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+  void _abrirInfoPersonal() async {
+    final photoBytes =
+        context.read<ProfilePictureProvider>().photoBytes;
+    final resultado = await Navigator.push<UsuarioModel>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PersonalInfoPage(
+          usuario: _usuario,
+          photoBytes: photoBytes,
+          onEdited: _cargar,
         ),
       ),
     );
+    if (resultado != null && mounted) {
+      setState(() => _usuario = resultado);
+    }
   }
 
   Widget _buildEditButton() => SizedBox(
@@ -693,28 +629,4 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _infoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xFF00f5ff), size: 18),
-          const SizedBox(width: 12),
-          Text('$label: ',
-              style: const TextStyle(
-                  color: AppColors.textSecondary, fontSize: 14)),
-          Expanded(
-            child: Text(value,
-                style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
-                overflow: TextOverflow.ellipsis),
-          ),
-        ],
-      ),
-    );
-  }
-
 }
-

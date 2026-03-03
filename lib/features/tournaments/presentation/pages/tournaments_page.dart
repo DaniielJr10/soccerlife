@@ -69,14 +69,6 @@ class _TournamentsPageState extends State<TournamentsPage> {
         centerTitle: true,
         title: const Text('Torneos',
             style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded, color: Color(0xFF00f5ff)),
-            tooltip: 'Nuevo torneo',
-            onPressed: () => _openForm(),
-          ),
-          const SizedBox(width: 4),
-        ],
       ),
       body: Consumer<TournamentProvider>(
         builder: (_, provider, __) {
