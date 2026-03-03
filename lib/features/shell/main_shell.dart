@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../achievements/presentation/pages/achievements_page.dart';
 import '../dashboard/presentation/pages/dashboard_page.dart';
 import '../matches/presentation/pages/matches_page.dart';
 import '../statistics/presentation/pages/statistics_page.dart';
@@ -24,7 +23,6 @@ class _MainShellState extends State<MainShell> {
     MatchesPage(),
     StatisticsPage(),
     TournamentsPage(),
-    AchievementsPage(),
     ProfilePage(),
   ];
 
@@ -33,7 +31,6 @@ class _MainShellState extends State<MainShell> {
     _NavItem(icon: Icons.sports_soccer_rounded,   label: 'Partidos'),
     _NavItem(icon: Icons.bar_chart_rounded,       label: 'Estadísticas'),
     _NavItem(icon: Icons.emoji_events_rounded,    label: 'Torneos'),
-    _NavItem(icon: Icons.military_tech_rounded,   label: 'Logros'),
     _NavItem(icon: Icons.person_rounded,          label: 'Perfil'),
   ];
 

@@ -7,6 +7,7 @@ import '../../../../services/auth_service.dart';
 import '../../../../services/profile_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../hoja_de_vida/presentation/pages/hoja_de_vida_page.dart';
+import '../../../achievements/presentation/pages/achievements_page.dart';
 import '../../../profile_picture/application/profile_picture_provider.dart';
 import '../../../profile_picture/presentation/pages/profile_picture_page.dart';
 import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
@@ -284,6 +285,17 @@ class _ProfilePageState extends State<ProfilePage> {
     return _card(
       title: 'CONFIGURACIÓN',
       children: [
+        _actionTile(
+          icon: Icons.military_tech_rounded,
+          label: 'Logros',
+          sublabel: 'Mis medallas y logros desbloqueados',
+          color: const Color(0xFF00f5ff),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AchievementsPage()),
+          ),
+        ),
+        _divider(),
         _actionTile(
           icon: Icons.lock_outline,
           label: 'Cambiar Contraseña',

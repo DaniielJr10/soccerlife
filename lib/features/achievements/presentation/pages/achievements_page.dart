@@ -72,10 +72,19 @@ class _AchievementsPageState extends State<AchievementsPage> {
   }
 
   Widget _buildSliverAppBar() {
+    final canPop = Navigator.of(context).canPop();
     return SliverAppBar(
       pinned: true,
       expandedHeight: 160,
       backgroundColor: AppColors.surface,
+      automaticallyImplyLeading: false,
+      leading: canPop
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: AppColors.textPrimary),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : null,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
         background: _AchievementsHeader(
