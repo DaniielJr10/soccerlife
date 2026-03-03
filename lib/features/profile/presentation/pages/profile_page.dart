@@ -138,13 +138,6 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_rounded, color: AppColors.primary),
-            tooltip: 'Editar perfil',
-            onPressed: _cargando ? null : _editarPerfil,
-          ),
-        ],
       ),
       body: _cargando
           ? const Center(
@@ -220,17 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(_usuario.email,
               style: const TextStyle(
                   color: AppColors.textSecondary, fontSize: 14)),
-          const SizedBox(height: 6),
-          GestureDetector(
-            onTap: _abrirFotoPerfil,
-            child: Text(
-              photoBytes != null ? 'Cambiar foto' : 'Añadir foto',
-              style: const TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
-            ),
-          ),
+
         ],
       ),
     );
