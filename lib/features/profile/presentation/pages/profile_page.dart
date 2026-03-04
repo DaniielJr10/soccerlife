@@ -12,7 +12,6 @@ import '../../../profile_picture/application/profile_picture_provider.dart';
 import '../../../profile_picture/presentation/pages/profile_picture_page.dart';
 import '../../../profile_picture/presentation/widgets/profile_avatar_widget.dart';
 import 'change_password_page.dart';
-import 'edit_profile_page.dart';
 import 'personal_info_page.dart';
 
 /// Página de perfil del jugador.
@@ -86,25 +85,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _editarPerfil() async {
-    final datos = {
-      'nombre': _usuario.nombre,
-      'posicion': _usuario.posicion,
-      'club': _usuario.club,
-      'edad': _usuario.edad,
-      'estatura': _usuario.estatura,
-      'peso': _usuario.peso,
-    };
-    final resultado = await Navigator.push<Map<String, dynamic>>(
-      context,
-      MaterialPageRoute(
-          builder: (_) => EditProfilePage(datosActuales: datos)),
-    );
-    if (resultado != null) {
-      setState(() => _usuario = UsuarioModel.fromMap(resultado));
-    }
-  }
-
   Future<void> _cerrarSesion() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -157,8 +137,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                   _buildInfoCardButton(),
                   const SizedBox(height: 16),
-                  _buildEditButton(),
-                  const SizedBox(height: 12),
                   _buildCvButton(),
                   const SizedBox(height: 16),
                   _buildConfigCard(),
@@ -287,22 +265,6 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() => _usuario = resultado);
     }
   }
-
-  Widget _buildEditButton() => SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          icon: const Icon(Icons.edit_rounded),
-          label: const Text('Editar perfil'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.primary,
-            side: const BorderSide(color: AppColors.primary),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          onPressed: _editarPerfil,
-        ),
-      );
 
   Widget _buildCvButton() => SizedBox(
         width: double.infinity,
