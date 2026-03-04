@@ -137,8 +137,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                   _buildInfoCardButton(),
                   const SizedBox(height: 16),
-                  _buildCvButton(),
-                  const SizedBox(height: 16),
                   _buildConfigCard(),
                   const SizedBox(height: 12),
                   _buildSupportCard(),
@@ -266,32 +264,21 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget _buildCvButton() => SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          icon: const Icon(Icons.style_rounded),
-          label: const Text('CV Deportivo'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFFD700),
-            foregroundColor: const Color(0xFF2C1A00),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-            textStyle: const TextStyle(
-                fontSize: 15, fontWeight: FontWeight.w800),
-            elevation: 0,
-          ),
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const HojaDeVidaPage()),
-          ),
-        ),
-      );
-
   Widget _buildConfigCard() {
     return _card(
       title: 'CONFIGURACIÓN',
       children: [
+        _actionTile(
+          icon: Icons.style_rounded,
+          label: 'CV Deportivo',
+          sublabel: 'Sube tu PDF o crea tu Carta FIFA',
+          color: const Color(0xFFFFD700),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HojaDeVidaPage()),
+          ),
+        ),
+        _divider(),
         _actionTile(
           icon: Icons.military_tech_rounded,
           label: 'Logros',
