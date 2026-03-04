@@ -77,6 +77,9 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
     _emailFocus.addListener(() {
       setState(() => _emailFocused = _emailFocus.hasFocus);
     });
+    for (var node in _codigoFocusNodes) {
+      node.addListener(() => setState(() {}));
+    }
   }
 
   void _iniciarAnimacionesEntrada() {
@@ -709,58 +712,64 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(4, (index) {
-                return SizedBox(
-                  width: 40,
-                  height: 50,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        width: 1,
-                      ),
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withValues(alpha: 0.1),
-                          Colors.black.withValues(alpha: 0.15),
-                        ],
-                      ),
+                final isFocused = _codigoFocusNodes[index].hasFocus;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 60,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isFocused
+                          ? const Color(0xFF00f5ff)
+                          : Colors.white.withValues(alpha: 0.25),
+                      width: isFocused ? 2.0 : 1.2,
                     ),
-                    child: TextFormField(
-                      controller: _codigoControllers[index],
-                      focusNode: _codigoFocusNodes[index],
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      decoration: const InputDecoration(
-                        counterText: '',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      onChanged: (value) {
-                        // Pasa automáticamente al siguiente campo
-                        if (value.isNotEmpty && index < 3) {
-                          _codigoFocusNodes[index + 1].requestFocus();
-                        }
-                        // Verifica automáticamente cuando se completen 4 campos
-                        if (index == 3 && value.isNotEmpty) {
-                          _verificarCodigo();
-                        }
-                      },
-                      onTap: () {
-                        // Selecciona todo el texto del campo al tocarlo
-                        _codigoControllers[index].selection = TextSelection(
-                          baseOffset: 0,
-                          extentOffset: _codigoControllers[index].text.length,
-                        );
-                      },
+                    color: isFocused
+                        ? const Color(0xFF00f5ff).withValues(alpha: 0.10)
+                        : Colors.white.withValues(alpha: 0.08),
+                  ),
+                  child: TextFormField(
+                    controller: _codigoControllers[index],
+                    focusNode: _codigoFocusNodes[index],
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
+                    decoration: InputDecoration(
+                      counterText: '',
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.transparent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    onChanged: (val) {
+                      // Pasa automáticamente al siguiente campo
+                      if (val.isNotEmpty && index < 3) {
+                        _codigoFocusNodes[index + 1].requestFocus();
+                      }
+                      // Verifica automáticamente cuando se completen 4 campos
+                      if (index == 3 && val.isNotEmpty) {
+                        _verificarCodigo();
+                      }
+                    },
+                    onTap: () {
+                      // Selecciona todo el texto del campo al tocarlo
+                      _codigoControllers[index].selection = TextSelection(
+                        baseOffset: 0,
+                        extentOffset: _codigoControllers[index].text.length,
+                      );
+                    },
                   ),
                 );
               }),
