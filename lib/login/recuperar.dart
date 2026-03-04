@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/user_recuperar.dart';
+import 'nueva_password.dart';
 
 class RecuperarPasswordPage extends StatefulWidget {
   const RecuperarPasswordPage({super.key});
@@ -925,14 +926,19 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     _buildButton(
                       onTap: () {
                         HapticFeedback.mediumImpact();
-                        // TODO: Navegar a pantalla NuevaPasswordPage y pasar _tokenRecuperacion
                         if (_tokenRecuperacion == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Token no disponible')), 
+                            const SnackBar(content: Text('Token no disponible')),
                           );
                           return;
                         }
-                        Navigator.of(context).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => NuevaPasswordPage(
+                              token: _tokenRecuperacion!,
+                            ),
+                          ),
+                        );
                       },
                       text: 'Crear Nueva Contraseña',
                     ),
@@ -943,7 +949,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
                     TextButton(
                       onPressed: () {
                         HapticFeedback.lightImpact();
-                        Navigator.of(context).pop();
+                        Navigator.of(context).popUntil((route) => route.isFirst);
                       },
                       child: Text(
                         'Volver al inicio de sesión',

@@ -144,8 +144,8 @@ const cambiarPasswordRecuperacion = async (req, res) => {
       return res.status(400).json({ message: 'Token y nueva contraseña son requeridos' });
     }
 
-    if (nuevaPassword.length < 6) {
-      return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
+    if (nuevaPassword.length < 8) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
     // Verificar token
