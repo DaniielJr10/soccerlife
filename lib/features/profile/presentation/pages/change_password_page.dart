@@ -173,13 +173,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                     const SizedBox(height: 8),
                     _PasswordField(
                       controller: _newCtrl,
-                      label: 'Mínimo 6 caracteres',
+                      label: 'Mínimo 8 caracteres',
                       visible: _verNew,
                       onToggle: () => setState(() => _verNew = !_verNew),
                       onChanged: _evaluarFortaleza,
                       validator: (v) {
                         if (v == null || v.isEmpty) return 'Campo requerido';
-                        if (v.length < 6) return 'Mínimo 6 caracteres';
+                        if (v.length < 8) return 'Mínimo 8 caracteres';
                         if (v == _actCtrl.text.trim()) {
                           return 'Debe ser diferente a tu contraseña actual';
                         }

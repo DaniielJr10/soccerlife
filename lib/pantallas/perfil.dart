@@ -807,7 +807,7 @@ class _PerfilPageState extends State<PerfilPage>
                 decoration: InputDecoration(
                   labelText: 'Nueva contraseña',
                   border: const OutlineInputBorder(),
-                  helperText: 'Mínimo 6 caracteres',
+                  helperText: 'Mínimo 8 caracteres',
                   suffixIcon: IconButton(
                     icon: Icon(verNueva ? Icons.visibility_off : Icons.visibility),
                     onPressed: () => setDlg(() => verNueva = !verNueva),
