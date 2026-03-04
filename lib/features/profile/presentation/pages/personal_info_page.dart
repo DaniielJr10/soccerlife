@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -22,7 +21,6 @@ class PersonalInfoPage extends StatefulWidget {
 }
 
 class _PersonalInfoPageState extends State<PersonalInfoPage> {
-  static const _cyan = Color(0xFF00f5ff);
   bool _editando = false;
   bool _guardando = false;
   final _formKey = GlobalKey<FormState>();
@@ -53,7 +51,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     _club     = TextEditingController(text: u.club);
     _edad     = TextEditingController(text: u.edad > 0 ? '${u.edad}' : '');
     _estatura = TextEditingController(
-        text: u.estatura > 0 ? '${u.estatura.toStringAsFixed(0)}' : '');
+        text: u.estatura > 0 ? u.estatura.toStringAsFixed(0) : '');
     _peso     = TextEditingController(text: u.peso > 0 ? '${u.peso}' : '');
   }
 
@@ -73,7 +71,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         _club.text     = _usuario.club;
         _edad.text     = _usuario.edad > 0 ? '${_usuario.edad}' : '';
         _estatura.text = _usuario.estatura > 0
-            ? '${_usuario.estatura.toStringAsFixed(0)}'
+            ? _usuario.estatura.toStringAsFixed(0)
             : '';
         _peso.text     = _usuario.peso > 0 ? '${_usuario.peso}' : '';
       }
@@ -144,7 +142,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             child: Text(
               'Editar',
               style: TextStyle(
-                color: _editando ? AppColors.textMuted : _cyan,
+                color: _editando ? AppColors.textMuted : AppColors.primary,
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
               ),
@@ -190,7 +188,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: _cyan.withValues(alpha: 0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 blurRadius: 24,
                 spreadRadius: 3,
               ),
@@ -205,7 +203,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [_cyan, Color(0xFF0077ff), _cyan],
+              colors: [AppColors.primary, Color(0xFF0077ff), AppColors.primary],
               stops: [0.0, 0.5, 1.0],
             ),
           ),
@@ -231,7 +229,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                       child: Text(
                         _usuario.iniciales,
                         style: const TextStyle(
-                          color: _cyan,
+                          color: AppColors.primary,
                           fontSize: 34,
                           fontWeight: FontWeight.w900,
                         ),
@@ -292,7 +290,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _cyan.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -361,7 +359,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _cyan,
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.black,
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -396,10 +394,10 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: _cyan.withValues(alpha: 0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: _cyan, size: 18),
+            child: Icon(icon, color: AppColors.primary, size: 18),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -444,7 +442,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         labelText: label,
         labelStyle: const TextStyle(
             color: AppColors.textSecondary, fontSize: 13),
-        prefixIcon: Icon(icon, color: _cyan, size: 18),
+        prefixIcon: Icon(icon, color: AppColors.primary, size: 18),
         filled: true,
         fillColor: AppColors.background,
         contentPadding:
@@ -457,7 +455,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             borderSide: const BorderSide(color: AppColors.border)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: _cyan, width: 1.5)),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
       ),
     );
   }
@@ -470,7 +468,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         labelStyle: const TextStyle(
             color: AppColors.textSecondary, fontSize: 13),
         prefixIcon:
-            const Icon(Icons.sports_soccer_rounded, color: _cyan, size: 18),
+            const Icon(Icons.sports_soccer_rounded, color: AppColors.primary, size: 18),
         filled: true,
         fillColor: AppColors.background,
         contentPadding:
@@ -483,7 +481,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             borderSide: const BorderSide(color: AppColors.border)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: _cyan, width: 1.5)),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
       ),
       dropdownColor: AppColors.card,
       style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),

@@ -34,15 +34,15 @@ class TournamentEntity {
   }
 
   factory TournamentEntity.fromJson(Map<String, dynamic> j) {
-    DateTime? _parseDate(dynamic v) =>
+    DateTime? parseDate(dynamic v) =>
         v == null ? null : DateTime.tryParse(v.toString());
 
     return TournamentEntity(
       id:           j['_id']?.toString(),
       nombre:       j['nombre']?.toString() ?? '',
       descripcion:  j['descripcion']?.toString() ?? '',
-      fechaInicio:  _parseDate(j['fechaInicio']),
-      fechaFin:     _parseDate(j['fechaFin']),
+      fechaInicio:  parseDate(j['fechaInicio']),
+      fechaFin:     parseDate(j['fechaFin']),
       estado:       j['estado']?.toString() ?? 'activo',
       colorHex:     j['colorHex']?.toString() ?? '#00D4AA',
     );

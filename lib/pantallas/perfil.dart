@@ -299,7 +299,7 @@ class _PerfilPageState extends State<PerfilPage>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.3),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -548,7 +548,7 @@ class _PerfilPageState extends State<PerfilPage>
         border: Border.all(color: cardColor == const Color(0xFF1a1a2e) ? Colors.grey[800]! : Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -559,7 +559,7 @@ class _PerfilPageState extends State<PerfilPage>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -623,7 +623,8 @@ class _PerfilPageState extends State<PerfilPage>
             trailing: Switch(
               value: _notificacionesActivas,
               onChanged: (_) => _toggleNotificaciones(),
-              activeColor: const Color(0xFF00f5ff),
+              activeThumbColor: Colors.white,
+              activeTrackColor: const Color(0xFF00f5ff),
             ),
           ),
         ]),

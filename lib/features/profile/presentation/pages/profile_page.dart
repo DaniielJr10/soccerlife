@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _errorMsg;
   bool _notificacionesActivas = true;
 
-  // Foto de perfil — se gestiona a través del ProfilePictureProvider
+  // Foto de perfil  se gestiona a través del ProfilePictureProvider
   bool _cargandoFoto = true;
 
   @override
@@ -39,28 +39,31 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _cargar() async {
-    setState(() { _cargando = true; _errorMsg = null; });
+    setState(() {
+      _cargando = true;
+      _errorMsg = null;
+    });
     final notif = await StorageService.obtener('notificaciones_activas');
     if (mounted) setState(() => _notificacionesActivas = notif != 'false');
 
-    // Carga perfil y foto en paralelo
-    await Future.wait([
-      ProfileService.obtenerPerfil().then((perfilResult) async {
-        if (perfilResult['success'] == true) {
-          final u = perfilResult['usuario'] as Map<String, dynamic>;
-          if (mounted) setState(() => _usuario = UsuarioModel.fromMap(u));
-        } else {
-          final cached = await StorageService.obtenerUsuarioModel();
-          if (mounted) setState(() {
-            _usuario = cached;
-            _errorMsg = 'Sin conexión — mostrando datos locales';
-          });
-        }
-      }),
-      // Delega la carga de la foto al provider compartido
-      if (mounted) context.read<ProfilePictureProvider>().load(),
-    ]);
+    // Carga perfil
+    final perfilResult = await ProfileService.obtenerPerfil();
+    if (!mounted) return;
 
+    if (perfilResult['success'] == true) {
+      final u = perfilResult['usuario'] as Map<String, dynamic>;
+      setState(() => _usuario = UsuarioModel.fromMap(u));
+    } else {
+      final cached = await StorageService.obtenerUsuarioModel();
+      if (!mounted) return;
+      setState(() {
+        _usuario = cached;
+        _errorMsg = 'Sin conexión  mostrando datos locales';
+      });
+    }
+
+    // Delega la carga de la foto al provider compartido
+    context.read<ProfilePictureProvider>().load();
     if (mounted) setState(() { _cargando = false; _cargandoFoto = false; });
   }
 
@@ -75,12 +78,12 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
-    // ProfilePicturePage devuelve los nuevos bytes (o null si se eliminó).
-    // Actualizamos el provider para que Dashboard y Perfil reflejen el cambio.
     if (mounted) {
       // ignore: use_build_context_synchronously
       context.read<ProfilePictureProvider>().setPhoto(
-        newBytes is List<int> ? Uint8List.fromList(newBytes) : newBytes as Uint8List?,
+        newBytes is List<int>
+            ? Uint8List.fromList(newBytes)
+            : newBytes as Uint8List?,
       );
     }
   }
@@ -107,6 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
     if (confirm == true && mounted) {
       await StorageService.limpiarDatos();
+      // ignore: use_build_context_synchronously
       Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
     }
   }
@@ -159,11 +163,13 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         child: Row(
           children: [
-            Icon(Icons.wifi_off_rounded, color: AppColors.warning, size: 16),
+            const Icon(Icons.wifi_off_rounded,
+                color: AppColors.warning, size: 16),
             const SizedBox(width: 8),
             Expanded(
               child: Text(_errorMsg!,
-                  style: TextStyle(color: AppColors.warning, fontSize: 12)),
+                  style: const TextStyle(
+                      color: AppColors.warning, fontSize: 12)),
             ),
           ],
         ),
@@ -193,7 +199,6 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(_usuario.email,
               style: const TextStyle(
                   color: AppColors.textSecondary, fontSize: 14)),
-
         ],
       ),
     );
@@ -208,38 +213,44 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF00f5ff).withValues(alpha: 0.4)),
+          border:
+              Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
         ),
         child: Row(
           children: [
             Container(
-              width: 44, height: 44,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: const Color(0xFF00f5ff).withValues(alpha: 0.12),
+                color: AppColors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.person_outline,
-                  color: Color(0xFF00f5ff), size: 24),
+                  color: AppColors.primary, size: 24),
             ),
             const SizedBox(width: 14),
             const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Información personal',
-                      style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15)),
+                  Text(
+                    'Información personal',
+                    style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15),
+                  ),
                   SizedBox(height: 2),
-                  Text('Ver nombre, posición, club y más',
-                      style: TextStyle(
-                          color: AppColors.textSecondary, fontSize: 12)),
+                  Text(
+                    'Ver nombre, posición, club y más',
+                    style: TextStyle(
+                        color: AppColors.textSecondary, fontSize: 12),
+                  ),
                 ],
               ),
             ),
             const Icon(Icons.chevron_right,
-                color: Color(0xFF00f5ff), size: 22),
+                color: AppColors.primary, size: 22),
           ],
         ),
       ),
@@ -247,8 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _abrirInfoPersonal() async {
-    final photoBytes =
-        context.read<ProfilePictureProvider>().photoBytes;
+    final photoBytes = context.read<ProfilePictureProvider>().photoBytes;
     final resultado = await Navigator.push<UsuarioModel>(
       context,
       MaterialPageRoute(
@@ -283,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Icons.military_tech_rounded,
           label: 'Logros',
           sublabel: 'Mis medallas y logros desbloqueados',
-          color: const Color(0xFF00f5ff),
+          color: AppColors.primary,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const AchievementsPage()),
@@ -303,20 +313,28 @@ class _ProfilePageState extends State<ProfilePage> {
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: Container(
-            width: 36, height: 36,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: const Color(0xFFF39C12).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.notifications_outlined, color: Color(0xFFF39C12), size: 20),
+            child: const Icon(Icons.notifications_outlined,
+                color: Color(0xFFF39C12), size: 20),
           ),
-          title: const Text('Notificaciones', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
-          subtitle: Text(_notificacionesActivas ? 'Activadas' : 'Desactivadas',
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          title: const Text('Notificaciones',
+              style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w500)),
+          subtitle: Text(
+              _notificacionesActivas ? 'Activadas' : 'Desactivadas',
+              style: const TextStyle(
+                  color: AppColors.textSecondary, fontSize: 12)),
           trailing: Switch(
             value: _notificacionesActivas,
             onChanged: (_) => _toggleNotificaciones(),
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.textOnPrimary,
+            activeTrackColor: AppColors.primary,
           ),
           onTap: _toggleNotificaciones,
         ),
@@ -344,8 +362,12 @@ class _ProfilePageState extends State<ProfilePage> {
             context: context,
             applicationName: 'Soccer Life',
             applicationVersion: '1.0.0',
-            applicationIcon: const Icon(Icons.sports_soccer, size: 48, color: AppColors.primary),
-            children: [const Text('Aplicación para gestionar tu carrera futbolística.\n\nDesarrollada con Flutter.')],
+            applicationIcon: const Icon(Icons.sports_soccer,
+                size: 48, color: AppColors.primary),
+            children: [
+              const Text(
+                  'Aplicación para gestionar tu carrera futbolística.\n\nDesarrollada con Flutter.')
+            ],
           ),
         ),
       ],
@@ -388,27 +410,35 @@ class _ProfilePageState extends State<ProfilePage> {
       contentPadding: EdgeInsets.zero,
       onTap: onTap,
       leading: Container(
-        width: 36, height: 36,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: color, size: 20),
       ),
-      title: Text(label, style: TextStyle(
-        color: destructive ? color : AppColors.textPrimary,
-        fontWeight: FontWeight.w600, fontSize: 15,
-      )),
+      title: Text(
+        label,
+        style: TextStyle(
+          color: destructive ? color : AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+        ),
+      ),
       subtitle: sublabel != null
-          ? Text(sublabel, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))
+          ? Text(sublabel,
+              style: const TextStyle(
+                  color: AppColors.textSecondary, fontSize: 12))
           : null,
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 18),
+      trailing: const Icon(Icons.chevron_right,
+          color: AppColors.textSecondary, size: 18),
     );
   }
 
   Widget _divider() => const Divider(height: 1, color: AppColors.border);
 
-  // ── Acciones ───────────────────────────────────────────────────────────────
+  //  Acciones 
 
   void _toggleNotificaciones() async {
     final nuevo = !_notificacionesActivas;
@@ -416,68 +446,130 @@ class _ProfilePageState extends State<ProfilePage> {
     await StorageService.guardar('notificaciones_activas', nuevo.toString());
   }
 
-
-
   void _mostrarAyuda() {
     final faqs = [
-      {'q': '¿Cómo registro un partido?', 'a': 'Ve a la pantalla "Partidos" y toca el botón "+" para registrar uno nuevo.'},
-      {'q': '¿Cómo se calculan mis estadísticas?', 'a': 'Se recalculan automáticamente cada vez que registras, editas o eliminas un partido.'},
-      {'q': '¿Puedo usar la app en otro dispositivo?', 'a': 'Sí. Tus datos se sincronizan en el servidor. Solo inicia sesión y todo estará disponible.'},
-      {'q': '¿Cómo cambio mi foto de perfil?', 'a': 'Toca tu avatar o el enlace "Cambiar foto" en la pantalla de Perfil.'},
-      {'q': '¿Qué pasa si elimino mi cuenta?', 'a': 'Quedará inactiva y no podrás acceder. Para reactivarla contacta a soporte.'},
+      {
+        'q': '¿Cómo registro un partido?',
+        'a': 'Ve a la pantalla "Partidos" y toca el botón "+" para registrar uno nuevo.'
+      },
+      {
+        'q': '¿Cómo se calculan mis estadísticas?',
+        'a': 'Se recalculan automáticamente cada vez que registras, editas o eliminas un partido.'
+      },
+      {
+        'q': '¿Puedo usar la app en otro dispositivo?',
+        'a': 'Sí. Tus datos se sincronizan en el servidor. Solo inicia sesión y todo estará disponible.'
+      },
+      {
+        'q': '¿Cómo cambio mi foto de perfil?',
+        'a': 'Toca tu avatar o el enlace "Cambiar foto" en la pantalla de Perfil.'
+      },
+      {
+        'q': '¿Qué pasa si elimino mi cuenta?',
+        'a': 'Quedará inactiva y no podrás acceder. Para reactivarla contacta a soporte.'
+      },
     ];
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.7, maxChildSize: 0.95, minChildSize: 0.4,
+        initialChildSize: 0.7,
+        maxChildSize: 0.95,
+        minChildSize: 0.4,
         builder: (_, ctrl) => Container(
           decoration: const BoxDecoration(
             color: AppColors.card,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          child: Column(children: [
-            const SizedBox(height: 12),
-            Container(width: 40, height: 4,
-                decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
-            const SizedBox(height: 16),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(children: [
-                Icon(Icons.help_outline, color: Color(0xFF2ECC71), size: 26),
-                SizedBox(width: 10),
-                Text('Ayuda y Soporte', style: TextStyle(
-                    color: AppColors.textPrimary, fontSize: 19, fontWeight: FontWeight.bold)),
-              ]),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ListView(controller: ctrl, padding: const EdgeInsets.all(16), children: [
-                ...faqs.map((f) => ExpansionTile(
-                  iconColor: const Color(0xFF2ECC71),
-                  collapsedIconColor: AppColors.textSecondary,
-                  title: Text(f['q']!, style: const TextStyle(
-                      color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 14)),
-                  children: [Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: Text(f['a']!, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-                  )],
-                )),
-                const Divider(height: 32, color: AppColors.border),
-                const Text('¿Necesitas más ayuda?',
-                    style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
-                const SizedBox(height: 8),
-                const Row(children: [
-                  Icon(Icons.email_outlined, color: Color(0xFF2ECC71), size: 18),
-                  SizedBox(width: 8),
-                  Text('soporte@soccerlife.app',
-                      style: TextStyle(color: Color(0xFF2ECC71), fontWeight: FontWeight.w500)),
-                ]),
-                const SizedBox(height: 20),
-              ]),
-            ),
-          ]),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+              const SizedBox(height: 16),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Icon(Icons.help_outline,
+                        color: Color(0xFF2ECC71), size: 26),
+                    SizedBox(width: 10),
+                    Text(
+                      'Ayuda y Soporte',
+                      style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView(
+                  controller: ctrl,
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    ...faqs.map(
+                      (f) => ExpansionTile(
+                        iconColor: const Color(0xFF2ECC71),
+                        collapsedIconColor: AppColors.textSecondary,
+                        title: Text(
+                          f['q']!,
+                          style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14),
+                        ),
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: Text(
+                              f['a']!,
+                              style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 32, color: AppColors.border),
+                    const Text(
+                      '¿Necesitas más ayuda?',
+                      style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                    ),
+                    const SizedBox(height: 8),
+                    const Row(
+                      children: [
+                        Icon(Icons.email_outlined,
+                            color: Color(0xFF2ECC71), size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          'soporte@soccerlife.app',
+                          style: TextStyle(
+                              color: Color(0xFF2ECC71),
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -491,55 +583,78 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDlg) => AlertDialog(
           backgroundColor: AppColors.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Row(children: [
-            Icon(Icons.delete_forever, color: Color(0xFFC0392B)),
-            SizedBox(width: 8),
-            Text('Borrar Cuenta', style: TextStyle(color: Color(0xFFC0392B))),
-          ]),
-          content: Column(mainAxisSize: MainAxisSize.min, children: [
-            const Text(
-              '⚠️ Esta acción es irreversible.\nEscribe tu contraseña para confirmar:',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: passCtrl, obscureText: true,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                labelText: 'Contraseña', border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock_outline),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20)),
+          title: const Row(
+            children: [
+              Icon(Icons.delete_forever, color: Color(0xFFC0392B)),
+              SizedBox(width: 8),
+              Text('Borrar Cuenta',
+                  style: TextStyle(color: Color(0xFFC0392B))),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                ' Esta acción es irreversible.\nEscribe tu contraseña para confirmar:',
+                style: TextStyle(
+                    color: AppColors.textSecondary, fontSize: 14),
               ),
-            ),
-          ]),
+              const SizedBox(height: 16),
+              TextField(
+                controller: passCtrl,
+                obscureText: true,
+                style:
+                    const TextStyle(color: AppColors.textPrimary),
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+              ),
+            ],
+          ),
           actions: [
-            TextButton(onPressed: cargando ? null : () => Navigator.pop(ctx),
+            TextButton(
+                onPressed: cargando ? null : () => Navigator.pop(ctx),
                 child: const Text('Cancelar')),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC0392B), foregroundColor: Colors.white),
-              onPressed: cargando ? null : () async {
-                if (passCtrl.text.isEmpty) return;
-                setDlg(() => cargando = true);
-                final loginRes = await AuthService.login(
-                    email: _usuario.email, password: passCtrl.text.trim());
-                if (!loginRes['success']) {
-                  setDlg(() => cargando = false);
-                  _snack('Contraseña incorrecta', Colors.red); return;
-                }
-                final res = await AuthService.eliminarCuenta();
-                setDlg(() => cargando = false);
-                if (!ctx.mounted) return;
-                Navigator.pop(ctx);
-                if (res['success'] && mounted) {
-                  Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
-                } else {
-                  _snack(res['message'] ?? 'Error al borrar cuenta', Colors.red);
-                }
-              },
+                  backgroundColor: const Color(0xFFC0392B),
+                  foregroundColor: Colors.white),
+              onPressed: cargando
+                  ? null
+                  : () async {
+                      if (passCtrl.text.isEmpty) return;
+                      setDlg(() => cargando = true);
+                      final loginRes = await AuthService.login(
+                          email: _usuario.email,
+                          password: passCtrl.text.trim());
+                      if (!loginRes['success']) {
+                        setDlg(() => cargando = false);
+                        _snack('Contraseña incorrecta', Colors.red);
+                        return;
+                      }
+                      final res = await AuthService.eliminarCuenta();
+                      setDlg(() => cargando = false);
+                      if (!ctx.mounted) return;
+                      Navigator.pop(ctx);
+                      if (res['success'] && mounted) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login', (_) => false);
+                      } else {
+                        _snack(res['message'] ?? 'Error al borrar cuenta',
+                            Colors.red);
+                      }
+                    },
               child: cargando
-                  ? const SizedBox(width: 16, height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white))
                   : const Text('Borrar cuenta'),
             ),
           ],
@@ -550,11 +665,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _snack(String msg, Color color) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg), backgroundColor: color));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(msg), backgroundColor: color));
   }
 
-  Widget _card({required String title, required List<Widget> children}) {
+  Widget _card(
+      {required String title, required List<Widget> children}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -577,5 +693,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
 }

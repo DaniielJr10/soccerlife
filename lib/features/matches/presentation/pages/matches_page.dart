@@ -114,8 +114,8 @@ class _MatchesPageState extends State<MatchesPage> {
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('Registrar partido'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00f5ff),
-                  foregroundColor: Colors.black,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.textOnPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -397,7 +397,7 @@ class _FilterChip extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.12) : AppColors.surfaceAlt,
+          color: selected ? color.withValues(alpha: 0.12) : AppColors.surfaceAlt,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected ? color : AppColors.border,
@@ -461,7 +461,7 @@ class _TorneoChip extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.15) : AppColors.surfaceAlt,
+          color: selected ? color.withValues(alpha: 0.15) : AppColors.surfaceAlt,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected ? color : AppColors.border,
@@ -543,7 +543,7 @@ class _EmptyFilterState extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -551,7 +551,7 @@ class _EmptyFilterState extends StatelessWidget {
                     ? Icons.emoji_events_rounded
                     : Icons.sports_soccer_rounded,
                 size: 38,
-                color: color.withOpacity(0.7),
+                color: color.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 20),
@@ -631,9 +631,9 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.25)),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

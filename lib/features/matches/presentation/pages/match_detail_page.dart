@@ -46,12 +46,12 @@ class MatchDetailPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [resultColor.withOpacity(0.2), AppColors.card],
+          colors: [resultColor.withValues(alpha: 0.2), AppColors.card],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: resultColor.withOpacity(0.3)),
+        border: Border.all(color: resultColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -71,7 +71,7 @@ class MatchDetailPage extends StatelessWidget {
                 child: Text(
                   '–',
                   style: TextStyle(
-                    color: resultColor.withOpacity(0.6),
+                    color: resultColor.withValues(alpha: 0.6),
                     fontSize: 36,
                     fontWeight: FontWeight.w300,
                   ),
@@ -90,7 +90,7 @@ class MatchDetailPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: resultColor.withOpacity(0.15),
+              color: resultColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -344,11 +344,11 @@ class _StatGridTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: item.value > 0
-            ? item.color.withOpacity(0.08)
+            ? item.color.withValues(alpha: 0.08)
             : AppColors.surfaceAlt,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: item.value > 0 ? item.color.withOpacity(0.3) : AppColors.border,
+          color: item.value > 0 ? item.color.withValues(alpha: 0.3) : AppColors.border,
         ),
       ),
       child: Column(
@@ -411,7 +411,7 @@ class _PrecisionRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: pct,
-            backgroundColor: color.withOpacity(0.12),
+            backgroundColor: color.withValues(alpha: 0.12),
             valueColor: AlwaysStoppedAnimation(color),
             minHeight: 6,
           ),

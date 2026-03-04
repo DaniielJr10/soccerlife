@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Estado vacío reutilizable con ícono, título y subtítulo.
+/// Estado vacío reutilizable con ícono, título, subtítulo y acción opcional.
 class AppEmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
   final Widget? action;
+  final Color? iconColor;
 
   const AppEmptyState({
     super.key,
@@ -14,25 +15,32 @@ class AppEmptyState extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.action,
+    this.iconColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final color = iconColor ?? AppColors.primary;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              width: 88,
+              height: 88,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: color.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: color.withValues(alpha: 0.15),
+                  width: 1.5,
+                ),
               ),
-              child: Icon(icon, color: AppColors.primary, size: 48),
+              child: Icon(icon, color: color, size: 42),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Text(
               title,
               style: const TextStyle(
@@ -48,12 +56,12 @@ class AppEmptyState extends StatelessWidget {
               style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
-                height: 1.5,
+                height: 1.6,
               ),
               textAlign: TextAlign.center,
             ),
             if (action != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               action!,
             ],
           ],

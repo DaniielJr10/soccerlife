@@ -1,12 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'auth_service.dart';
 
-/**
- * Servicio de API para Partidos
- * Maneja todas las operaciones relacionadas con partidos
- */
+/// Servicio de API para Partidos
+/// Maneja todas las operaciones relacionadas con partidos
 class PartidosService {
   static String get baseUrl => '${ApiConfig.baseUrl}/partidos';
 
@@ -52,7 +51,7 @@ class PartidosService {
         };
       }
     } catch (e) {
-      print('❌ Error en crearPartido: $e');
+      debugPrint('❌ Error en crearPartido: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',
@@ -82,7 +81,7 @@ class PartidosService {
         };
       }
     } catch (e) {
-      print('❌ Error en obtenerPartidosFuturos: $e');
+      debugPrint('❌ Error en obtenerPartidosFuturos: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',
@@ -113,7 +112,7 @@ class PartidosService {
         };
       }
     } catch (e) {
-      print('❌ Error en obtenerPartidosJugados: $e');
+      debugPrint('❌ Error en obtenerPartidosJugados: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',
@@ -164,7 +163,7 @@ class PartidosService {
         };
       }
     } catch (e) {
-      print('❌ Error en actualizarPartido: $e');
+      debugPrint('❌ Error en actualizarPartido: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',
@@ -193,7 +192,7 @@ class PartidosService {
         };
       }
     } catch (e) {
-      print('❌ Error en eliminarPartido: $e');
+      debugPrint('❌ Error en eliminarPartido: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',

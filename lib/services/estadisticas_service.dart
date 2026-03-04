@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'auth_service.dart';
 
-/**
- * Servicio de API para Estadísticas
- */
+/// Servicio de API para Estadísticas
 class EstadisticasService {
   static String get baseUrl => '${ApiConfig.baseUrl}/estadisticas';
 
@@ -38,7 +37,7 @@ class EstadisticasService {
         };
       }
     } catch (e) {
-      print('❌ Error en obtenerEstadisticas: $e');
+      debugPrint('❌ Error en obtenerEstadisticas: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',

@@ -65,7 +65,7 @@ class StatProgressRow extends StatelessWidget {
             child: LinearProgressIndicator(
               value: clamped,
               minHeight: 5,
-              backgroundColor: color.withOpacity(0.1),
+              backgroundColor: color.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation(color),
             ),
           ),

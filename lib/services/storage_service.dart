@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario_model.dart';
 
@@ -23,7 +24,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.setString(_keyToken, token);
     } catch (e) {
-      print('Error guardando token: $e');
+      debugPrint('Error guardando token: $e');
       return false;
     }
   }
@@ -34,7 +35,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_keyToken);
     } catch (e) {
-      print('Error obteniendo token: $e');
+      debugPrint('Error obteniendo token: $e');
       return null;
     }
   }
@@ -52,7 +53,7 @@ class StorageService {
       await prefs.setString(_keyUserNombre, nombre);
       return true;
     } catch (e) {
-      print('Error guardando datos de usuario: $e');
+      debugPrint('Error guardando datos de usuario: $e');
       return false;
     }
   }
@@ -74,7 +75,7 @@ class StorageService {
       await prefs.setInt(_keyUserPeso, peso);
       return true;
     } catch (e) {
-      print('Error guardando perfil: $e');
+      debugPrint('Error guardando perfil: $e');
       return false;
     }
   }
@@ -155,7 +156,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_keyUserId);
     } catch (e) {
-      print('Error obteniendo userId: $e');
+      debugPrint('Error obteniendo userId: $e');
       return null;
     }
   }
@@ -166,7 +167,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_keyUserEmail);
     } catch (e) {
-      print('Error obteniendo email: $e');
+      debugPrint('Error obteniendo email: $e');
       return null;
     }
   }
@@ -177,7 +178,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_keyUserNombre);
     } catch (e) {
-      print('Error obteniendo nombre: $e');
+      debugPrint('Error obteniendo nombre: $e');
       return null;
     }
   }
@@ -205,7 +206,7 @@ class StorageService {
       await prefs.remove(_keyFotoPerfil);
       return true;
     } catch (e) {
-      print('Error limpiando datos: $e');
+      debugPrint('Error limpiando datos: $e');
       return false;
     }
   }
@@ -216,7 +217,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.setString(_keyFotoPerfil, path);
     } catch (e) {
-      print('Error guardando foto perfil: \$e');
+      debugPrint('Error guardando foto perfil: \$e');
       return false;
     }
   }
@@ -237,7 +238,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_keyFotoPerfil);
     } catch (e) {
-      print('Error eliminando foto perfil: \$e');
+      debugPrint('Error eliminando foto perfil: \$e');
     }
   }
 
@@ -247,7 +248,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.setString(key, value);
     } catch (e) {
-      print('Error guardando $key: $e');
+      debugPrint('Error guardando $key: $e');
       return false;
     }
   }
@@ -258,7 +259,7 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(key);
     } catch (e) {
-      print('Error obteniendo $key: $e');
+      debugPrint('Error obteniendo $key: $e');
       return null;
     }
   }

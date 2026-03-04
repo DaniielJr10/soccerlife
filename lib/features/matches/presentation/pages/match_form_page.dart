@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -8,9 +8,9 @@ import '../../application/providers/match_provider.dart';
 import '../../domain/entities/match_entity.dart';
 import '../widgets/stats_form_section.dart';
 
-/// Formulario para registrar o editar un partido jugado con todas sus estadísticas.
+/// Formulario para registrar o editar un partido jugado con todas sus estadÃ­sticas.
 class MatchFormPage extends StatefulWidget {
-  /// Si se pasa [match], el formulario entra en modo edición.
+  /// Si se pasa [match], el formulario entra en modo ediciÃ³n.
   final MatchEntity? match;
 
   const MatchFormPage({super.key, this.match});
@@ -22,7 +22,7 @@ class MatchFormPage extends StatefulWidget {
 class _MatchFormPageState extends State<MatchFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Campos básicos
+  // Campos bÃ¡sicos
   final _rivalCtrl         = TextEditingController();
   final _lugarCtrl         = TextEditingController();
   final _horaCtrl          = TextEditingController(text: '15:00');
@@ -38,11 +38,11 @@ class _MatchFormPageState extends State<MatchFormPage> {
   String? _torneoId;
   String? _torneoNombre;
 
-  // Lista local de torneos (cargada una sola vez — no usa Consumer para
+  // Lista local de torneos (cargada una sola vez â€” no usa Consumer para
   // evitar que rebuilds del provider congelen el formulario)
   List<TournamentEntity> _torneos = [];
 
-  // Estadísticas - contador
+  // EstadÃ­sticas - contador
   final Map<String, int> _stats = {
     'goles': 0, 'asistencias': 0,
     'regatesExitosos': 0,
@@ -85,7 +85,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
   }
 
   /// Carga torneos una sola vez en estado local.
-  /// Usa los datos ya en caché del provider si están disponibles,
+  /// Usa los datos ya en cachÃ© del provider si estÃ¡n disponibles,
   /// o lanza load() sin bloquear el formulario.
   Future<void> _cargarTorneos() async {    final provider = context.read<TournamentProvider>();
     if (provider.items.isNotEmpty) {
@@ -104,7 +104,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
   void dispose() {
     for (final c in [_rivalCtrl, _lugarCtrl,
         _horaCtrl, _notasCtrl, _golesLocalCtrl, _golesVisitCtrl,
-        _minutosCtrl]) c.dispose();
+        _minutosCtrl]) { c.dispose(); }
     super.dispose();
   }
 
@@ -126,7 +126,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
             physics: const ClampingScrollPhysics(),
           children: [
-            _SectionTitle(title: 'Información del partido'),
+            _SectionTitle(title: 'InformaciÃ³n del partido'),
             _buildRival(),
             Row(children: [_buildFecha()]),
             _Row2(left: _buildHora(), right: _buildLugar()),
@@ -137,7 +137,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             _buildMinutos(),
             _buildRating(),
             const SizedBox(height: 8),
-            _SectionTitle(title: 'Estadísticas personales'),
+            _SectionTitle(title: 'EstadÃ­sticas personales'),
             StatsFormSection(
               values: _stats,
               onChanged: (k, v) => setState(() => _stats[k] = v),
@@ -154,7 +154,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
   );
   }
 
-  // ── Campos básicos ──────────────────────────────────────────────────────
+  // â”€â”€ Campos bÃ¡sicos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildRival() {
     return Padding(
@@ -164,7 +164,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           labelText: 'Equipo rival *',
-          prefixIcon: Icon(Icons.group_rounded, color: Color(0xFF00f5ff)),
+          prefixIcon: Icon(Icons.group_rounded, color: AppColors.primary),
         ),
         validator: (v) =>
             (v == null || v.trim().isEmpty) ? 'Campo obligatorio' : null,
@@ -204,7 +204,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
           style: const TextStyle(color: AppColors.textPrimary),
           decoration: const InputDecoration(
             labelText: 'Hora *',
-            prefixIcon: Icon(Icons.access_time_rounded, color: Color(0xFF00f5ff)),
+            prefixIcon: Icon(Icons.access_time_rounded, color: AppColors.primary),
           ),
           validator: (v) =>
               (v == null || v.trim().isEmpty) ? 'Requerida' : null,
@@ -234,8 +234,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
         dropdownColor: AppColors.card,
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
-          labelText: 'Competición',
-          prefixIcon: Icon(Icons.emoji_events_rounded, color: Color(0xFF00f5ff)),
+          labelText: 'CompeticiÃ³n',
+          prefixIcon: Icon(Icons.emoji_events_rounded, color: AppColors.primary),
         ),
         selectedItemBuilder: (context) => [
           const Text('Amistoso', overflow: TextOverflow.ellipsis),
@@ -303,7 +303,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Requerido';
-                if (int.tryParse(v) == null) return 'Número inválido';
+                if (int.tryParse(v) == null) return 'NÃºmero invÃ¡lido';
                 return null;
               },
             ),
@@ -311,7 +311,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              '–',
+              'â€“',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 22,
@@ -336,7 +336,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Requerido';
-                if (int.tryParse(v) == null) return 'Número inválido';
+                if (int.tryParse(v) == null) return 'NÃºmero invÃ¡lido';
                 return null;
               },
             ),
@@ -356,7 +356,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           labelText: 'Minutos jugados',
-          prefixIcon: Icon(Icons.timer_rounded, color: Color(0xFF00f5ff)),
+          prefixIcon: Icon(Icons.timer_rounded, color: AppColors.primary),
           suffixText: 'min',
         ),
         validator: (v) {
@@ -377,7 +377,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         decoration: BoxDecoration(
           color: AppColors.surfaceAlt,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF00f5ff), width: 1.5),
+          border: Border.all(color: AppColors.primary, width: 1.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,7 +385,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Valoración',
+                const Text('ValoraciÃ³n',
                     style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                 Text(
                   _valoracion.toStringAsFixed(1),
@@ -423,7 +423,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
           labelText: 'Notas del partido',
           prefixIcon: Padding(
             padding: EdgeInsets.only(bottom: 48),
-            child: Icon(Icons.notes_rounded, color: Color(0xFF00f5ff)),
+            child: Icon(Icons.notes_rounded, color: AppColors.primary),
           ),
         ),
       ),
@@ -431,37 +431,38 @@ class _MatchFormPageState extends State<MatchFormPage> {
   }
 
   Widget _buildSaveButton() {
-    return ElevatedButton(
-      onPressed: _guardando ? null : _save,
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 52),
-        backgroundColor: const Color(0xFF00f5ff),
-        foregroundColor: Colors.black,
-        shadowColor: const Color(0xFF00f5ff).withValues(alpha: 0.4),
-        elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton(
+        onPressed: _guardando ? null : _save,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.textOnPrimary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         ),
+        child: _guardando
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: AppColors.textOnPrimary,
+                  strokeWidth: 2.5,
+                ),
+              )
+            : Text(_esEdicion ? 'Guardar cambios' : 'Guardar partido'),
       ),
-      child: _guardando
-          ? const SizedBox(
-              width: 22,
-              height: 22,
-              child:
-                  CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
-            )
-          : Text(
-              _esEdicion ? 'Guardar cambios' : 'Guardar partido',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.1,
-              ),
-            ),
     );
   }
 
-  // ── Lógica ───────────────────────────────────────────────────────────────
+  // â”€â”€ LÃ³gica â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
@@ -527,7 +528,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
   }
 }
 
-// ── Helpers de layout ────────────────────────────────────────────────────────
+// â”€â”€ Helpers de layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SectionTitle extends StatelessWidget {
   final String title;
@@ -599,7 +600,7 @@ class _FieldBox extends StatelessWidget {
           ),
           child: Row(
             children: [
-      Icon(icon, color: const Color(0xFF00f5ff), size: 18),
+      Icon(icon, color: AppColors.primary, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -623,3 +624,5 @@ class _FieldBox extends StatelessWidget {
     );
   }
 }
+
+
