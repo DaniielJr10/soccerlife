@@ -721,6 +721,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
     void Function()? onTap,
     double? height,
   }) {
+    final focused = focusNode?.hasFocus ?? false;
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
@@ -740,18 +741,26 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         hintText: label,
         prefixIcon: Padding(
           padding: const EdgeInsets.only(left: 16, right: 12),
-          child: Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 22),
+          child: Icon(
+            icon,
+            color: focused ? const Color(0xFF00f5ff) : Colors.white.withValues(alpha: 0.6),
+            size: 22,
+          ),
         ),
         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
         suffixIcon: suffixIcon,
         hintStyle: TextStyle(
-          color: Colors.white.withValues(alpha: 0.55),
+          color: focused
+              ? const Color(0xFF00f5ff).withValues(alpha: 0.75)
+              : Colors.white.withValues(alpha: 0.55),
           fontSize: 16,
           fontWeight: FontWeight.w400,
         ),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.08),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        fillColor: focused
+            ? const Color(0xFF00f5ff).withValues(alpha: 0.10)
+            : Colors.white.withValues(alpha: 0.08),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
@@ -768,9 +777,9 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: Colors.white.withValues(alpha: 0.5),
-            width: 1.5,
+          borderSide: const BorderSide(
+            color: Color(0xFF00f5ff),
+            width: 2.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
@@ -791,7 +800,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
       ),
     );
   }
-  
+
   // Menú desplegable para seleccionar posición
   Widget _buildDropdown() {
     return DropdownButtonFormField<String>(
