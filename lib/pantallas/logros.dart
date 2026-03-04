@@ -193,7 +193,7 @@ class _LogrosPageState extends State<LogrosPage>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.3),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -219,7 +219,7 @@ class _LogrosPageState extends State<LogrosPage>
           Text(
             '$desbloqueados de $total desbloqueados',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: 16,
             ),
           ),
@@ -230,7 +230,7 @@ class _LogrosPageState extends State<LogrosPage>
                 width: double.infinity,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -317,7 +317,7 @@ class _LogrosPageState extends State<LogrosPage>
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -328,7 +328,7 @@ class _LogrosPageState extends State<LogrosPage>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icono, color: color, size: 24),
@@ -398,13 +398,13 @@ class _LogrosPageState extends State<LogrosPage>
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         border: desbloqueado
-            ? Border.all(color: logro['color'].withOpacity(0.3), width: 2)
+            ? Border.all(color: logro['color'].withValues(alpha: 0.3), width: 2)
             : null,
         boxShadow: [
           BoxShadow(
             color: desbloqueado
-                ? logro['color'].withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+                ? logro['color'].withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -419,7 +419,7 @@ class _LogrosPageState extends State<LogrosPage>
             decoration: BoxDecoration(
               color: desbloqueado
                   ? logro['color']
-                  : Colors.grey.withOpacity(0.3),
+                  : Colors.grey.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Icon(
@@ -506,7 +506,7 @@ class _LogrosPageState extends State<LogrosPage>
                             width: double.infinity,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.3),
+                              color: Colors.grey.withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
@@ -657,7 +657,7 @@ class _DialogoRegistrarLogroState extends State<_DialogoRegistrarLogro> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00f5ff).withOpacity(0.1),
+                        color: const Color(0xFF00f5ff).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -780,8 +780,8 @@ class _DialogoRegistrarLogroState extends State<_DialogoRegistrarLogro> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: seleccionado 
-                                ? const Color(0xFF00f5ff).withOpacity(0.2)
-                                : Colors.grey.withOpacity(0.1),
+                                ? const Color(0xFF00f5ff).withValues(alpha: 0.2)
+                                : Colors.grey.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: seleccionado
                                 ? Border.all(color: const Color(0xFF00f5ff), width: 2)

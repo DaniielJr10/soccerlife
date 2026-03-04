@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'auth_service.dart';
 
-/**
- * Servicio de API para Logros
- */
+/// Servicio de API para Logros
 class LogrosService {
   static String get baseUrl => '${ApiConfig.baseUrl}/logros';
 
@@ -31,7 +30,7 @@ class LogrosService {
         };
       }
     } catch (e) {
-      print('❌ Error en obtenerLogrosUsuario: $e');
+      debugPrint('❌ Error en obtenerLogrosUsuario: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',
@@ -63,7 +62,7 @@ class LogrosService {
         };
       }
     } catch (e) {
-      print('❌ Error en verificarLogros: $e');
+      debugPrint('❌ Error en verificarLogros: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',

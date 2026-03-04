@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class ApiConfig {
   // Configuración para diferentes entornos
   static const String _casaIP = '192.168.1.45:3000';
@@ -28,6 +30,6 @@ class ApiConfig {
   
   // Para debugging
   static void printCurrentConfig() {
-    print('🔧 URL actual de la API: $baseUrl');
+    debugPrint('🔧 URL actual de la API: $baseUrl');
   }
 }

@@ -8,8 +8,8 @@ const cambiarPassword = async (req, res) => {
     if (!passwordActual || !passwordNueva) {
       return res.status(400).json({ message: 'Se requieren passwordActual y passwordNueva' });
     }
-    if (passwordNueva.length < 6) {
-      return res.status(400).json({ message: 'La nueva contraseña debe tener al menos 6 caracteres' });
+    if (passwordNueva.length < 8) {
+      return res.status(400).json({ message: 'La nueva contraseña debe tener al menos 8 caracteres' });
     }
     const usuario = await Usuario.findById(req.usuarioId).select('password');
     if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });

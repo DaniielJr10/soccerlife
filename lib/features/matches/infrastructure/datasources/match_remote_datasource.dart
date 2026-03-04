@@ -92,7 +92,7 @@ class MatchRemoteDataSource {
       if (match.valoracion != null) 'valoracion': match.valoracion,
     };
     final res = await http.put(
-      Uri.parse('${_base}/${match.id}/resultado'),
+      Uri.parse('$_base/${match.id}/resultado'),
       headers: headers,
       body: json.encode(body),
     );

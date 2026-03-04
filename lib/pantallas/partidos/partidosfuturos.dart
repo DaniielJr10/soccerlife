@@ -141,7 +141,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
         border: Border.all(color: Colors.grey[300]!, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -228,7 +228,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1565C0).withOpacity(0.55),
+            color: const Color(0xFF1565C0).withValues(alpha: 0.55),
             blurRadius: 14,
             spreadRadius: 1,
             offset: const Offset(0, 5),
@@ -296,7 +296,7 @@ class _PartidosFuturosPageState extends State<PartidosFuturosPage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.08),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

@@ -27,14 +27,15 @@ class _MainShellState extends State<MainShell> {
   ];
 
   static const List<_NavItem> _navItems = [
-    _NavItem(icon: Icons.dashboard_rounded,       label: 'Dashboard'),
-    _NavItem(icon: Icons.sports_soccer_rounded,   label: 'Partidos'),
-    _NavItem(icon: Icons.bar_chart_rounded,       label: 'Estadísticas'),
-    _NavItem(icon: Icons.emoji_events_rounded,    label: 'Torneos'),
-    _NavItem(icon: Icons.person_rounded,          label: 'Perfil'),
+    _NavItem(icon: Icons.dashboard_rounded,      activeIcon: Icons.dashboard,        label: 'Inicio'),
+    _NavItem(icon: Icons.sports_soccer_outlined, activeIcon: Icons.sports_soccer,    label: 'Partidos'),
+    _NavItem(icon: Icons.bar_chart_outlined,     activeIcon: Icons.bar_chart_rounded, label: 'Stats'),
+    _NavItem(icon: Icons.emoji_events_outlined,  activeIcon: Icons.emoji_events,     label: 'Torneos'),
+    _NavItem(icon: Icons.person_outline_rounded, activeIcon: Icons.person_rounded,   label: 'Perfil'),
   ];
 
   void _onDestinationSelected(int index) {
+    if (_currentIndex == index) return; // evita rebuild innecesario
     setState(() => _currentIndex = index);
   }
 
@@ -49,7 +50,8 @@ class _MainShellState extends State<MainShell> {
           final page = entry.value;
           return AnimatedOpacity(
             opacity: _currentIndex == i ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeInOut,
             child: page,
           );
         }).toList(),
@@ -62,36 +64,47 @@ class _MainShellState extends State<MainShell> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border(
+        border: const Border(
           top: BorderSide(color: AppColors.border, width: 1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
-      child: NavigationBar(
-        selectedIndex: _currentIndex,
-        backgroundColor: Colors.transparent,
-        indicatorColor: const Color(0xFF00f5ff).withValues(alpha: 0.15),
-        animationDuration: const Duration(milliseconds: 300),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final active = states.contains(WidgetState.selected);
-          return TextStyle(
-            fontSize: 10,
-            fontWeight: active ? FontWeight.w900 : FontWeight.w700,
-            color: Colors.black,
-          );
-        }),
-        onDestinationSelected: _onDestinationSelected,
-        destinations: _navItems.map((n) => NavigationDestination(
-            icon: Icon(n.icon, size: 22, color: const Color(0xFF00f5ff)),
-            selectedIcon: Icon(n.icon, size: 25, color: const Color(0xFF00f5ff)),
-            label: n.label,
-          )).toList(),
+      child: SafeArea(
+        top: false,
+        child: NavigationBar(
+          selectedIndex: _currentIndex,
+          backgroundColor: Colors.transparent,
+          indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+          animationDuration: const Duration(milliseconds: 300),
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            final active = states.contains(WidgetState.selected);
+            return TextStyle(
+              fontSize: 11,
+              fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+              color: active ? AppColors.primary : AppColors.textMuted,
+            );
+          }),
+          onDestinationSelected: _onDestinationSelected,
+          destinations: _navItems.asMap().entries.map((entry) {
+            final i = entry.key;
+            final n = entry.value;
+            final isSelected = _currentIndex == i;
+            return NavigationDestination(
+              icon: Icon(n.icon, size: 22, color: AppColors.textMuted),
+              selectedIcon: Icon(n.activeIcon, size: 24, color: AppColors.primary),
+              label: n.label,
+              tooltip: isSelected ? '' : n.label,
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -99,6 +112,11 @@ class _MainShellState extends State<MainShell> {
 
 class _NavItem {
   final IconData icon;
+  final IconData activeIcon;
   final String label;
-  const _NavItem({required this.icon, required this.label});
+  const _NavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+  });
 }

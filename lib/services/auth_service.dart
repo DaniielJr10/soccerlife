@@ -1,12 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'storage_service.dart';
 
-/**
- * Servicio de Autenticación
- * Maneja login, registro, logout y estado de sesión
- */
+/// Servicio de Autenticación
+/// Maneja login, registro, logout y estado de sesión
 class AuthService {
   static String get baseUrl => ApiConfig.baseUrl;
 
@@ -16,7 +15,7 @@ class AuthService {
     required String password,
   }) async {
     try {
-      print('🔗 Intentando login en: $baseUrl/usuarios/login');
+      debugPrint('🔗 Intentando login en: $baseUrl/usuarios/login');
       final url = Uri.parse('$baseUrl/usuarios/login');
 
       final body = {
@@ -30,7 +29,7 @@ class AuthService {
         body: json.encode(body),
       );
 
-      print('📥 Status: ${response.statusCode}');
+      debugPrint('📥 Status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -75,7 +74,7 @@ class AuthService {
         };
       }
     } catch (e) {
-      print('❌ Error en login: $e');
+      debugPrint('❌ Error en login: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',
@@ -146,7 +145,7 @@ class AuthService {
         };
       }
     } catch (e) {
-      print('❌ Error en registro: $e');
+      debugPrint('❌ Error en registro: $e');
       return {
         'success': false,
         'message': e.toString().replaceAll('Exception: ', ''),
@@ -180,7 +179,7 @@ class AuthService {
         };
       }
     } catch (e) {
-      print('❌ Error actualizando perfil: $e');
+      debugPrint('❌ Error actualizando perfil: $e');
       return {'success': false, 'message': 'Error de conexión: $e'};
     }
   }
@@ -191,7 +190,7 @@ class AuthService {
       await StorageService.limpiarDatos();
       return true;
     } catch (e) {
-      print('❌ Error en logout: $e');
+      debugPrint('❌ Error en logout: $e');
       return false;
     }
   }

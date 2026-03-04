@@ -217,7 +217,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
 
 
   Widget _buildHeader() {
-    return Container(
+    return SizedBox(
       height: 280,
       child: Center(
         child: Column(
@@ -493,7 +493,7 @@ class _InicioSesionPageState extends State<InicioSesionPage>
         color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.4),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),

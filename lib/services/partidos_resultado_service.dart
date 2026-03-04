@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'auth_service.dart';
 
-/**
- * Servicio para registrar resultados de partidos
- */
+/// Servicio para registrar resultados de partidos
 class PartidosResultadoService {
   static String get baseUrl => '${ApiConfig.baseUrl}/partidos';
 
@@ -56,7 +55,7 @@ class PartidosResultadoService {
         };
       }
     } catch (e) {
-      print('❌ Error en registrarResultado: $e');
+      debugPrint('❌ Error en registrarResultado: $e');
       return {
         'success': false,
         'message': 'Error de conexión: $e',

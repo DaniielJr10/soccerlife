@@ -216,7 +216,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
             );
           } catch (storageError) {
             // Error de almacenamiento local — no afecta al flujo del usuario
-            print('⚠️ Error al guardar datos localmente: $storageError');
+            debugPrint('⚠️ Error al guardar datos localmente: $storageError');
           }
         } else if (resultado['emailDuplicado'] == true) {
           // El registro pudo haberse completado pero la respuesta no llegó.
@@ -915,7 +915,7 @@ class _RegistrarsePageState extends State<RegistrarsePage> with TickerProviderSt
         color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.4),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),

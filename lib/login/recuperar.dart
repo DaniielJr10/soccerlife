@@ -474,7 +474,7 @@ class _RecuperarPasswordPageState extends State<RecuperarPasswordPage>
         color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withOpacity(0.4),
+            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),

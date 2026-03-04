@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
@@ -22,14 +23,14 @@ class UserRecuperarService {
     required String email,
   }) async {
     try {
-      print('🔗 Solicitando recuperación por email: $email');
+      debugPrint('🔗 Solicitando recuperación por email: $email');
       final url = Uri.parse('$baseUrl/usuarios/recuperar-password/email');
       
       final body = {
         'email': email,
       };
 
-      print('📤 Enviando solicitud de recuperación: $body');
+      debugPrint('📤 Enviando solicitud de recuperación: $body');
 
       final response = await http.post(
         url,
@@ -39,8 +40,8 @@ class UserRecuperarService {
         body: json.encode(body),
       );
 
-      print('📥 Respuesta del servidor - Status: ${response.statusCode}');
-      print('📥 Respuesta del servidor - Body: ${response.body}');
+      debugPrint('📥 Respuesta del servidor - Status: ${response.statusCode}');
+      debugPrint('📥 Respuesta del servidor - Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -57,7 +58,7 @@ class UserRecuperarService {
         };
       }
     } catch (e) {
-      print('❌ Error en solicitarRecuperacionPorEmail: $e');
+      debugPrint('❌ Error en solicitarRecuperacionPorEmail: $e');
       return {
         'success': false,
         'message': 'Error de conexión. Verifica tu internet.',
@@ -73,7 +74,7 @@ class UserRecuperarService {
     required String codigo,
   }) async {
     try {
-      print('🔗 Verificando código de recuperación');
+      debugPrint('🔗 Verificando código de recuperación');
       final url = Uri.parse('$baseUrl/usuarios/verificar-codigo-recuperacion');
       
       final Map<String, dynamic> body = {
@@ -81,7 +82,7 @@ class UserRecuperarService {
         'codigo': codigo,
       };
 
-      print('📤 Enviando verificación de código: $body');
+      debugPrint('📤 Enviando verificación de código: $body');
 
       final response = await http.post(
         url,
@@ -91,8 +92,8 @@ class UserRecuperarService {
         body: json.encode(body),
       );
 
-      print('📥 Respuesta del servidor - Status: ${response.statusCode}');
-      print('📥 Respuesta del servidor - Body: ${response.body}');
+      debugPrint('📥 Respuesta del servidor - Status: ${response.statusCode}');
+      debugPrint('📥 Respuesta del servidor - Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -109,7 +110,7 @@ class UserRecuperarService {
         };
       }
     } catch (e) {
-      print('❌ Error en verificarCodigoRecuperacion: $e');
+      debugPrint('❌ Error en verificarCodigoRecuperacion: $e');
       return {
         'success': false,
         'message': 'Error de conexión. Verifica tu internet.',
@@ -123,7 +124,7 @@ class UserRecuperarService {
     required String nuevaPassword,
   }) async {
     try {
-      print('🔗 Cambiando contraseña con token');
+      debugPrint('🔗 Cambiando contraseña con token');
       final url = Uri.parse('$baseUrl/usuarios/cambiar-password-recuperacion');
       
       final body = {
@@ -131,7 +132,7 @@ class UserRecuperarService {
         'nuevaPassword': nuevaPassword,
       };
 
-      print('📤 Enviando cambio de contraseña');
+      debugPrint('📤 Enviando cambio de contraseña');
 
       final response = await http.post(
         url,
@@ -141,8 +142,8 @@ class UserRecuperarService {
         body: json.encode(body),
       );
 
-      print('📥 Respuesta del servidor - Status: ${response.statusCode}');
-      print('📥 Respuesta del servidor - Body: ${response.body}');
+      debugPrint('📥 Respuesta del servidor - Status: ${response.statusCode}');
+      debugPrint('📥 Respuesta del servidor - Body: ${response.body}');
 
       if (response.statusCode == 200) {
         return {
@@ -157,7 +158,7 @@ class UserRecuperarService {
         };
       }
     } catch (e) {
-      print('❌ Error en cambiarPasswordConToken: $e');
+      debugPrint('❌ Error en cambiarPasswordConToken: $e');
       return {
         'success': false,
         'message': 'Error de conexión. Verifica tu internet.',
