@@ -76,7 +76,7 @@ class _StatCounter extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surfaceAlt,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: const Color(0xFF00f5ff), width: 1.5),
       ),
       child: Row(
         children: [
@@ -131,14 +131,14 @@ class _CounterButton extends StatelessWidget {
         height: 32,
         decoration: BoxDecoration(
           color: onTap != null
-              ? AppColors.primary.withOpacity(0.15)
+              ? const Color(0xFF00f5ff).withOpacity(0.15)
               : AppColors.border.withOpacity(0.3),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: onTap != null ? AppColors.primary : AppColors.textMuted,
+          color: onTap != null ? const Color(0xFF00f5ff) : AppColors.textMuted,
         ),
       ),
     );

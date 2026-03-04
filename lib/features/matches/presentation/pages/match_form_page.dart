@@ -377,7 +377,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         decoration: BoxDecoration(
           color: AppColors.surfaceAlt,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: const Color(0xFF00f5ff), width: 1.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
