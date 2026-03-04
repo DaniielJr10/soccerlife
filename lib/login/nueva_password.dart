@@ -21,27 +21,27 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
 
-  // Controladores del formulario
+  // Formulario y controladores
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
-  final _confirmarPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _passwordFocus = FocusNode();
-  final _confirmarPasswordFocus = FocusNode();
+  final _confirmPasswordFocus = FocusNode();
 
   // Estados de la interfaz
   bool _obscurePassword = true;
-  bool _obscureConfirmar = true;
-  bool _guardando = false;
+  bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
+  bool _cambioExitoso = false;
   bool _passwordFocused = false;
-  bool _confirmarFocused = false;
-  bool _exitoso = false;
+  bool _confirmPasswordFocused = false;
 
   @override
   void initState() {
     super.initState();
     _inicializarAnimaciones();
     _configurarListenersFocus();
-    _iniciarAnimaciones();
+    _iniciarAnimacionesEntrada();
   }
 
   void _inicializarAnimaciones() {
@@ -76,16 +76,18 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     _passwordFocus.addListener(() {
       setState(() => _passwordFocused = _passwordFocus.hasFocus);
     });
-    _confirmarPasswordFocus.addListener(() {
-      setState(() => _confirmarFocused = _confirmarPasswordFocus.hasFocus);
+    _confirmPasswordFocus.addListener(() {
+      setState(() => _confirmPasswordFocused = _confirmPasswordFocus.hasFocus);
     });
   }
 
-  void _iniciarAnimaciones() {
+  void _iniciarAnimacionesEntrada() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      _fadeController.forward();
-      _slideController.forward();
-      _scaleController.forward();
+      if (mounted) {
+        _fadeController.forward();
+        _slideController.forward();
+        _scaleController.forward();
+      }
     });
   }
 
@@ -95,34 +97,55 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     _slideController.dispose();
     _scaleController.dispose();
     _passwordController.dispose();
-    _confirmarPasswordController.dispose();
+    _confirmPasswordController.dispose();
     _passwordFocus.dispose();
-    _confirmarPasswordFocus.dispose();
+    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
-  // ── Lógica ───────────────────────────────────────────────────────────────
+  // Validador de contraseña (mínimo 8 caracteres)
+  String? _validatePassword(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'La contraseña es obligatoria';
+    }
+    if (value.length < 8) {
+      return 'La contraseña debe tener mínimo 8 caracteres';
+    }
+    return null;
+  }
 
-  Future<void> _guardarNuevaPassword() async {
+  // Validador de confirmación de contraseña
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Confirma tu contraseña';
+    }
+    if (value != _passwordController.text) {
+      return 'Las contraseñas no coinciden';
+    }
+    return null;
+  }
+
+  // Cambia la contraseña llamando al servicio
+  Future<void> _cambiarPassword() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       HapticFeedback.heavyImpact();
       return;
     }
 
-    setState(() => _guardando = true);
+    setState(() => _isLoading = true);
     HapticFeedback.lightImpact();
 
     final resp = await UserRecuperarService.cambiarPasswordConToken(
       token: widget.token,
-      nuevaPassword: _passwordController.text.trim(),
+      nuevaPassword: _passwordController.text,
     );
 
     if (!mounted) return;
-    setState(() => _guardando = false);
+    setState(() => _isLoading = false);
 
     if (resp['success'] == true) {
       HapticFeedback.mediumImpact();
-      setState(() => _exitoso = true);
+      setState(() => _cambioExitoso = true);
       _scaleController.reset();
       _scaleController.forward();
     } else {
@@ -137,39 +160,17 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     }
   }
 
+  // Navega al inicio de sesión limpiando la pila de navegación
   void _irAlLogin() {
     HapticFeedback.lightImpact();
-    // Volver hasta la pantalla de login eliminando toda la pila de navegación
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  // ── Validadores ───────────────────────────────────────────────────────────
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'La contraseña es obligatoria';
-    }
-    if (value.trim().length < 8) {
-      return 'La contraseña debe tener al menos 8 caracteres';
-    }
-    return null;
-  }
-
-  String? _validateConfirmarPassword(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Debes confirmar tu contraseña';
-    }
-    if (value.trim() != _passwordController.text.trim()) {
-      return 'Las contraseñas no coinciden';
-    }
-    return null;
-  }
-
-  // ── UI ────────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
-    if (_exitoso) return _buildPantallaExito();
+    if (_cambioExitoso) {
+      return _buildSuccessScreen();
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -178,7 +179,10 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: _irAlLogin,
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.of(context).pop();
+          },
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
@@ -189,7 +193,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
             opacity: _fadeAnimation.value,
             child: Stack(
               children: [
-                _buildFondo(),
+                _buildFootballBackground(),
                 SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -204,7 +208,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
                         const SizedBox(height: 20),
                         SlideTransition(
                           position: _slideAnimation,
-                          child: _buildFormulario(),
+                          child: _buildPasswordForm(),
                         ),
                         SizedBox(
                             height:
@@ -221,7 +225,8 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     );
   }
 
-  Widget _buildFondo() {
+  // Fondo con imagen de estadio
+  Widget _buildFootballBackground() {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -246,6 +251,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     );
   }
 
+  // Header con logo y título
   Widget _buildHeader() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -266,7 +272,10 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(50),
-            child: Image.asset('images/logo.png', fit: BoxFit.cover),
+            child: Image.asset(
+              'images/logo.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(height: 28),
@@ -310,7 +319,8 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     );
   }
 
-  Widget _buildFormulario() {
+  // Formulario para crear la nueva contraseña
+  Widget _buildPasswordForm() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Form(
@@ -318,7 +328,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Info card
+            // Información del requisito
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -337,15 +347,15 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
               child: Column(
                 children: [
                   const Icon(
-                    Icons.lock_reset_rounded,
+                    Icons.lock_reset,
                     color: Color(0xFF00b4db),
                     size: 32,
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    'Crea una contraseña segura con al menos 8 caracteres para proteger tu cuenta.',
+                  const Text(
+                    'Crea una nueva contraseña segura. Debe tener al menos 8 caracteres.',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       height: 1.3,
@@ -356,7 +366,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
               ),
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 32),
 
             // Campo nueva contraseña
             _buildPasswordField(
@@ -364,7 +374,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
               focusNode: _passwordFocus,
               label: 'Nueva Contraseña',
               isFocused: _passwordFocused,
-              obscure: _obscurePassword,
+              obscureText: _obscurePassword,
               onToggleObscure: () =>
                   setState(() => _obscurePassword = !_obscurePassword),
               validator: _validatePassword,
@@ -374,28 +384,28 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
 
             // Campo confirmar contraseña
             _buildPasswordField(
-              controller: _confirmarPasswordController,
-              focusNode: _confirmarPasswordFocus,
+              controller: _confirmPasswordController,
+              focusNode: _confirmPasswordFocus,
               label: 'Confirmar Contraseña',
-              isFocused: _confirmarFocused,
-              obscure: _obscureConfirmar,
-              onToggleObscure: () =>
-                  setState(() => _obscureConfirmar = !_obscureConfirmar),
-              validator: _validateConfirmarPassword,
+              isFocused: _confirmPasswordFocused,
+              obscureText: _obscureConfirmPassword,
+              onToggleObscure: () => setState(
+                  () => _obscureConfirmPassword = !_obscureConfirmPassword),
+              validator: _validateConfirmPassword,
             ),
 
             const SizedBox(height: 32),
 
             // Botón guardar
             _buildButton(
-              onTap: _guardando ? null : _guardarNuevaPassword,
+              onTap: _isLoading ? null : _cambiarPassword,
               text: 'Guardar Contraseña',
-              isLoading: _guardando,
+              isLoading: _isLoading,
             ),
 
             const SizedBox(height: 16),
 
-            // Link volver
+            // Link volver al login
             TextButton(
               onPressed: _irAlLogin,
               child: Text(
@@ -406,7 +416,6 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
                 ),
               ),
             ),
-
             const SizedBox(height: 8),
           ],
         ),
@@ -414,19 +423,20 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     );
   }
 
+  // Campo de contraseña estilizado
   Widget _buildPasswordField({
     required TextEditingController controller,
     required FocusNode focusNode,
     required String label,
     required bool isFocused,
-    required bool obscure,
+    required bool obscureText,
     required VoidCallback onToggleObscure,
     required String? Function(String?) validator,
   }) {
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
-      obscureText: obscure,
+      obscureText: obscureText,
       style: TextStyle(
         color: Colors.white.withValues(alpha: 0.85),
         fontSize: 16,
@@ -446,20 +456,15 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
         ),
         prefixIconConstraints:
             const BoxConstraints(minWidth: 0, minHeight: 0),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: IconButton(
-            icon: Icon(
-              obscure
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
-              color: isFocused
-                  ? const Color(0xFF00f5ff)
-                  : Colors.white.withValues(alpha: 0.6),
-              size: 22,
-            ),
-            onPressed: onToggleObscure,
+        suffixIcon: IconButton(
+          icon: Icon(
+            obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+            color: isFocused
+                ? const Color(0xFF00f5ff)
+                : Colors.white.withValues(alpha: 0.6),
+            size: 22,
           ),
+          onPressed: onToggleObscure,
         ),
         hintStyle: TextStyle(
           color: isFocused
@@ -490,18 +495,24 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide:
-              const BorderSide(color: Color(0xFF00f5ff), width: 2.0),
+          borderSide: const BorderSide(
+            color: Color(0xFF00f5ff),
+            width: 2.0,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide:
-              const BorderSide(color: Color(0xFFff6b6b), width: 1.2),
+          borderSide: const BorderSide(
+            color: Color(0xFFff6b6b),
+            width: 1.2,
+          ),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide:
-              const BorderSide(color: Color(0xFFff6b6b), width: 1.5),
+          borderSide: const BorderSide(
+            color: Color(0xFFff6b6b),
+            width: 1.5,
+          ),
         ),
         errorStyle: const TextStyle(
           color: Color(0xFFff6b6b),
@@ -512,6 +523,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     );
   }
 
+  // Botón estilizado principal
   Widget _buildButton({
     required VoidCallback? onTap,
     required String text,
@@ -526,7 +538,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
         color: const Color(0xFF00f5ff),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f5ff).withValues(alpha: 0.4),
+            color: const Color(0xFF00f5ff).withOpacity(0.4),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -563,14 +575,13 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
     );
   }
 
-  // ── Pantalla de éxito ─────────────────────────────────────────────────────
-
-  Widget _buildPantallaExito() {
+  // Pantalla de éxito tras cambiar la contraseña
+  Widget _buildSuccessScreen() {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          _buildFondo(),
+          _buildFootballBackground(),
           Center(
             child: ScaleTransition(
               scale: _scaleAnimation,
@@ -604,7 +615,8 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF2ecc71).withValues(alpha: 0.4),
+                            color:
+                                const Color(0xFF2ecc71).withValues(alpha: 0.4),
                             blurRadius: 20,
                             spreadRadius: 0,
                           ),
@@ -619,6 +631,7 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
 
                     const SizedBox(height: 32),
 
+                    // Título de éxito
                     ShaderMask(
                       shaderCallback: (bounds) => const LinearGradient(
                         colors: [Color(0xFF2ecc71), Color(0xFF27ae60)],
@@ -648,9 +661,10 @@ class _NuevaPasswordPageState extends State<NuevaPasswordPage>
 
                     const SizedBox(height: 32),
 
+                    // Botón ir al login
                     _buildButton(
                       onTap: _irAlLogin,
-                      text: 'Ir al inicio de sesión',
+                      text: 'Ir al Inicio de Sesión',
                     ),
                   ],
                 ),
