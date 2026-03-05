@@ -8,6 +8,48 @@ import '../../application/providers/match_provider.dart';
 import '../../domain/entities/match_entity.dart';
 import '../widgets/stats_form_section.dart';
 
+const _kPrimary = Color(0xFF00f5ff);
+const _kError   = Color(0xFFff6b6b);
+
+InputDecoration _deco(String label, IconData icon, {Widget? suffix, String? suffix2}) {
+  return InputDecoration(
+    labelText: label,
+    labelStyle: const TextStyle(color: Colors.black54),
+    floatingLabelStyle: const TextStyle(color: Colors.black),
+    prefixIcon: Padding(
+      padding: const EdgeInsets.only(left: 16, right: 12),
+      child: Icon(icon, color: _kPrimary, size: 22),
+    ),
+    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+    suffixIcon: suffix,
+    suffixText: suffix2,
+    filled: true,
+    fillColor: Colors.white,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: Color(0xFFDDDDDD), width: 1.2),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: Color(0xFFDDDDDD), width: 1.2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: _kPrimary, width: 2.0),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: _kError, width: 1.2),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: _kError, width: 1.5),
+    ),
+    errorStyle: const TextStyle(color: _kError, fontWeight: FontWeight.w500),
+  );
+}
+
 /// Formulario para registrar o editar un partido jugado con todas sus estadísticas.
 class MatchFormPage extends StatefulWidget {
   /// Si se pasa [match], el formulario entra en modo edición.
@@ -161,11 +203,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
       padding: const EdgeInsets.only(bottom: 10),
       child: TextFormField(
         controller: _rivalCtrl,
-        style: const TextStyle(color: AppColors.textPrimary),
-        decoration: const InputDecoration(
-          labelText: 'Equipo rival *',
-          prefixIcon: Icon(Icons.group_rounded, color: AppColors.primary),
-        ),
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: _deco('Equipo rival *', Icons.group_rounded),
         validator: (v) =>
             (v == null || v.trim().isEmpty) ? 'Campo obligatorio' : null,
       ),
@@ -201,11 +240,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
         padding: const EdgeInsets.only(right: 8, bottom: 10),
         child: TextFormField(
           controller: _horaCtrl,
-          style: const TextStyle(color: AppColors.textPrimary),
-          decoration: const InputDecoration(
-            labelText: 'Hora *',
-            prefixIcon: Icon(Icons.access_time_rounded, color: AppColors.primary),
-          ),
+          style: const TextStyle(color: Colors.black, fontSize: 16),
+          decoration: _deco('Hora *', Icons.access_time_rounded),
           validator: (v) =>
               (v == null || v.trim().isEmpty) ? 'Requerida' : null,
         ),
@@ -219,8 +255,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
         padding: const EdgeInsets.only(bottom: 10),
         child: TextFormField(
           controller: _lugarCtrl,
-          style: const TextStyle(color: AppColors.textPrimary),
-          decoration: const InputDecoration(labelText: 'Lugar'),
+          style: const TextStyle(color: Colors.black, fontSize: 16),
+          decoration: _deco('Lugar', Icons.location_on_rounded),
         ),
       ),
     );
@@ -231,12 +267,9 @@ class _MatchFormPageState extends State<MatchFormPage> {
       padding: const EdgeInsets.only(bottom: 10),
       child: DropdownButtonFormField<String?>(
         value: _torneoId,
-        dropdownColor: AppColors.card,
-        style: const TextStyle(color: AppColors.textPrimary),
-        decoration: const InputDecoration(
-          labelText: 'Competición',
-          prefixIcon: Icon(Icons.emoji_events_rounded, color: AppColors.primary),
-        ),
+        dropdownColor: Colors.white,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: _deco('Competición', Icons.emoji_events_rounded),
         selectedItemBuilder: (context) => [
           const Text('Amistoso', overflow: TextOverflow.ellipsis),
           ..._torneos.map(
@@ -297,9 +330,10 @@ class _MatchFormPageState extends State<MatchFormPage> {
                 fontWeight: FontWeight.w700,
                 fontSize: 22,
               ),
-              decoration: const InputDecoration(
+              decoration: _deco('Mis goles', Icons.sports_soccer_rounded).copyWith(
                 labelText: 'Mis goles',
                 helperText: 'Tu equipo',
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Requerido';
@@ -330,9 +364,10 @@ class _MatchFormPageState extends State<MatchFormPage> {
                 fontWeight: FontWeight.w700,
                 fontSize: 22,
               ),
-              decoration: const InputDecoration(
+              decoration: _deco('Goles rival', Icons.sports_soccer_rounded).copyWith(
                 labelText: 'Goles rival',
                 helperText: 'Equipo contrario',
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Requerido';
@@ -353,12 +388,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
         controller: _minutosCtrl,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: const TextStyle(color: AppColors.textPrimary),
-        decoration: const InputDecoration(
-          labelText: 'Minutos jugados',
-          prefixIcon: Icon(Icons.timer_rounded, color: AppColors.primary),
-          suffixText: 'min',
-        ),
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: _deco('Minutos jugados', Icons.timer_rounded, suffix2: 'min'),
         validator: (v) {
           if (v == null || v.trim().isEmpty) return 'Requerido';
           final n = int.tryParse(v);
@@ -375,9 +406,9 @@ class _MatchFormPageState extends State<MatchFormPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: AppColors.surfaceAlt,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primary, width: 1.5),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFDDDDDD), width: 1.2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +417,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Valoración',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                    style: TextStyle(color: Colors.black54, fontSize: 14)),
                 Text(
                   _valoracion.toStringAsFixed(1),
                   style: const TextStyle(
@@ -418,12 +449,11 @@ class _MatchFormPageState extends State<MatchFormPage> {
       child: TextFormField(
         controller: _notasCtrl,
         maxLines: 3,
-        style: const TextStyle(color: AppColors.textPrimary),
-        decoration: const InputDecoration(
-          labelText: 'Notas del partido',
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(bottom: 48),
-            child: Icon(Icons.notes_rounded, color: AppColors.primary),
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: _deco('Notas del partido', Icons.notes_rounded).copyWith(
+          prefixIcon: const Padding(
+            padding: EdgeInsets.only(left: 16, right: 12, bottom: 48),
+            child: Icon(Icons.notes_rounded, color: _kPrimary, size: 22),
           ),
         ),
       ),
@@ -437,8 +467,8 @@ class _MatchFormPageState extends State<MatchFormPage> {
       child: ElevatedButton(
         onPressed: _guardando ? null : _save,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textOnPrimary,
+          backgroundColor: _kPrimary,
+          foregroundColor: Colors.black,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -594,25 +624,25 @@ class _FieldBox extends StatelessWidget {
           margin: const EdgeInsets.only(right: 8, bottom: 10),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
-            color: AppColors.surfaceAlt,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFDDDDDD), width: 1.2),
           ),
           child: Row(
             children: [
-      Icon(icon, color: AppColors.primary, size: 18),
-              const SizedBox(width: 8),
+      Icon(icon, color: _kPrimary, size: 20),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(label,
                         style: const TextStyle(
-                            color: AppColors.textMuted, fontSize: 11)),
+                            color: Colors.black54, fontSize: 11)),
                     Text(value,
                         style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 14,
+                            color: Colors.black,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500)),
                   ],
                 ),
