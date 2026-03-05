@@ -4,6 +4,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../application/tournament_provider.dart';
 import '../../domain/entities/tournament_entity.dart';
 
+const _kPrimary = Color(0xFF00f5ff);
+
 /// Formulario para crear o editar un torneo.
 class TournamentFormPage extends StatefulWidget {
   /// null → crear nuevo; no null → editar existente.
@@ -97,7 +99,7 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
       lastDate: DateTime(2040),
       builder: (_, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.dark(primary: AppColors.primary),
+          colorScheme: const ColorScheme.dark(primary: _kPrimary),
         ),
         child: child!,
       ),
@@ -119,7 +121,7 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
         backgroundColor: AppColors.surface,
         centerTitle: true,
         title: Text(_modoEdicion ? 'Editar torneo' : 'Nuevo torneo',
-            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
+            style: const TextStyle(color: Colors.black)),
         leading: const BackButton(color: AppColors.textSecondary),
       ),
       body: Form(
@@ -142,20 +144,37 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
             // Estado
             DropdownButtonFormField<String>(
               value: _estado,
-              dropdownColor: AppColors.card,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                  labelText: 'Estado', prefixIcon: Icon(Icons.flag_rounded)),
+              dropdownColor: Colors.white,
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Estado',
+                labelStyle: const TextStyle(color: Colors.black),
+                floatingLabelStyle: const TextStyle(color: Colors.black),
+                prefixIcon: const Icon(Icons.flag_rounded, color: _kPrimary),
+                filled: true,
+                fillColor: Colors.white,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: _kPrimary, width: 1.4),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: _kPrimary, width: 2),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               items: const [
-                DropdownMenuItem(value: 'activo',     child: Text('Activo')),
-                DropdownMenuItem(value: 'finalizado', child: Text('Finalizado')),
+                DropdownMenuItem(value: 'activo',     child: Text('Activo',     style: TextStyle(color: Colors.black))),
+                DropdownMenuItem(value: 'finalizado', child: Text('Finalizado', style: TextStyle(color: Colors.black))),
               ],
               onChanged: (v) => setState(() => _estado = v ?? _estado),
             ),
             const SizedBox(height: 16),
             // Color
             const Text('Color',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                style: TextStyle(color: Colors.black, fontSize: 13)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 10,
@@ -186,7 +205,8 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
             const SizedBox(height: 32),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: _kPrimary,
+                foregroundColor: Colors.black,
                 minimumSize: const Size.fromHeight(48),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -195,12 +215,11 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
               child: _guardando
                   ? const SizedBox(width: 20, height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                          strokeWidth: 2, color: Colors.black))
                   : Text(
                       _modoEdicion ? 'Guardar cambios' : 'Crear torneo',
                       style: const TextStyle(
-                          color: AppColors.textOnPrimary,
-                          fontWeight: FontWeight.w700)),
+                          color: Colors.black)),
             ),
           ],
         ),
@@ -212,8 +231,32 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
       {bool required = false}) {
     return TextFormField(
       controller: ctrl,
-      style: const TextStyle(color: AppColors.textPrimary),
-      decoration: InputDecoration(labelText: label, prefixIcon: Icon(icon)),
+      style: const TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black),
+        floatingLabelStyle: const TextStyle(color: Colors.black),
+        prefixIcon: Icon(icon, color: _kPrimary),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: _kPrimary, width: 1.4),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: _kPrimary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.danger, width: 1.4),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.danger, width: 2),
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
       validator: required
           ? (v) => (v == null || v.trim().isEmpty) ? 'Campo obligatorio' : null
           : null,
@@ -226,23 +269,23 @@ class _TournamentFormPageState extends State<TournamentFormPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.surfaceAlt,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: _kPrimary, width: 1.4),
         ),
         child: Row(children: [
           const Icon(Icons.calendar_today_rounded,
-              size: 14, color: AppColors.primary),
+              size: 14, color: _kPrimary),
           const SizedBox(width: 8),
           Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label,
                   style: const TextStyle(
-                      color: AppColors.textMuted, fontSize: 11)),
+                      color: Colors.black, fontSize: 11)),
               Text(_fmt(date),
                   style: const TextStyle(
-                      color: AppColors.textPrimary, fontSize: 13)),
+                      color: Colors.black, fontSize: 13)),
             ],
           )),
         ]),

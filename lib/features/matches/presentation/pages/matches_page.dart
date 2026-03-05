@@ -92,6 +92,14 @@ class _MatchesPageState extends State<MatchesPage> {
         ],
       ),
 
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openForm,
+        backgroundColor: const Color(0xFF00f5ff),
+        foregroundColor: Colors.black,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Registrar partido',
+            style: TextStyle(fontWeight: FontWeight.w700)),
+      ),
       body: Consumer2<MatchProvider, TournamentProvider>(
         builder: (_, provider, torneoProvider, __) {
           if (provider.isLoading && provider.played.isEmpty) {
