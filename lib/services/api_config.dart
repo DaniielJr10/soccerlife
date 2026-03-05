@@ -9,11 +9,16 @@ class ApiConfig {
   static const String _baseUrlCasa = 'http://$_casaIP/api';
   static const String _baseUrlLocal = 'http://$_localhost/api';
   
-  // URL actual (cambiar según donde estés)
+  // URL actual — detecta automáticamente la plataforma:
+  // · Web / Windows / Linux / macOS (misma máquina) → localhost
+  // · Android / iOS (dispositivo físico en la misma red) → IP local
   static String get baseUrl {
-    // Puedes cambiar esto manualmente o implementar detección automática
-    return _baseUrlCasa; // Para usar desde dispositivo físico o emulador en la misma red
-    // return _baseUrlLocal; // Solo para usar en el mismo computador (web/desktop)
+    if (kIsWeb || (!kIsWeb && (defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.macOS))) {
+      return _baseUrlLocal; // localhost para web y desktop
+    }
+    return _baseUrlCasa; // IP de red para dispositivos móviles
   }
   
   // Método para cambiar la configuración dinámicamente

@@ -8,9 +8,9 @@ import '../../application/providers/match_provider.dart';
 import '../../domain/entities/match_entity.dart';
 import '../widgets/stats_form_section.dart';
 
-/// Formulario para registrar o editar un partido jugado con todas sus estadÃ­sticas.
+/// Formulario para registrar o editar un partido jugado con todas sus estadísticas.
 class MatchFormPage extends StatefulWidget {
-  /// Si se pasa [match], el formulario entra en modo ediciÃ³n.
+  /// Si se pasa [match], el formulario entra en modo edición.
   final MatchEntity? match;
 
   const MatchFormPage({super.key, this.match});
@@ -22,7 +22,7 @@ class MatchFormPage extends StatefulWidget {
 class _MatchFormPageState extends State<MatchFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Campos bÃ¡sicos
+  // Campos básicos
   final _rivalCtrl         = TextEditingController();
   final _lugarCtrl         = TextEditingController();
   final _horaCtrl          = TextEditingController(text: '15:00');
@@ -38,11 +38,11 @@ class _MatchFormPageState extends State<MatchFormPage> {
   String? _torneoId;
   String? _torneoNombre;
 
-  // Lista local de torneos (cargada una sola vez â€” no usa Consumer para
+  // Lista local de torneos (cargada una sola vez — no usa Consumer para
   // evitar que rebuilds del provider congelen el formulario)
   List<TournamentEntity> _torneos = [];
 
-  // EstadÃ­sticas - contador
+  // Estadísticas - contador
   final Map<String, int> _stats = {
     'goles': 0, 'asistencias': 0,
     'regatesExitosos': 0,
@@ -85,7 +85,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
   }
 
   /// Carga torneos una sola vez en estado local.
-  /// Usa los datos ya en cachÃ© del provider si estÃ¡n disponibles,
+  /// Usa los datos ya en caché del provider si están disponibles,
   /// o lanza load() sin bloquear el formulario.
   Future<void> _cargarTorneos() async {    final provider = context.read<TournamentProvider>();
     if (provider.items.isNotEmpty) {
@@ -126,7 +126,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
             physics: const ClampingScrollPhysics(),
           children: [
-            _SectionTitle(title: 'InformaciÃ³n del partido'),
+            _SectionTitle(title: 'Información del partido'),
             _buildRival(),
             Row(children: [_buildFecha()]),
             _Row2(left: _buildHora(), right: _buildLugar()),
@@ -137,7 +137,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             _buildMinutos(),
             _buildRating(),
             const SizedBox(height: 8),
-            _SectionTitle(title: 'EstadÃ­sticas personales'),
+            _SectionTitle(title: 'Estadísticas personales'),
             StatsFormSection(
               values: _stats,
               onChanged: (k, v) => setState(() => _stats[k] = v),
@@ -234,7 +234,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
         dropdownColor: AppColors.card,
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: const InputDecoration(
-          labelText: 'CompeticiÃ³n',
+          labelText: 'Competición',
           prefixIcon: Icon(Icons.emoji_events_rounded, color: AppColors.primary),
         ),
         selectedItemBuilder: (context) => [
@@ -303,7 +303,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Requerido';
-                if (int.tryParse(v) == null) return 'NÃºmero invÃ¡lido';
+                if (int.tryParse(v) == null) return 'Número inválido';
                 return null;
               },
             ),
@@ -311,7 +311,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              'â€“',
+              '–',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 22,
@@ -336,7 +336,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Requerido';
-                if (int.tryParse(v) == null) return 'NÃºmero invÃ¡lido';
+                if (int.tryParse(v) == null) return 'Número inválido';
                 return null;
               },
             ),
@@ -385,7 +385,7 @@ class _MatchFormPageState extends State<MatchFormPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('ValoraciÃ³n',
+                const Text('Valoración',
                     style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                 Text(
                   _valoracion.toStringAsFixed(1),
