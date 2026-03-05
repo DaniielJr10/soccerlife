@@ -84,22 +84,21 @@ class _MainShellState extends State<MainShell> {
           animationDuration: const Duration(milliseconds: 300),
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          labelTextStyle: WidgetStateProperty.resolveWith((states) {
-            final active = states.contains(WidgetState.selected);
-            return TextStyle(
+          labelTextStyle: WidgetStateProperty.all(
+            const TextStyle(
               fontSize: 11,
-              fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-              color: active ? AppColors.primary : AppColors.textMuted,
-            );
-          }),
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
+            ),
+          ),
           onDestinationSelected: _onDestinationSelected,
           destinations: _navItems.asMap().entries.map((entry) {
             final i = entry.key;
             final n = entry.value;
             final isSelected = _currentIndex == i;
             return NavigationDestination(
-              icon: Icon(n.icon, size: 22, color: AppColors.textMuted),
-              selectedIcon: Icon(n.activeIcon, size: 24, color: AppColors.primary),
+              icon: Icon(n.icon, size: 22, color: const Color(0xFF00f5ff)),
+              selectedIcon: Icon(n.activeIcon, size: 24, color: const Color(0xFF00f5ff)),
               label: n.label,
               tooltip: isSelected ? '' : n.label,
             );
