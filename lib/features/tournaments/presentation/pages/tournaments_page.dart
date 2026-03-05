@@ -43,7 +43,7 @@ class _TournamentsPageState extends State<TournamentsPage> {
         backgroundColor: AppColors.card,
         title: const Text('Eliminar torneo',
             style: TextStyle(color: AppColors.textPrimary)),
-        content: Text('Â¿Eliminar "${torneo.nombre}"?',
+        content: Text('¿Eliminar "${torneo.nombre}"?',
             style: const TextStyle(color: AppColors.textSecondary)),
         actions: [
           TextButton(
@@ -78,15 +78,20 @@ class _TournamentsPageState extends State<TournamentsPage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openForm(),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textOnPrimary,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text(
-          'Nuevo torneo',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
+      floatingActionButton: Consumer<TournamentProvider>(
+        builder: (_, provider, __) {
+          if (provider.items.isEmpty) return const SizedBox.shrink();
+          return FloatingActionButton.extended(
+            onPressed: () => _openForm(),
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.textOnPrimary,
+            icon: const Icon(Icons.add_rounded),
+            label: const Text(
+              'Nuevo torneo',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          );
+        },
       ),
       body: Consumer<TournamentProvider>(
         builder: (_, provider, __) {

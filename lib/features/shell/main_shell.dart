@@ -21,16 +21,16 @@ class _MainShellState extends State<MainShell> {
   final List<Widget> _pages = const [
     DashboardPage(),
     MatchesPage(),
-    StatisticsPage(),
     TournamentsPage(),
+    StatisticsPage(),
     ProfilePage(),
   ];
 
   static const List<_NavItem> _navItems = [
     _NavItem(icon: Icons.dashboard_rounded,      activeIcon: Icons.dashboard,        label: 'Inicio'),
     _NavItem(icon: Icons.sports_soccer_outlined, activeIcon: Icons.sports_soccer,    label: 'Partidos'),
-    _NavItem(icon: Icons.bar_chart_outlined,     activeIcon: Icons.bar_chart_rounded, label: 'Stats'),
     _NavItem(icon: Icons.emoji_events_outlined,  activeIcon: Icons.emoji_events,     label: 'Torneos'),
+    _NavItem(icon: Icons.bar_chart_outlined,     activeIcon: Icons.bar_chart_rounded, label: 'Estadísticas'),
     _NavItem(icon: Icons.person_outline_rounded, activeIcon: Icons.person_rounded,   label: 'Perfil'),
   ];
 
