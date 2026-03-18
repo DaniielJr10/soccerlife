@@ -8,6 +8,8 @@ import 'storage_service.dart';
 /// Maneja login, registro, logout y estado de sesión
 class AuthService {
   static String get baseUrl => ApiConfig.baseUrl;
+  static Uri _uri(String path, {Map<String, dynamic>? queryParameters}) =>
+      ApiConfig.uri(path, queryParameters: queryParameters);
 
   /// Login de usuario
   static Future<Map<String, dynamic>> login({
@@ -16,7 +18,7 @@ class AuthService {
   }) async {
     try {
       debugPrint('🔗 Intentando login en: $baseUrl/usuarios/login');
-      final url = Uri.parse('$baseUrl/usuarios/login');
+      final url = _uri('usuarios/login');
 
       final body = {
         'email': email,
@@ -94,7 +96,7 @@ class AuthService {
     int? peso,
   }) async {
     try {
-      final url = Uri.parse('$baseUrl/usuarios');
+      final url = _uri('usuarios');
 
       final body = {
         'nombre': nombre,
@@ -160,7 +162,7 @@ class AuthService {
     required Map<String, dynamic> datos,
   }) async {
     try {
-      final url = Uri.parse('$baseUrl/usuarios/$userId');
+      final url = _uri('usuarios/$userId');
       final headers = await obtenerHeadersAutenticados();
 
       final response = await http.put(
@@ -222,7 +224,7 @@ class AuthService {
     required String nueva,
   }) async {
     try {
-      final url = Uri.parse('$baseUrl/usuarios/cambiar-password');
+      final url = _uri('usuarios/cambiar-password');
       final headers = await obtenerHeadersAutenticados();
       final response = await http.post(
         url,
@@ -242,7 +244,7 @@ class AuthService {
     try {
       final userId = await StorageService.obtenerUserId();
       if (userId == null) return {'success': false, 'message': 'No se encontró el usuario'};
-      final url = Uri.parse('$baseUrl/usuarios/$userId');
+      final url = _uri('usuarios/$userId');
       final headers = await obtenerHeadersAutenticados();
       final response = await http.delete(url, headers: headers);
       if (response.statusCode == 200) {
@@ -261,7 +263,7 @@ class AuthService {
   /// Subir o reemplazar la foto de perfil en el servidor (base64 con prefijo data:image)
   static Future<Map<String, dynamic>> subirFotoPerfil(String fotoBase64) async {
     try {
-      final url = Uri.parse('$baseUrl/usuarios/foto-perfil');
+      final url = _uri('usuarios/foto-perfil');
       final headers = await obtenerHeadersAutenticados();
       final response = await http.put(
         url,
@@ -281,7 +283,7 @@ class AuthService {
   /// Obtener la foto de perfil desde el servidor (string base64 con prefijo o null)
   static Future<String?> obtenerFotoPerfilServidor() async {
     try {
-      final url = Uri.parse('$baseUrl/usuarios/foto-perfil');
+      final url = _uri('usuarios/foto-perfil');
       final headers = await obtenerHeadersAutenticados();
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
@@ -299,7 +301,7 @@ class AuthService {
   /// Eliminar la foto de perfil del servidor
   static Future<bool> eliminarFotoPerfilServidor() async {
     try {
-      final url = Uri.parse('$baseUrl/usuarios/foto-perfil');
+      final url = _uri('usuarios/foto-perfil');
       final headers = await obtenerHeadersAutenticados();
       final response = await http.delete(url, headers: headers);
       return response.statusCode == 200;
